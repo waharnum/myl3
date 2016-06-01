@@ -20,6 +20,9 @@ var journal = floe.dashboard.journal(".floec-journal", {
             func: "floe.dashboard.journal.bindSubmitEntryClick",
             args: "{that}"
         }
+    },
+    dbOptions: {
+        name: "notes"
     }
 });
 

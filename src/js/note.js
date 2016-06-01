@@ -67,7 +67,8 @@ floe.dashboard.note.createNote = function (that) {
         "timestamp": that.model.timestamp,
         "text": that.model.text
     };
-    notesDB.put(noteDoc).then(function (note) {
+    var db = new PouchDB(that.options.dbOptions.name);
+    db.put(noteDoc).then(function (note) {
         that.events.onNoteStored.fire();
     });
 };
@@ -80,15 +81,17 @@ floe.dashboard.note.updateNote = function (that) {
         "timestamp": that.model.timestamp,
         "text": that.model.text
     };
-    notesDB.put(noteDoc);
+    var db = new PouchDB(that.options.dbOptions.name);
+    db.put(noteDoc);
 };
 
 floe.dashboard.note.deleteNote = function (that) {
     console.log("floe.dashboard.note.deleteNote");
     var noteId = that.model._id;
     console.log(noteId);
-    notesDB.get(noteId).then(function (note) {
-        return notesDB.remove(note);
+    var db = new PouchDB(that.options.dbOptions.name);
+    db.get(noteId).then(function (note) {
+        return db.remove(note);
     });
     that.destroy();
 };

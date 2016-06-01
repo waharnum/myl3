@@ -21,7 +21,10 @@ fluid.defaults("floe.dashboard.journal", {
                 // because the framework interprets this as an
                 // implicit relay
                 onEntryRetrievedArgs: "{arguments}.0",
-                "model": "{that}.options.onEntryRetrievedArgs"
+                "model": "{that}.options.onEntryRetrievedArgs",
+                dbOptions: {
+                    name: "{journal}.options.dbOptions.name"
+                }
             }
         }
     },
@@ -35,12 +38,16 @@ fluid.defaults("floe.dashboard.journal", {
             args: "{that}",
             priority: "before:getEntries"
         }
+    },
+    dbOptions: {
+        // name: "notes"
     }
 });
 
 floe.dashboard.journal.getEntries = function (that) {
     // console.log("floe.dashboard.journal.getEntries");
-    notesDB.allDocs({include_docs: true}).then(function (response) {
+    var db = new PouchDB(that.options.dbOptions.name);
+    db.allDocs({include_docs: true}).then(function (response) {
         that.noteIdCounter = 0;
         fluid.each(response.rows, function (row) {
             entryContainer = floe.dashboard.journal.injectEntryContainer(that);
@@ -78,6 +85,9 @@ floe.dashboard.journal.bindSubmitEntryClick = function (that) {
                     func: "floe.dashboard.journal.addNoteToJournal",
                     args: ["{that}", journal]
                 }
+            },
+            dbOptions: {
+                name: journal.options.dbOptions.name
             }
         });
 
@@ -90,7 +100,8 @@ floe.dashboard.journal.bindSubmitEntryClick = function (that) {
 floe.dashboard.journal.addNoteToJournal = function (note, journal) {
     console.log("floe.dashboard.journal.addNoteToJournal");
     // console.log(that);
-    notesDB.get(note.model._id).then(function (dbNote) {
+    var db = new PouchDB(journal.options.dbOptions.name);
+    db.get(note.model._id).then(function (dbNote) {
         var entryContainer = floe.dashboard.journal.injectEntryContainer(journal);
         journal.events.onEntryRetrieved.fire(dbNote, entryContainer);
     });
