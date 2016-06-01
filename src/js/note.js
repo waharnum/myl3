@@ -5,17 +5,29 @@
         model: {
             "text": "",
             "timestamp": null,
-            "timestampPretty": null
+            "createdTimestampPretty": null,
+            "lastModifiedTimestampPretty": null
         },
-        modelRelay: {
-            target: "{that}.model.timestampPretty",
-            singleTransform: {
-                input: "{that}.model.timeEvents.created",
-                type: "fluid.transforms.free",
-                args: ["{that}.model.timeEvents.created"],
-                func: "floe.dashboard.note.getPrettyTimestamp"
+        modelRelay: [
+            {
+                target: "{that}.model.createdTimestampPretty",
+                singleTransform: {
+                    input: "{that}.model.timeEvents.created",
+                    type: "fluid.transforms.free",
+                    args: ["{that}.model.timeEvents.created"],
+                    func: "floe.dashboard.note.getPrettyTimestamp"
+                }
+            },
+            {
+                target: "{that}.model.lastModifiedTimestampPretty",
+                singleTransform: {
+                    input: "{that}.model.timeEvents.lastModified",
+                    type: "fluid.transforms.free",
+                    args: ["{that}.model.timeEvents.lastModified"],
+                    func: "floe.dashboard.note.getPrettyTimestamp"
+                }
             }
-        },
+        ],
         modelListeners: {
             "text": {
                 func: "floe.dashboard.note.updateNote",
@@ -46,12 +58,8 @@
 
     floe.dashboard.note.createNote = function (that) {
         console.log("floe.dashboard.note.createNote");
-        that.model._id = "note-" + that.model.timeEvents.created;
-        var noteDoc = {
-            "_id": that.model._id,
-            "timestamp": that.model.timeEvents.created,
-            "text": that.model.text
-        };
+        that.applier.change("_id", "note-" + that.model.timeEvents.created);
+        var noteDoc = fluid.copy(that.model);
         var db = new PouchDB(that.options.dbOptions.name);
         db.put(noteDoc).then(function (note) {
             that.events.onNoteStored.fire();
@@ -60,12 +68,7 @@
 
     floe.dashboard.note.updateNote = function (that) {
         console.log("floe.dashboard.note.updateNote");
-        var noteDoc = {
-            "_id": that.model._id,
-            "_rev": that.model._rev,
-            "timestamp": that.model.timeEvents.created,
-            "text": that.model.text
-        };
+        var noteDoc = fluid.copy(that.model);
         var db = new PouchDB(that.options.dbOptions.name);
         db.put(noteDoc);
     };
@@ -73,7 +76,6 @@
     floe.dashboard.note.deleteNote = function (that) {
         console.log("floe.dashboard.note.deleteNote");
         var noteId = that.model._id;
-        console.log(noteId);
         var db = new PouchDB(that.options.dbOptions.name);
         db.get(noteId).then(function (note) {
             return db.remove(note);
@@ -85,12 +87,14 @@
         gradeNames: ["floe.dashboard.note", "floe.chartAuthoring.valueBinding"],
         // A key/value of selectorName: model.path
         selectors: {
-            timestamp: ".flc-note-timestamp",
+            created: ".flc-note-created",
+            lastModified: ".flc-note-lastModified",
             text: ".flc-note-text",
             delete: ".flc-note-delete"
         },
         bindings: {
-            timestamp: "timestampPretty",
+            created: "createdTimestampPretty",
+            lastModified: "lastModifiedTimestampPretty",
             text: "text"
         },
         listeners: {
@@ -119,7 +123,7 @@
     };
 
     floe.dashboard.note.displayed.renderNoteTemplate = function (that) {
-        var noteTemplate = "<span class='flc-note-timestamp'></span><a href='#' class='flc-note-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=5></textarea>";
+        var noteTemplate = "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-note-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=5></textarea>";
         that.container.append(noteTemplate);
         that.events.onNoteTemplateRendered.fire();
     };

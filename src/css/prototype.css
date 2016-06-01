@@ -4,4 +4,5 @@
 
 .floe-entryList li {
     display: inline-block;
+    margin-top: 1em;
 }

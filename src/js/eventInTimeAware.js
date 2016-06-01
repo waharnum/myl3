@@ -18,10 +18,12 @@
             },
         },
         // We update "timeEvents.lastModified"  whenever the model is updated
+        // except on initialization
         modelListeners: {
             "": {
                 funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
-                args: "{that}"                
+                args: "{that}",
+                excludeSource: "init"
             }
         }
     });
