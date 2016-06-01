@@ -1,6 +1,6 @@
 PouchDB.debug.enable('*');
 
-var notesDB = new PouchDB('notes');
+// var notesDB = new PouchDB('notes');
 
 // destroy the DB
 // new PouchDB('notes').destroy();

@@ -1,0 +1,7 @@
+.floe-journalContainer {
+    padding-left: 1em;
+}
+
+.floe-entryList li {
+    display: inline-block;
+}

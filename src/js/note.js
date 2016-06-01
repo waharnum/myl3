@@ -1,6 +1,7 @@
 (function ($, fluid) {
+
     fluid.defaults("floe.dashboard.note", {
-        gradeNames: "fluid.modelComponent",
+        gradeNames: ["fluid.modelComponent", "floe.dashboard.eventInTimeAware"],
         model: {
             "text": "",
             "timestamp": null,
@@ -9,9 +10,9 @@
         modelRelay: {
             target: "{that}.model.timestampPretty",
             singleTransform: {
-                input: "{that}.model.timestamp",
+                input: "{that}.model.timeEvents.created",
                 type: "fluid.transforms.free",
-                args: ["{that}.model.timestamp"],
+                args: ["{that}.model.timeEvents.created"],
                 func: "floe.dashboard.note.getPrettyTimestamp"
             }
         },
@@ -27,33 +28,16 @@
     fluid.defaults("floe.dashboard.note.new", {
         gradeNames: "floe.dashboard.note",
         listeners: {
-            "onCreate.autoTimestamp": {
-                func: "floe.dashboard.note.setTimestampAuto",
-                args: ["{that}"]
-            },
             "onCreate.storeNote": {
                 func: "floe.dashboard.note.createNote",
                 args: "{that}",
-                priorities: "after:setTimestamp"
+                priority: "last"
             }
         },
         events: {
             onNoteStored: null
         }
     });
-
-    floe.dashboard.note.setText = function (text, that) {
-        that.applier.change("text", text);
-    };
-
-    floe.dashboard.note.setTimestamp = function (date, that) {
-        that.applier.change("timestamp", date);
-    };
-
-    floe.dashboard.note.setTimestampAuto = function (that) {
-        var timestamp = Date.now();
-        that.applier.change("timestamp", timestamp);
-    };
 
     floe.dashboard.note.getPrettyTimestamp = function (timestamp) {
         var pretty = new Date(timestamp);
@@ -62,10 +46,10 @@
 
     floe.dashboard.note.createNote = function (that) {
         console.log("floe.dashboard.note.createNote");
-        that.model._id = "note-" + that.model.timestamp;
+        that.model._id = "note-" + that.model.timeEvents.created;
         var noteDoc = {
             "_id": that.model._id,
-            "timestamp": that.model.timestamp,
+            "timestamp": that.model.timeEvents.created,
             "text": that.model.text
         };
         var db = new PouchDB(that.options.dbOptions.name);
@@ -79,7 +63,7 @@
         var noteDoc = {
             "_id": that.model._id,
             "_rev": that.model._rev,
-            "timestamp": that.model.timestamp,
+            "timestamp": that.model.timeEvents.created,
             "text": that.model.text
         };
         var db = new PouchDB(that.options.dbOptions.name);

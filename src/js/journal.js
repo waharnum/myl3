@@ -70,7 +70,7 @@
 
     floe.dashboard.journal.createJournalMarkup = function (that) {
         var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>");
-        that.container.append("<ol class='floec-entryList'>");
+        that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 
     floe.dashboard.journal.bindSubmitEntryClick = function (that) {

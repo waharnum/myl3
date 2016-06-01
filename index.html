@@ -1,20 +1,30 @@
 <html>
 <head>
-<script src="src/lib/pouchdb-5.3.1.min.js"></script>
-<script src="src/lib/infusion-all.js"></script>
-<script src="src/lib/chance.js"></script>
+<script src="src/lib/js/pouchdb-5.3.1.min.js"></script>
+<script src="src/lib/js/infusion-all.js"></script>
+<script src="src/lib/js/chance.js"></script>
+
+<link rel="stylesheet" type="text/css" href="src/lib/css/normalize.css" />
+<link rel="stylesheet" type="text/css" href="src/css/prototype.css" />
+
 </head>
 <body>
-<div class="floec-journal">
+
+<div class="floe-journalContainer">
+
+    <div class="floec-journal">
+
+    </div>
+
+    <form>
+        <textarea id="floec-newEntry" cols=50 rows=5>Enter New Note</textarea>
+        <button id="floec-submitEntry" type="submit">Add Entry</button>
+    </form>
 
 </div>
 
-<form>
-    <textarea id="floec-newEntry" cols=50 rows=5>Enter New Note</textarea>
-    <button id="floec-submitEntry" type="submit">Add Entry</button>
-</form>
-
 <script src="src/js/valueBinding.js"></script>
+<script src="src/js/eventInTimeAware.js"></script>
 <script src="src/js/note.js"></script>
 <script src="src/js/journal.js"></script>
 <script src="src/js/prototype.js"></script>
