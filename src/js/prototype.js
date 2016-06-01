@@ -20,45 +20,136 @@ fluid.defaults("floe.dashboard.note", {
             args: ["{that}.model.timestamp"],
             func: "floe.dashboard.note.getPrettyTimestamp"
         }
+    },
+    modelListeners: {
+        "text": {
+            func: "floe.dashboard.note.updateNote",
+            args: "{that}",
+            excludeSource: "init"
+        }
     }
 });
 
 fluid.defaults("floe.dashboard.note.new", {
     gradeNames: "floe.dashboard.note",
     listeners: {
-        "onCreate.setTimestamp": {
-            func: "floe.dashboard.note.setTimestamp",
-            args: [Date.now(), "{that}"]
+        "onCreate.autoTimestamp": {
+            func: "floe.dashboard.note.setTimestampAuto",
+            args: ["{that}"]
         },
         "onCreate.storeNote": {
-            func: "floe.dashboard.note.storeNote",
+            func: "floe.dashboard.note.createNote",
             args: "{that}",
             priorities: "after:setTimestamp"
         }
+    },
+    events: {
+        onNoteStored: null
     }
 });
 
 floe.dashboard.note.setText = function (text, that) {
-    that.applier.change("text", text)
-}
+    that.applier.change("text", text);
+};
 
 floe.dashboard.note.setTimestamp = function (date, that) {
-    that.applier.change("timestamp", date)
-}
+    that.applier.change("timestamp", date);
+};
+
+floe.dashboard.note.setTimestampAuto = function (that) {
+    var timestamp = Date.now();
+    that.applier.change("timestamp", timestamp);
+};
 
 floe.dashboard.note.getPrettyTimestamp = function (timestamp) {
     var pretty = new Date(timestamp);
     return pretty;
-}
+};
 
-floe.dashboard.note.storeNote = function (that) {
-    var note = {
-        "_id": "note-" + that.model.timestamp,
+floe.dashboard.note.createNote = function (that) {
+    console.log("floe.dashboard.note.createNote");
+    that.model._id = "note-" + that.model.timestamp;
+    var noteDoc = {
+        "_id": that.model._id,
         "timestamp": that.model.timestamp,
         "text": that.model.text
+    };
+    notesDB.put(noteDoc).then(function (note) {
+        that.events.onNoteStored.fire();
+    });
+};
+
+floe.dashboard.note.updateNote = function (that) {
+    console.log("floe.dashboard.note.updateNote");
+    var noteDoc = {
+        "_id": that.model._id,
+        "_rev": that.model._rev,
+        "timestamp": that.model.timestamp,
+        "text": that.model.text
+    };
+    notesDB.put(noteDoc);
+};
+
+floe.dashboard.note.deleteNote = function (that) {
+    console.log("floe.dashboard.note.deleteNote");
+    var noteId = that.model._id;
+    console.log(noteId);
+    notesDB.get(noteId).then(function (note) {
+        return notesDB.remove(note);
+    });
+    that.destroy();
+};
+
+fluid.defaults("floe.dashboard.note.displayed", {
+    gradeNames: ["floe.dashboard.note", "floe.chartAuthoring.valueBinding"],
+    // A key/value of selectorName: model.path
+    selectors: {
+        timestamp: ".flc-note-timestamp",
+        text: ".flc-note-text",
+        delete: ".flc-note-delete"
+    },
+    bindings: {
+        timestamp: "timestampPretty",
+        text: "text"
+    },
+    listeners: {
+        "onCreate.renderNoteTemplate": {
+            funcName: "floe.dashboard.note.displayed.renderNoteTemplate",
+            args: "{that}",
+            // Needs to beat the value binding
+            priority: "first"
+        },
+        "onNoteTemplateRendered.bindDelete": {
+            funcName: "floe.dashboard.note.displayed.bindDelete",
+            args: "{that}"
+        },
+        "onDestroy.removeNoteMarkup": {
+            funcName: "floe.dashboard.note.displayed.removeNoteMarkup",
+            args: "{that}"
+        }
+    },
+    events: {
+        onNoteTemplateRendered: null
     }
-    notesDB.put(note);
-}
+});
+
+floe.dashboard.note.displayed.removeNoteMarkup = function (that) {
+    that.container.remove();
+};
+
+floe.dashboard.note.displayed.renderNoteTemplate = function (that) {
+    var noteTemplate = "<span class='flc-note-timestamp'></span><a href='#' class='flc-note-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=5></textarea>";
+    that.container.append(noteTemplate);
+    that.events.onNoteTemplateRendered.fire();
+};
+
+floe.dashboard.note.displayed.bindDelete = function (that) {
+    var deleteControl = that.locate("delete");
+    deleteControl.click(function (e) {
+        e.preventDefault();
+        floe.dashboard.note.deleteNote(that);
+    });
+};
 
 // var note = floe.dashboard.note.new({
 //     model: {
@@ -68,64 +159,123 @@ floe.dashboard.note.storeNote = function (that) {
 
 fluid.defaults("floe.dashboard.journal", {
     gradeNames: "fluid.viewComponent",
+    selectors: {
+        entryList: ".floec-entryList"
+    },
     model: {
         "name": "",
         "entries": {}
     },
     events: {
-        onEntriesReady: null
+        onEntryRetrieved: null
+    },
+    dynamicComponents: {
+        note: {
+            createOnEvent: "onEntryRetrieved",
+            type: "floe.dashboard.note.displayed",
+            container: "{arguments}.1",
+            options: {
+                // Necessary because passing "{arguments}.0"
+                // directly to model: in block fails
+                // because the framework interprets this as an
+                // implicit relay
+                onEntryRetrievedArgs: "{arguments}.0",
+                "model": "{that}.options.onEntryRetrievedArgs"
+            }
+        }
     },
     listeners: {
         "onCreate.getEntries": {
             func: "floe.dashboard.journal.getEntries",
             args: "{that}"
         },
-        "onEntriesReady.displayJournal": {
-            func: "floe.dashboard.journal.displayJournal",
+        "onCreate.createJournalMarkup": {
+            func: "floe.dashboard.journal.createJournalMarkup",
+            args: "{that}",
+            priority: "before:getEntries"
+        }
+    }
+});
+
+floe.dashboard.journal.getEntries = function (that) {
+    // console.log("floe.dashboard.journal.getEntries");
+    notesDB.allDocs({include_docs: true}).then(function (response) {
+        that.noteIdCounter = 0;
+        fluid.each(response.rows, function (row) {
+            entryContainer = floe.dashboard.journal.injectEntryContainer(that);
+            that.events.onEntryRetrieved.fire(row.doc, entryContainer);
+        });
+    });
+};
+
+floe.dashboard.journal.injectEntryContainer = function (that) {
+    console.log(that);
+    var entryList = that.locate("entryList");
+    var currentId = "note-"+that.noteIdCounter;
+    entryList.append("<li id='" + currentId + "'></li>");
+    var entryContainer = $("#"+currentId);
+    that.noteIdCounter++;
+    console.log(entryContainer);
+    return entryContainer;
+};
+
+floe.dashboard.journal.createJournalMarkup = function (that) {
+    var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>");
+    that.container.append("<ol class='floec-entryList'>");
+};
+
+floe.dashboard.journal.bindSubmitEntryClick = function (that) {
+    var journal = that;
+    $("#floec-submitEntry").click(function (e) {
+        var entryText = $("#floec-newEntry").val();
+        var note = floe.dashboard.note.new({
+            model: {
+                "text": entryText
+            },
+            listeners: {
+                "onNoteStored.AddNoteToJournal": {
+                    func: "floe.dashboard.journal.addNoteToJournal",
+                    args: ["{that}", journal]
+                }
+            }
+        });
+
+        // console.log(noteDoc);
+
+        e.preventDefault();
+    });
+};
+
+floe.dashboard.journal.addNoteToJournal = function (note, journal) {
+    console.log("floe.dashboard.journal.addNoteToJournal");
+    // console.log(that);
+    notesDB.get(note.model._id).then(function (dbNote) {
+        var entryContainer = floe.dashboard.journal.injectEntryContainer(journal);
+        journal.events.onEntryRetrieved.fire(dbNote, entryContainer);
+    });
+};
+
+var journal = floe.dashboard.journal(".floec-journal", {
+    model: {
+        "name": "Alan's Journal"
+    },
+    listeners: {
+        "onCreate.bindSubmitEntryClick": {
+            func: "floe.dashboard.journal.bindSubmitEntryClick",
             args: "{that}"
         }
     }
 });
 
 
-floe.dashboard.journal.getEntries = function (that) {
-    // console.log("floe.dashboard.journal.getEntries");
-    notesDB.allDocs({include_docs: true}).then(function (response) {
-        fluid.each(response.rows, function (row) {
-            that.applier.change("entries." + row.id, row.doc)
-        });
-        that.events.onEntriesReady.fire();
-    });
-}
+// Note creator
 
-floe.dashboard.journal.displayJournal = function (that) {
-    // console.log("floe.dashboard.journal.displayJournal");
-    console.log(that);
-    var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>")
-    that.container.append("<ol class='floec-entryList'>");
-    var entryList = $(".floec-entryList");
+    // var note = floe.dashboard.note.new({
+    //     model: {
+    //         "text": chance.sentence()
+    //     }
+    // });
 
-    fluid.each(that.model.entries, function (entry, idx) {
-        var prettyTime = floe.dashboard.note.getPrettyTimestamp(entry.timestamp);
-        entryList.append("<li>" + prettyTime + "<br/>" + entry.text + "</li>");
-    });
-}
-
-var journal = floe.dashboard.journal(".floec-journal", {
-    model: {
-        "name": "Alan's Journal"
-    }
-});
-
-$("#floec-submitEntry").click(function (e) {
-    var entryText = $("#floec-newEntry").val()
-    var note = floe.dashboard.note.new({
-        model: {
-            "text": entryText
-        }
-    });
-    e.preventDefault();
-});
 
 // notesDB.allDocs({include_docs: true}).then(function (response) {
 //     console.log(response);
