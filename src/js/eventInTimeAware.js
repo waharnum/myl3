@@ -63,7 +63,7 @@
 
     floe.dashboard.eventInTimeAware.getPrettyDate = function (timestamp) {
         var pretty = new Date(timestamp);
-        return pretty.toDateString();
+        return pretty.toLocaleString();
     };
 
 })(jQuery, fluid);
