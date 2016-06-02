@@ -3,31 +3,8 @@
     fluid.defaults("floe.dashboard.note", {
         gradeNames: ["fluid.modelComponent", "floe.dashboard.eventInTimeAware"],
         model: {
-            "text": "",
-            "timestamp": null,
-            "createdTimestampPretty": null,
-            "lastModifiedTimestampPretty": null
+            "text": ""
         },
-        modelRelay: [
-            {
-                target: "{that}.model.createdTimestampPretty",
-                singleTransform: {
-                    input: "{that}.model.timeEvents.created",
-                    type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.created"],
-                    func: "floe.dashboard.note.getPrettyTimestamp"
-                }
-            },
-            {
-                target: "{that}.model.lastModifiedTimestampPretty",
-                singleTransform: {
-                    input: "{that}.model.timeEvents.lastModified",
-                    type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.lastModified"],
-                    func: "floe.dashboard.note.getPrettyTimestamp"
-                }
-            }
-        ],
         modelListeners: {
             "text": {
                 func: "floe.dashboard.note.updateNote",
@@ -51,14 +28,9 @@
         }
     });
 
-    floe.dashboard.note.getPrettyTimestamp = function (timestamp) {
-        var pretty = new Date(timestamp);
-        return pretty;
-    };
-
     floe.dashboard.note.createNote = function (that) {
         console.log("floe.dashboard.note.createNote");
-        that.applier.change("_id", "note-" + that.model.timeEvents.created);
+        that.applier.change("_id", that.model.timeEvents.created);
         var noteDoc = fluid.copy(that.model);
         var db = new PouchDB(that.options.dbOptions.name);
         db.put(noteDoc).then(function (note) {
@@ -93,8 +65,8 @@
             delete: ".flc-note-delete"
         },
         bindings: {
-            created: "createdTimestampPretty",
-            lastModified: "lastModifiedTimestampPretty",
+            created: "createdDatePretty",
+            lastModified: "lastModifiedDatePretty",
             text: "text"
         },
         listeners: {

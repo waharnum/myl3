@@ -1,12 +1,8 @@
 (function ($, fluid) {
     fluid.defaults("floe.dashboard.page", {
-        gradeNames: "fluid.viewComponent",
+        gradeNames: ["floe.dashboard.eventInTimeAware", "fluid.viewComponent"],
         selectors: {
             entryList: ".floec-entryList"
-        },
-        model: {
-            "name": "",
-            "entries": {}
         },
         events: {
             onEntryRetrieved: null
@@ -69,7 +65,7 @@
     };
 
     floe.dashboard.page.createJournalMarkup = function (that) {
-        var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>");
+        var journalHeading = that.container.append("<h1>" + that.model.createdDatePretty + "</h1>");
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 

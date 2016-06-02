@@ -23,7 +23,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     };
 
-    jqUnit.test("Test eventInTimeAware component", function () {
+    jqUnit.test("Test eventInTimeAware grade", function () {
         jqUnit.expect(6);
         var that = floe.dashboard.eventInTimeAware();
 
