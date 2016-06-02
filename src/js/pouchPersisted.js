@@ -2,48 +2,39 @@
 
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
-        modelListeners: {
-            // "": {
-            //     func: "floe.dashboard.pouchPersisted.update",
-            //     args: "{that}",
-            //     excludeSource: "init"
-            // }
-        },
-        modelRelay: [
-            {
-                target: "{that}.model._id",
-                singleTransform: {
-                    input: "{that}.model.timeEvents.created",
-                    type: "fluid.transforms.free",
-                    args: ["{that}"],
-                    func: "floe.dashboard.pouchPersisted.getPouchId"
-                }
-            }
-        ],
         events: {
-            "onPouchDocCreated": null
+            "onPouchDocStored": null,
+            "onPouchDocDeleted": null
+        },
+        listeners: {
+            "onCreate.setPouchId": {
+                funcName: "floe.dashboard.pouchPersisted.setPouchId",
+                args: "{that}"
+            }
         },
         dbOptions: {
             // name: "test"
+        },
+        invokers: {
+            "store": {
+                funcName: "floe.dashboard.pouchPersisted.store",
+                args: "{that}"
+            },
+            "delete": {
+                funcName: "floe.dashboard.pouchPersisted.delete",
+                args: "{that}"
+            }
         }
 
     });
 
-    floe.dashboard.pouchPersisted.create = function (that) {
-        console.log("floe.dashboard.note.pouchPersisted.create");
+    floe.dashboard.pouchPersisted.store = function (that) {
+        console.log("floe.dashboard.note.pouchPersisted.store");
         var doc = fluid.copy(that.model);
         var db = new PouchDB(that.options.dbOptions.name);
         db.put(doc).then(function () {
-            that.events.onPouchDocCreated.fire();
+            that.events.onPouchDocStored.fire();
         });
-    };
-
-    floe.dashboard.pouchPersisted.update = function (that) {
-        console.log("floe.dashboard.note.pouchPersisted.update");
-        console.log(that);
-        var doc = fluid.copy(that.model);
-        var db = new PouchDB(that.options.dbOptions.name);
-        db.put(doc);
     };
 
     floe.dashboard.pouchPersisted.delete = function (that) {
@@ -51,13 +42,15 @@
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.name);
         db.get(docId).then(function (doc) {
-            return db.remove(doc);
+            db.remove(doc).then(function () {
+                that.events.onPouchDocDeleted.fire();
+            });
         });
         that.destroy();
     };
 
-    floe.dashboard.pouchPersisted.getPouchId = function (that) {
-        return that.model.timeEvents.created;
+    floe.dashboard.pouchPersisted.setPouchId = function (that) {
+        that.model._id = that.model.timeEvents.created;
     };
 
 })(jQuery, fluid);

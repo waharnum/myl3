@@ -1,14 +1,13 @@
 (function ($, fluid) {
 
     fluid.defaults("floe.dashboard.note", {
-        gradeNames: ["fluid.modelComponent", "floe.dashboard.eventInTimeAware"],
+        gradeNames: ["fluid.modelComponent", "floe.dashboard.pouchPersisted"],
         model: {
             "text": ""
         },
         modelListeners: {
             "text": {
-                func: "floe.dashboard.note.updateNote",
-                args: "{that}",
+                func: "{that}.store",
                 excludeSource: "init"
             }
         }
@@ -18,42 +17,13 @@
         gradeNames: "floe.dashboard.note",
         listeners: {
             "onCreate.storeNote": {
-                func: "floe.dashboard.note.createNote",
-                args: "{that}",
-                priority: "last"
+                func: "{that}.store"
             }
         },
         events: {
-            onNoteStored: null
+            onNoteStored: "{that}.events.onPouchDocStored"
         }
     });
-
-    floe.dashboard.note.createNote = function (that) {
-        console.log("floe.dashboard.note.createNote");
-        that.applier.change("_id", that.model.timeEvents.created);
-        var noteDoc = fluid.copy(that.model);
-        var db = new PouchDB(that.options.dbOptions.name);
-        db.put(noteDoc).then(function (note) {
-            that.events.onNoteStored.fire();
-        });
-    };
-
-    floe.dashboard.note.updateNote = function (that) {
-        console.log("floe.dashboard.note.updateNote");
-        var noteDoc = fluid.copy(that.model);
-        var db = new PouchDB(that.options.dbOptions.name);
-        db.put(noteDoc);
-    };
-
-    floe.dashboard.note.deleteNote = function (that) {
-        console.log("floe.dashboard.note.deleteNote");
-        var noteId = that.model._id;
-        var db = new PouchDB(that.options.dbOptions.name);
-        db.get(noteId).then(function (note) {
-            return db.remove(note);
-        });
-        that.destroy();
-    };
 
     fluid.defaults("floe.dashboard.note.displayed", {
         gradeNames: ["floe.dashboard.note", "floe.chartAuthoring.valueBinding"],
@@ -104,7 +74,7 @@
         var deleteControl = that.locate("delete");
         deleteControl.click(function (e) {
             e.preventDefault();
-            floe.dashboard.note.deleteNote(that);
+            that.delete();
         });
     };
 })(jQuery, fluid);
