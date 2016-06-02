@@ -29,13 +29,14 @@
     });
 
     floe.dashboard.eventInTimeAware.setCreatedTimeStamp = function (that) {
-        // Only set the timestamp to Date.now() if the model's current one is falsey
-        var timestamp = that.model.timeEvents.created || Date.now();
-        that.applier.change("timeEvents.created", timestamp);
+        // Only set the timestamp to current time if the model's current one is falsey
+        var timestamp = that.model.timeEvents.created ? new Date(that.model.timeEvents.created) : new Date();
+        that.applier.change("timeEvents.created", timestamp.toJSON());
     };
 
     floe.dashboard.eventInTimeAware.setModifiedTimeStamp = function (that) {
-        that.applier.change("timeEvents.lastModified", Date.now());
+        var modifiedTimestamp = new Date();
+        that.applier.change("timeEvents.lastModified", modifiedTimestamp.toJSON());
     };
 
 })(jQuery, fluid);

@@ -36,6 +36,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertTrue("LastModified time event is parseable", floe.tests.dashboard.isParseableTime(that.model.timeEvents.created));
 
         var userSuppliedTime = "May, 2016";
+        // Expected result of cnverting new Date(userSuppliedTime) via
+        // Date.toJSON();
+        var convertedUserSuppliedTime = "2016-05-01T04:00:00.000Z";
 
         that = floe.dashboard.eventInTimeAware({
             model: {
@@ -45,7 +48,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
         });
 
-        jqUnit.assertEquals("User-supplied timestamp is respected", userSuppliedTime, that.model.timeEvents.created);
+        jqUnit.assertEquals("User-supplied timestamp is respected", convertedUserSuppliedTime, that.model.timeEvents.created);
 
         jqUnit.assertTrue("A lastModified time event is generated", that.model.timeEvents.lastModified);
 
