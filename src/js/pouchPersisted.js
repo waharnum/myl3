@@ -1,5 +1,6 @@
 (function ($, fluid) {
 
+    // Base grade for persistence of model to Pouch
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         events: {
@@ -28,6 +29,7 @@
 
     });
 
+    // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.store = function (that) {
         console.log("floe.dashboard.note.pouchPersisted.store");
         var doc = fluid.copy(that.model);
@@ -37,6 +39,7 @@
         });
     };
 
+    // Delete the document 
     floe.dashboard.pouchPersisted.delete = function (that) {
         console.log("floe.dashboard.note.pouchPersisted.delete");
         var docId = that.model._id;

@@ -88,8 +88,6 @@
                 }
             });
 
-            // console.log(noteDoc);
-
             e.preventDefault();
         });
     };

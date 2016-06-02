@@ -20,10 +20,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var that = floe.dashboard.pouchPersisted({
             dbOptions: {
                 name: "test"
+            },
+            model: {
+                "boolean": true,
+                "integer": 3,
+                "string": "Hello World",
+                "decimal": 3.76,
             }
         });
 
         console.log(that);
+
+        that.store();
+        that.delete();
 
         // jqUnit.assertTrue("If created without a timestamp, gets a timestamp", that.model.timeEvents.created);
         //
