@@ -1,5 +1,5 @@
 (function ($, fluid) {
-    fluid.defaults("floe.dashboard.journal", {
+    fluid.defaults("floe.dashboard.page", {
         gradeNames: "fluid.viewComponent",
         selectors: {
             entryList: ".floec-entryList"
@@ -24,18 +24,18 @@
                     onEntryRetrievedArgs: "{arguments}.0",
                     "model": "{that}.options.onEntryRetrievedArgs",
                     dbOptions: {
-                        name: "{journal}.options.dbOptions.name"
+                        name: "{page}.options.dbOptions.name"
                     }
                 }
             }
         },
         listeners: {
             "onCreate.getEntries": {
-                func: "floe.dashboard.journal.getEntries",
+                func: "floe.dashboard.page.getEntries",
                 args: "{that}"
             },
             "onCreate.createJournalMarkup": {
-                func: "floe.dashboard.journal.createJournalMarkup",
+                func: "floe.dashboard.page.createJournalMarkup",
                 args: "{that}",
                 priority: "before:getEntries"
             }
@@ -45,19 +45,19 @@
         }
     });
 
-    floe.dashboard.journal.getEntries = function (that) {
-        // console.log("floe.dashboard.journal.getEntries");
+    floe.dashboard.page.getEntries = function (that) {
+        // console.log("floe.dashboard.page.getEntries");
         var db = new PouchDB(that.options.dbOptions.name);
         db.allDocs({include_docs: true}).then(function (response) {
             that.noteIdCounter = 0;
             fluid.each(response.rows, function (row) {
-                entryContainer = floe.dashboard.journal.injectEntryContainer(that);
+                entryContainer = floe.dashboard.page.injectEntryContainer(that);
                 that.events.onEntryRetrieved.fire(row.doc, entryContainer);
             });
         });
     };
 
-    floe.dashboard.journal.injectEntryContainer = function (that) {
+    floe.dashboard.page.injectEntryContainer = function (that) {
         console.log(that);
         var entryList = that.locate("entryList");
         var currentId = "note-"+that.noteIdCounter;
@@ -68,12 +68,12 @@
         return entryContainer;
     };
 
-    floe.dashboard.journal.createJournalMarkup = function (that) {
+    floe.dashboard.page.createJournalMarkup = function (that) {
         var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>");
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 
-    floe.dashboard.journal.bindSubmitEntryClick = function (that) {
+    floe.dashboard.page.bindSubmitEntryClick = function (that) {
         var journal = that;
         $("#floec-submitEntry").click(function (e) {
             var entryText = $("#floec-newEntry").val();
@@ -83,7 +83,7 @@
                 },
                 listeners: {
                     "onNoteStored.AddNoteToJournal": {
-                        func: "floe.dashboard.journal.addNoteToJournal",
+                        func: "floe.dashboard.page.addNoteToJournal",
                         args: ["{that}", journal]
                     }
                 },
@@ -98,12 +98,12 @@
         });
     };
 
-    floe.dashboard.journal.addNoteToJournal = function (note, journal) {
-        console.log("floe.dashboard.journal.addNoteToJournal");
+    floe.dashboard.page.addNoteToJournal = function (note, journal) {
+        console.log("floe.dashboard.page.addNoteToJournal");
         // console.log(that);
         var db = new PouchDB(journal.options.dbOptions.name);
         db.get(note.model._id).then(function (dbNote) {
-            var entryContainer = floe.dashboard.journal.injectEntryContainer(journal);
+            var entryContainer = floe.dashboard.page.injectEntryContainer(journal);
             journal.events.onEntryRetrieved.fire(dbNote, entryContainer);
         });
     };

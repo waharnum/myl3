@@ -11,13 +11,13 @@ PouchDB.debug.enable('*');
 //     }
 // });
 
-var journal = floe.dashboard.journal(".floec-journal", {
+var journal = floe.dashboard.page(".floec-journal", {
     model: {
         "name": "Alan's Journal"
     },
     listeners: {
         "onCreate.bindSubmitEntryClick": {
-            func: "floe.dashboard.journal.bindSubmitEntryClick",
+            func: "floe.dashboard.page.bindSubmitEntryClick",
             args: "{that}"
         }
     },
