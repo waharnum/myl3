@@ -41,10 +41,15 @@
         }
     });
 
-    floe.dashboard.page.getEntries = function (that) {
+    floe.dashboard.page.getEntries = function (that, date) {
         // console.log("floe.dashboard.page.getEntries");
         var db = new PouchDB(that.options.dbOptions.name);
-        db.allDocs({include_docs: true}).then(function (response) {
+        db.allDocs({
+            include_docs: true
+            // start and end date filtering
+            // startkey: "2016-05-20T00:00:00.000Z",
+            // endkey: "2016-05-20T23:59:59.999Z"
+            }).then(function (response) {
             that.noteIdCounter = 0;
             fluid.each(response.rows, function (row) {
                 entryContainer = floe.dashboard.page.injectEntryContainer(that);
