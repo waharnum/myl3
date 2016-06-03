@@ -30,8 +30,8 @@
                 func: "floe.dashboard.page.getEntries",
                 args: "{that}"
             },
-            "onCreate.createJournalMarkup": {
-                func: "floe.dashboard.page.createJournalMarkup",
+            "onCreate.createPageMarkup": {
+                func: "floe.dashboard.page.createPageMarkup",
                 args: "{that}",
                 priority: "before:getEntries"
             }
@@ -64,13 +64,14 @@
         return entryContainer;
     };
 
-    floe.dashboard.page.createJournalMarkup = function (that) {
-        var journalHeading = that.container.append("<h1>" + that.model.createdDatePretty + "</h1>");
+    floe.dashboard.page.createPageMarkup = function (that) {
+        var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>");
+        var pageHeading = that.container.append("<h2>" + that.model.createdDatePretty + "</h2>");
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 
     floe.dashboard.page.bindSubmitEntryClick = function (that) {
-        var journal = that;
+        var page = that;
         $("#floec-submitEntry").click(function (e) {
             var entryText = $("#floec-newEntry").val();
             var note = floe.dashboard.note.new({
@@ -78,13 +79,13 @@
                     "text": entryText
                 },
                 listeners: {
-                    "onNoteStored.AddNoteToJournal": {
-                        func: "floe.dashboard.page.addNoteToJournal",
-                        args: ["{that}", journal]
+                    "onNoteStored.AddNote": {
+                        func: "floe.dashboard.page.addNote",
+                        args: ["{that}", page]
                     }
                 },
                 dbOptions: {
-                    name: journal.options.dbOptions.name
+                    name: page.options.dbOptions.name
                 }
             });
 
@@ -92,13 +93,13 @@
         });
     };
 
-    floe.dashboard.page.addNoteToJournal = function (note, journal) {
-        console.log("floe.dashboard.page.addNoteToJournal");
+    floe.dashboard.page.addNote = function (note, page) {
+        console.log("floe.dashboard.page.addNote");
         // console.log(that);
-        var db = new PouchDB(journal.options.dbOptions.name);
+        var db = new PouchDB(page.options.dbOptions.name);
         db.get(note.model._id).then(function (dbNote) {
-            var entryContainer = floe.dashboard.page.injectEntryContainer(journal);
-            journal.events.onEntryRetrieved.fire(dbNote, entryContainer);
+            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
+            page.events.onEntryRetrieved.fire(dbNote, entryContainer);
         });
     };
 })(jQuery, fluid);
