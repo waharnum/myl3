@@ -50,7 +50,7 @@
                 funcName: "floe.dashboard.note.displayed.bindDelete",
                 args: "{that}"
             },
-            "onDestroy.removeNoteMarkup": {
+            "onPouchDocDeleted.removeNoteMarkup": {
                 funcName: "floe.dashboard.note.displayed.removeNoteMarkup",
                 args: "{that}"
             }

@@ -14,7 +14,8 @@
             }
         },
         dbOptions: {
-            // name: "test"
+            // localName: "test",
+            // remoteName: "http://localhost:5984/test"
         },
         invokers: {
             "store": {
@@ -24,6 +25,10 @@
             "delete": {
                 funcName: "floe.dashboard.pouchPersisted.delete",
                 args: "{that}"
+            },
+            "remoteSync": {
+                funcName: "floe.dashboard.pouchPersisted.remoteSync",
+                args: "{that}"
             }
         }
 
@@ -31,25 +36,35 @@
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.store = function (that) {
-        console.log("floe.dashboard.note.pouchPersisted.store");
+        // console.log("floe.dashboard.note.pouchPersisted.store");
+        // console.log(that.options.dbOptions);
         var doc = fluid.copy(that.model);
-        var db = new PouchDB(that.options.dbOptions.name);
+        var db = new PouchDB(that.options.dbOptions.localName);
         db.put(doc).then(function () {
+            that.remoteSync();
             that.events.onPouchDocStored.fire();
         });
     };
 
-    // Delete the document 
+    // Delete the document
     floe.dashboard.pouchPersisted.delete = function (that) {
-        console.log("floe.dashboard.note.pouchPersisted.delete");
+        // console.log("floe.dashboard.note.pouchPersisted.delete");
         var docId = that.model._id;
-        var db = new PouchDB(that.options.dbOptions.name);
+        var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {
             db.remove(doc).then(function () {
+                that.remoteSync();
                 that.events.onPouchDocDeleted.fire();
             });
         });
-        that.destroy();
+    };
+
+    // Syncs to the remote
+    floe.dashboard.pouchPersisted.remoteSync = function (that) {
+        // console.log("floe.dashboard.note.pouchPersisted.remoteSync");
+        var localDB = new PouchDB(that.options.dbOptions.localName);
+        var remoteDB = new PouchDB(that.options.dbOptions.remoteName);
+        localDB.sync(remoteDB);
     };
 
     floe.dashboard.pouchPersisted.setPouchId = function (that) {

@@ -20,7 +20,8 @@
                     onEntryRetrievedArgs: "{arguments}.0",
                     "model": "{that}.options.onEntryRetrievedArgs",
                     dbOptions: {
-                        name: "{page}.options.dbOptions.name"
+                        localName: "{page}.options.dbOptions.localName",
+                        remoteName: "{page}.options.dbOptions.remoteName"
                     }
                 }
             }
@@ -37,7 +38,7 @@
             }
         },
         dbOptions: {
-            // name: "notes"
+            // localName: "notes"
         },
         // Some key constants
         constants: {
@@ -52,8 +53,8 @@
         var today = new Date();
         var todayUTCFull = today.toJSON();
         var todayUTCDate = todayUTCFull.slice(0,todayUTCFull.indexOf("T"));
-            
-        var db = new PouchDB(that.options.dbOptions.name);
+
+        var db = new PouchDB(that.options.dbOptions.localName);
         db.allDocs({
             include_docs: true,
             // start and end date filtering
@@ -69,13 +70,13 @@
     };
 
     floe.dashboard.page.injectEntryContainer = function (that) {
-        console.log(that);
+        // console.log(that);
         var entryList = that.locate("entryList");
         var currentId = "note-"+that.noteIdCounter;
         entryList.append("<li id='" + currentId + "'></li>");
         var entryContainer = $("#"+currentId);
         that.noteIdCounter++;
-        console.log(entryContainer);
+        // console.log(entryContainer);
         return entryContainer;
     };
 
@@ -100,7 +101,8 @@
                     }
                 },
                 dbOptions: {
-                    name: page.options.dbOptions.name
+                    localName: page.options.dbOptions.localName,
+                    remoteName: page.options.dbOptions.remoteName
                 }
             });
 
@@ -111,10 +113,49 @@
     floe.dashboard.page.addNote = function (note, page) {
         console.log("floe.dashboard.page.addNote");
         // console.log(that);
-        var db = new PouchDB(page.options.dbOptions.name);
+        var db = new PouchDB(page.options.dbOptions.localName);
         db.get(note.model._id).then(function (dbNote) {
             var entryContainer = floe.dashboard.page.injectEntryContainer(page);
             page.events.onEntryRetrieved.fire(dbNote, entryContainer);
         });
     };
+
+
+    // Relay initial preferences
+    floe.dashboard.page.relayInitialPreferences = function (prefsEditor, that) {
+        console.log("floe.dashboard.page.relayInitialPreferences");
+        that.applier.change("preferences", prefsEditor.model.preferences);
+        console.log(that);
+    };
+
+    // Compares the current preferences
+    floe.dashboard.page.compareCurrentPreferences = function (prefsEditor, that) {
+        console.log("floe.dashboard.page.comparePreferences");
+        var prefsEditorPreferences = fluid.get(prefsEditor, "model.preferences");
+        var pagePreferences = fluid.get(that, "model.preferences");
+        var stats = {changes: 0, unchanged: 0, changeMap: {}};
+        if(fluid.model.diff(prefsEditorPreferences, pagePreferences, stats) === false) {
+            that.applier.change("preferences", prefsEditor.model.preferences);
+            fluid.each(stats.changeMap, function (changeType, changePath) {
+                var preferenceType = changePath;
+                var preferenceValue = fluid.get(that, "model.preferences."+changePath);
+                var note = floe.dashboard.note.new({
+                    model: {
+                        "text": "Changed " + preferenceType + " to " + preferenceValue
+                    },
+                    listeners: {
+                        "onNoteStored.AddNote": {
+                            func: "floe.dashboard.page.addNote",
+                            args: ["{that}", that]
+                        }
+                    },
+                    dbOptions: {
+                        localName: that.options.dbOptions.localName,
+                        remoteName: that.options.dbOptions.remoteName
+                    }
+                });
+            });
+        }
+    };
+
 })(jQuery, fluid);

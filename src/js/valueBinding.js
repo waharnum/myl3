@@ -33,21 +33,21 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(that.options.bindings, function (modelPath, selector) {
             var elm = that.locate(selector);
             elm.on("change", function () {
-                console.log("floe.chartAuthoring.valueBinding.bindDOMChange");
+                // console.log("floe.chartAuthoring.valueBinding.bindDOMChange");
                 that.applier.change(modelPath, elm.val());
             });
         });
     };
 
     floe.chartAuthoring.valueBinding.updateDOM = function (elm, value) {
-        console.log("floe.chartAuthoring.valueBinding.updateDOM");
+        // console.log("floe.chartAuthoring.valueBinding.updateDOM");
         elm = $(elm);
         elm[elm.is("input") ? "val" : "text"](value);
     };
 
     floe.chartAuthoring.valueBinding.setInitialDOM = function (that) {
         fluid.each(that.options.bindings, function (modelPath, selector) {
-            console.log("floe.chartAuthoring.valueBinding.setInitialDOM");
+            // console.log("floe.chartAuthoring.valueBinding.setInitialDOM");
             floe.chartAuthoring.valueBinding.updateDOM(that.locate(selector), fluid.get(that.model, modelPath));
         });
     };
