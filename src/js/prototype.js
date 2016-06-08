@@ -19,6 +19,14 @@ var journalPage = floe.dashboard.page(".floec-journal", {
         "onCreate.bindSubmitEntryClick": {
             func: "floe.dashboard.page.bindSubmitEntryClick",
             args: "{that}"
+        },
+        "onCreate.bindBackLink": {
+            func: "floe.dashboard.page.bindBackLink",
+            args: "{that}"
+        },
+        "onCreate.bindForwardLink": {
+            func: "floe.dashboard.page.bindForwardLink",
+            args: "{that}"
         }
     },
     dbOptions: {
@@ -120,17 +128,13 @@ $(document).ready(function () {
                                     "onPanelShow.log": {
                                         func: "floe.dashboard.page.compareCurrentPreferences",
                                         args: ["{prefsEditor}", "{floe.dashboard.page}"]
-                                    }
+                                    },
                                 }
                             }
                         },
                         prefsEditor: {
                             options: {
                                 listeners: {
-                                    // "onCreate.bindUnloadEvent": {
-                                    //
-                                    //
-                                    // },
                                     "onReady.relayInitialPreferences": {
                                         func: "floe.dashboard.page.relayInitialPreferences",
                                         args: ["{that}", "{floe.dashboard.page}"],
