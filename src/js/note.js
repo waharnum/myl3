@@ -1,7 +1,18 @@
 (function ($, fluid) {
 
+    // Base grade
+    fluid.defaults("floe.dashboard.entry", {
+        gradeNames: ["floe.dashboard.pouchPersisted"],
+        listeners: {
+            "onPouchDocDeleted.removeNoteMarkup": {
+                funcName: "floe.dashboard.note.displayed.removeEntryMarkup",
+                args: "{that}"
+            }
+        }
+    });
+
     fluid.defaults("floe.dashboard.note", {
-        gradeNames: ["fluid.modelComponent", "floe.dashboard.pouchPersisted"],
+        gradeNames: ["floe.dashboard.entry"],
         model: {
             "text": ""
         },
@@ -49,24 +60,23 @@
             "onNoteTemplateRendered.bindDelete": {
                 funcName: "floe.dashboard.note.displayed.bindDelete",
                 args: "{that}"
-            },
-            "onPouchDocDeleted.removeNoteMarkup": {
-                funcName: "floe.dashboard.note.displayed.removeNoteMarkup",
-                args: "{that}"
             }
+        },
+        resources: {
+            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-note-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
         },
         events: {
             onNoteTemplateRendered: null
         }
     });
 
-    floe.dashboard.note.displayed.removeNoteMarkup = function (that) {
+    floe.dashboard.note.displayed.removeEntryMarkup = function (that) {
         that.container.remove();
     };
 
     floe.dashboard.note.displayed.renderNoteTemplate = function (that) {
-        var noteTemplate = "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-note-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=5></textarea>";
-        that.container.append(noteTemplate);
+        var entryTemplate = that.options.resources.entryTemplate;
+        that.container.append(entryTemplate);
         that.events.onNoteTemplateRendered.fire();
     };
 
