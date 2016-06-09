@@ -5,7 +5,8 @@
             entryList: ".floec-entryList"
         },
         events: {
-            onEntryRetrieved: null
+            onEntryRetrieved: null,
+            onPreferenceChangeRetrieved: null
         },
         model: {
             // The date of the page
@@ -14,8 +15,8 @@
         dynamicComponents: {
             note: {
                 createOnEvent: "onEntryRetrieved",
-                type: "floe.dashboard.note.displayed",
-                container: "{arguments}.1",
+                type: "{arguments}.1",
+                container: "{arguments}.2",
                 options: {
                     // Necessary because passing "{arguments}.0"
                     // directly to model: in block fails
@@ -92,10 +93,12 @@
             startkey: pageUTCDate + that.options.constants.startOfDayUTC,
             endkey: pageUTCDate + that.options.constants.endOfDayUTC
             }).then(function (response) {
-            that.noteIdCounter = 0;
+            that.entryIDCounter = 0;
             fluid.each(response.rows, function (row) {
+                var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
+                console.log(displayComponentType);
                 entryContainer = floe.dashboard.page.injectEntryContainer(that);
-                that.events.onEntryRetrieved.fire(row.doc, entryContainer);
+                that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
             });
         });
     };
@@ -103,10 +106,10 @@
     floe.dashboard.page.injectEntryContainer = function (that) {
         // console.log(that);
         var entryList = that.locate("entryList");
-        var currentId = "note-"+that.noteIdCounter;
+        var currentId = "note-"+that.entryIDCounter;
         entryList.append("<li id='" + currentId + "'></li>");
         var entryContainer = $("#"+currentId);
-        that.noteIdCounter++;
+        that.entryIDCounter++;
         // console.log(entryContainer);
         return entryContainer;
     };
@@ -122,13 +125,13 @@
         var page = that;
         $("#floec-submitEntry").click(function (e) {
             var entryText = $("#floec-newEntry").val();
-            var note = floe.dashboard.note.new({
+            var note = floe.dashboard.note.persisted({
                 model: {
                     "text": entryText
                 },
                 listeners: {
                     "onNoteStored.AddNote": {
-                        func: "floe.dashboard.page.addNote",
+                        func: "floe.dashboard.page.addEntry",
                         args: ["{that}", page]
                     }
                 },
@@ -158,13 +161,14 @@
         });
     };
 
-    floe.dashboard.page.addNote = function (note, page) {
-        console.log("floe.dashboard.page.addNote");
+    floe.dashboard.page.addEntry = function (note, page) {
+        console.log("floe.dashboard.page.addEntry");
         // console.log(that);
         var db = new PouchDB(page.options.dbOptions.localName);
         db.get(note.model._id).then(function (dbNote) {
+            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
             var entryContainer = floe.dashboard.page.injectEntryContainer(page);
-            page.events.onEntryRetrieved.fire(dbNote, entryContainer);
+            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
         });
     };
 
@@ -188,13 +192,18 @@
             fluid.each(stats.changeMap, function (changeType, changePath) {
                 var preferenceType = changePath;
                 var preferenceValue = fluid.get(page, "model.preferences."+changePath);
-                var note = floe.dashboard.note.new({
+                var preferenceChange = floe.dashboard.preferenceChange.persisted({
                     model: {
-                        "text": "Changed " + preferenceType + " to " + preferenceValue
+                        "preferenceChange": {
+                            // What preference was changed
+                            "preferenceType": preferenceType,
+                            // What was it changed to
+                            "preferenceValue": preferenceValue
+                        }
                     },
                     listeners: {
-                        "onNoteStored.AddNote": {
-                            func: "floe.dashboard.page.addNote",
+                        "onPreferenceChangeStored.addEntry": {
+                            func: "floe.dashboard.page.addEntry",
                             args: ["{that}", page]
                         }
                     },

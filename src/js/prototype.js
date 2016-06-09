@@ -5,7 +5,7 @@
 // destroy the DB
 // new PouchDB('notes').destroy();
 
-// var note = floe.dashboard.note.new({
+// var note = floe.dashboard.note.persisted({
 //     model: {
 //         "text": chance.sentence()
 //     }
@@ -57,7 +57,7 @@ floe.tests.dashboard.randomNote = function () {
     console.log(randomDate);
     randomDate = randomDate.toJSON();
 
-        var note = floe.dashboard.note.new({
+        var note = floe.dashboard.note.persisted({
             model: {
                 "text": randomText,
                 timeEvents: {
@@ -82,7 +82,7 @@ for(i; i > 0; i--) {
 
 // Note creator
 
-    // var note = floe.dashboard.note.new({
+    // var note = floe.dashboard.note.persisted({
     //     model: {
     //         "text": chance.sentence()
     //     }

@@ -1,8 +1,13 @@
 (function ($, fluid) {
 
-    // Base grade for persistence of model to Pouch
+    // Base grade for persistence of model components to Pouch
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
+        model: {
+            "persistenceInformation": {
+                "typeName": "{that}.typeName"
+            }
+        },
         events: {
             "onPouchDocStored": null,
             "onPouchDocDeleted": null

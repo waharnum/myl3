@@ -13,15 +13,15 @@
         }
     });
 
-    fluid.defaults("floe.dashboard.note.new", {
-        gradeNames: "floe.dashboard.note",
+    // Mixin for creation
+    fluid.defaults("floe.dashboard.entry.new", {
         listeners: {
-            "onCreate.storeNote": {
+            "onCreate.storeEntry": {
                 func: "{that}.store"
             }
         },
         events: {
-            onNoteStored: "{that}.events.onPouchDocStored"
+            onEntryStored: "{that}.events.onPouchDocStored"
         }
     });
 
@@ -29,7 +29,7 @@
     fluid.defaults("floe.dashboard.displayedEntry", {
         gradeNames: ["floe.chartAuthoring.valueBinding"],
         selectors: {
-            delete: ".flc-entry-delete"    
+            delete: ".flc-entry-delete"
         },
         listeners: {
             "onPouchDocDeleted.removeNoteMarkup": {
@@ -74,6 +74,38 @@
         });
     };
 
+    fluid.defaults("floe.dashboard.note.persisted", {
+        gradeNames: ["floe.dashboard.note", "floe.dashboard.entry.new"],
+        events: {
+            onNoteStored: "{that}.events.onPouchDocStored"
+        }
+    });
+
+    fluid.defaults("floe.dashboard.preferenceChange", {
+        gradeNames: ["floe.dashboard.pouchPersisted"],
+        model: {
+            "preferenceChange": {
+                // What preference was changed
+                "preferenceType": "",
+                // What was it changed to
+                "preferenceValue": ""
+            }
+        },
+        modelListeners: {
+            "preferenceChange": {
+                func: "{that}.store",
+                excludeSource: "init"
+            }
+        }
+    });
+
+    fluid.defaults("floe.dashboard.preferenceChange.persisted", {
+        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.new"],
+        events: {
+            onPreferenceChangeStored: "{that}.events.onPouchDocStored"
+        }
+    });
+
     fluid.defaults("floe.dashboard.note.displayed", {
         gradeNames: ["floe.dashboard.note", "floe.dashboard.displayedEntry"],
         // A key/value of selectorName: model.path
@@ -91,4 +123,25 @@
             entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
         }
     });
+
+    fluid.defaults("floe.dashboard.preferenceChange.displayed", {
+        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.displayedEntry"],
+        // A key/value of selectorName: model.path
+        selectors: {
+            created: ".flc-note-created",
+            lastModified: ".flc-note-lastModified",
+            preferenceType: ".flc-preferenceChange-type",
+            preferenceValue: ".flc-preferenceChange-value"
+        },
+        bindings: {
+            created: "createdDatePretty",
+            lastModified: "lastModifiedDatePretty",
+            preferenceType: "preferenceChange.preferenceType",
+            preferenceValue: "preferenceChange.preferenceValue",
+        },
+        resources: {
+            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><span class='flc-preferenceChange-type'></span> changed to <span class='flc-preferenceChange-value'></span>"
+        }
+    });
+
 })(jQuery, fluid);
