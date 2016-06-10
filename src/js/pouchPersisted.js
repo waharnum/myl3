@@ -4,6 +4,7 @@
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         model: {
+            // Allows for reconstruction of a component with same model
             "persistenceInformation": {
                 "typeName": "{that}.typeName"
             }
@@ -42,17 +43,23 @@
                 args: "{that}"
             }
         }
-
     });
 
+    floe.dashboard.pouchPersisted.setPouchId = function (that) {
+        that.model._id = that.model.timeEvents.created;
+    };
+
     // Tries to get the stored version of the document
-    // Fires the document as argument to the event when retrieved
+    // Fires the document as argument to the event when retrieved,
+    // and also returns it
     floe.dashboard.pouchPersisted.retrieve = function (that) {
         console.log("floe.dashboard.pouchPersisted.retrieve");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {
+            console.log("success")
             that.events.onPouchDocRetrieved.fire(doc);
+            return doc;
         });
     };
 
@@ -86,10 +93,6 @@
         var localDB = new PouchDB(that.options.dbOptions.localName);
         var remoteDB = new PouchDB(that.options.dbOptions.remoteName);
         localDB.sync(remoteDB);
-    };
-
-    floe.dashboard.pouchPersisted.setPouchId = function (that) {
-        that.model._id = that.model.timeEvents.created;
     };
 
 })(jQuery, fluid);

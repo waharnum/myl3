@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>The Quality Infrastructure frontend complete tests runner</title>
+    <title>The Dashboard complete tests runner</title>
 
     <link rel="stylesheet" href="lib/infusion/lib/qunit/css/qunit.css" type="text/css" media="screen">
     <link rel="stylesheet" href="lib/infusion/lib/qunit/addons/composite/qunit-composite.css">
@@ -10,8 +10,9 @@
     <script src="lib/infusion/lib/qunit/addons/composite/qunit-composite.js"></script>
 
     <script>
-    QUnit.testSuites("The Quality Infrastructure Frontend Tests", [
-        "./html/eventInTimeAware-Tests.html"
+    QUnit.testSuites("The Dashboard Tests", [
+        "./html/eventInTimeAware-Tests.html",
+        "./html/pouchPersisted-Tests.html"
     ]);
     </script>
 </head>
