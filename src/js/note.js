@@ -1,7 +1,7 @@
 (function ($, fluid) {
 
     fluid.defaults("floe.dashboard.note", {
-        gradeNames: ["floe.dashboard.pouchPersisted"],
+        gradeNames: ["floe.dashboard.couchSyncing"],
         model: {
             "text": ""
         },
@@ -82,7 +82,7 @@
     });
 
     fluid.defaults("floe.dashboard.preferenceChange", {
-        gradeNames: ["floe.dashboard.pouchPersisted"],
+        gradeNames: ["floe.dashboard.couchSyncing"],
         model: {
             "preferenceChange": {
                 // What preference was changed
@@ -157,7 +157,7 @@
         }
     });
 
-    floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {        
+    floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {
         var helpfulRadioButtons = that.locate("helpfulRadioButtons");
         helpfulRadioButtons.click(function (e) {
             var clickedRadioButton = $(this);

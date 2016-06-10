@@ -82,9 +82,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Any necessary teardown
     floe.tests.dashboard.pouchPersistedComponentTester.tearDownPouchTestDB = function (localName, remoteName) {
         console.log(".tearDownPouchTestDB")
-        new PouchDB(localName).destroy().then( function() {
-            new PouchDB(remoteName).destroy();
-        });
+        new PouchDB(localName).destroy();
     };
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.storage", {

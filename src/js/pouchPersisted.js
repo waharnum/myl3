@@ -23,7 +23,6 @@
         },
         dbOptions: {
             // localName: "test",
-            // remoteName: "http://localhost:5984/test"
         },
         invokers: {
             "retrieve": {
@@ -37,10 +36,28 @@
             "delete": {
                 funcName: "floe.dashboard.pouchPersisted.delete",
                 args: "{that}"
-            },
+            }
+        }
+    });
+
+    // A pouchPersisted grade that can sync to a CouchDB DB
+    fluid.defaults("floe.dashboard.couchSyncing", {
+        gradeNames: ["floe.dashboard.pouchPersisted"],
+        dbOptions: {
+            // remoteName: "http://localhost:5984/test"
+        },
+        invokers: {
             "remoteSync": {
                 funcName: "floe.dashboard.pouchPersisted.remoteSync",
                 args: "{that}"
+            }
+        },
+        listeners: {
+            "onPouchDocStored.remoteSync": {
+                funcName: "{that}.remoteSync"
+            },
+            "onPouchDocDeleted.remoteSync": {
+                funcName: "{that}.remoteSync"
             }
         }
     });
@@ -57,7 +74,6 @@
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {
-            console.log("success")
             that.events.onPouchDocRetrieved.fire(doc);
             return doc;
         });
@@ -69,7 +85,6 @@
         var doc = fluid.copy(that.model);
         var db = new PouchDB(that.options.dbOptions.localName);
         db.put(doc).then(function () {
-            that.remoteSync();
             that.events.onPouchDocStored.fire();
         });
     };
@@ -81,7 +96,6 @@
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {
             db.remove(doc).then(function () {
-                that.remoteSync();
                 that.events.onPouchDocDeleted.fire();
             });
         });
