@@ -1,4 +1,5 @@
 // PouchDB.debug.enable('*');
+PouchDB.debug.disable('*');
 
 // var notesDB = new PouchDB('notes');
 

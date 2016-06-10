@@ -88,11 +88,12 @@
                 // What preference was changed
                 "preferenceType": "",
                 // What was it changed to
-                "preferenceValue": ""
+                "preferenceValue": "",
+                "helpful": ""
             }
         },
         modelListeners: {
-            "preferenceChange": {
+            "preferenceChange.*": {
                 func: "{that}.store",
                 excludeSource: "init"
             }
@@ -131,7 +132,8 @@
             created: ".flc-note-created",
             lastModified: ".flc-note-lastModified",
             preferenceType: ".flc-preferenceChange-type",
-            preferenceValue: ".flc-preferenceChange-value"
+            preferenceValue: ".flc-preferenceChange-value",
+            helpfulRadioButtons: ".flc-preferenceChange-helpul-radio"
         },
         bindings: {
             created: "createdDatePretty",
@@ -140,8 +142,37 @@
             preferenceValue: "preferenceChange.preferenceValue",
         },
         resources: {
-            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><span class='flc-preferenceChange-type'></span> changed to <span class='flc-preferenceChange-value'></span>"
+            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><span class='flc-preferenceChange-type'></span> changed to <span class='flc-preferenceChange-value'></span><br/>This preference change helps me<br/>Yes <input type='radio' class='flc-preferenceChange-helpul-radio flc-preferenceChange-helpul-true' name='helpful' value='true'></input> No <input type='radio' name='helpful' value='false' class='flc-preferenceChange-helpul-radio flc-preferenceChange-helpul-false'></input>"
+        },
+        listeners: {
+            "onEntryTemplateRendered.setHelpfulValueFromModel": {
+                func: "floe.dashboard.preferenceChange.displayed.setHelpfulValueFromModel",
+                args: "{that}",
+                priority: "before:bindHelpfulControls"
+            },
+            "onEntryTemplateRendered.bindHelpfulControls": {
+                func: "floe.dashboard.preferenceChange.displayed.bindHelpfulControls",
+                args: "{that}"
+            }
         }
     });
+
+    floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {        
+        var helpfulRadioButtons = that.locate("helpfulRadioButtons");
+        helpfulRadioButtons.click(function (e) {
+            var clickedRadioButton = $(this);
+            that.applier.change("preferenceChange.helpful", clickedRadioButton.val());
+        });
+    };
+
+    floe.dashboard.preferenceChange.displayed.setHelpfulValueFromModel = function (that) {
+        var helpfulRadioButtons = that.locate("helpfulRadioButtons");
+        fluid.each(helpfulRadioButtons, function (radioButton) {
+
+            if(radioButton.value === that.model.preferenceChange.helpful) {
+                $(radioButton).prop("checked", true);
+            }
+        });
+    };
 
 })(jQuery, fluid);

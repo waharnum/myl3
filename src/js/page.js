@@ -13,7 +13,7 @@
             date: new Date().toJSON()
         },
         dynamicComponents: {
-            note: {
+            entry: {
                 createOnEvent: "onEntryRetrieved",
                 type: "{arguments}.1",
                 container: "{arguments}.2",

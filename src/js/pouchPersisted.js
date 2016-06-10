@@ -9,6 +9,8 @@
             }
         },
         events: {
+            // Event signature should include retrieved doc
+            "onPouchDocRetrieved": null,
             "onPouchDocStored": null,
             "onPouchDocDeleted": null
         },
@@ -23,6 +25,10 @@
             // remoteName: "http://localhost:5984/test"
         },
         invokers: {
+            "retrieve": {
+                funcName: "floe.dashboard.pouchPersisted.retrieve",
+                args: "{that}"
+            },
             "store": {
                 funcName: "floe.dashboard.pouchPersisted.store",
                 args: "{that}"
@@ -39,10 +45,20 @@
 
     });
 
+    // Tries to get the stored version of the document
+    // Fires the document as argument to the event when retrieved
+    floe.dashboard.pouchPersisted.retrieve = function (that) {
+        console.log("floe.dashboard.pouchPersisted.retrieve");
+        var docId = that.model._id;
+        var db = new PouchDB(that.options.dbOptions.localName);
+        db.get(docId).then(function (doc) {
+            that.events.onPouchDocRetrieved.fire(doc);
+        });
+    };
+
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.store = function (that) {
-        // console.log("floe.dashboard.note.pouchPersisted.store");
-        // console.log(that.options.dbOptions);
+        console.log("floe.dashboard.note.pouchPersisted.store");
         var doc = fluid.copy(that.model);
         var db = new PouchDB(that.options.dbOptions.localName);
         db.put(doc).then(function () {
