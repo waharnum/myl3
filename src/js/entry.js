@@ -63,7 +63,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.container.remove();
     };
 
-    floe.dashboard.entry.displayed.renderEntryTemplate = function (that) {
+    floe.dashboard.entry.displayed.renderEntryTemplate = function (that) { 
         var entryTemplate = fluid.stringTemplate(that.options.resources.stringTemplate, that.options.resources.templateValues);
         that.container.append(entryTemplate);
         that.events.onEntryTemplateRendered.fire();

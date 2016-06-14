@@ -42,7 +42,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["fluid.test.testEnvironment"],
         components: {
             pouchPersistedComponent: {
-                type: "floe.tests.dashboard.pouchPersistedComponent"
+                type: "floe.tests.dashboard.pouchPersistedComponent",
+                createOnEvent: "{pouchPersistedComponentTester}.events.onTestCaseStart"        
             }
         }
     });

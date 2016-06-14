@@ -17,8 +17,67 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     fluid.registerNamespace("floe.tests.dashboard");
 
-    jqUnit.test("Test base  component", function () {
-        jqUnit.expect(0);
+    fluid.defaults("floe.tests.dashboard.entry.note", {
+        gradeNames: ["floe.dashboard.note.displayed"],
+        dbOptions: {
+            localName: "test"
+        }
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.noteTestEnvironment", {
+        gradeNames: ["fluid.test.testEnvironment"],
+        components: {
+            note: {
+                type: "floe.tests.dashboard.entry.note",
+                container: ".floec-entry-note",
+                options: {
+                    model: {
+                        text: "Initial note text."
+                    }
+                },
+                createOnEvent: "{noteTester}.events.onTestCaseStart"
+            },
+            noteTester: {
+                type: "floe.tests.dashboard.entry.noteTester"
+            }
+        }
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.noteTester", {
+        gradeNames: ["fluid.test.testCaseHolder"],
+        modules: [ {
+            name: "Note-type entry component",
+            tests: [{
+                expect: 1,
+                name: "Test note component behaviour",
+                sequence: [{
+                    listener: "floe.tests.dashboard.entry.verifyRender",
+                    args: ["{note}"],
+                    priority: "last",
+                    event: "{noteTestEnvironment note}.events.onEntryTemplateRendered"
+                }]
+            }
+            ]
+        }]
+    });
+
+    floe.tests.dashboard.entry.verifyRender = function (note) {
+        var renderedText = note.locate("text");
+        console.log(renderedText.text);
+        jqUnit.assertEquals("Note model.text and rendered text are identical", note.model.text, renderedText.text());
+    };
+
+    // jqUnit.test("Test note entry", function () {
+    //     jqUnit.expect(0);
+    //     var note = floe.dashboard.note.displayed(".floec-entry-note", {
+    //         dbOptions: {
+    //             localName: "test"
+    //         }
+    //     });
+    // });
+
+    $(document).ready(function () {
+        floe.tests.dashboard.entry.noteTestEnvironment();
     });
 
 })(jQuery, fluid);
