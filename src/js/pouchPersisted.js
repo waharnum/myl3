@@ -116,14 +116,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 db.put(doc).then(function () {
                     that.events.onPouchDocStored.fire();
                 });
-        // Create the doc on a 404 (doesn't exist yet)
-            },  function (err) {
-            if (err.status === 404) {
-                db.put(doc).then(function () {
-                    that.events.onPouchDocStored.fire();
-                });
-            }
-        });
+                // Create the doc on a 404 (doesn't exist yet)
+            },
+            function (err) {
+                if (err.status === 404) {
+                    db.put(doc).then(function () {
+                        that.events.onPouchDocStored.fire();
+                    });
+                }
+            });
 
     };
 
