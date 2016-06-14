@@ -89,16 +89,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
 
-        db.get(docId).then(function (retrievedDoc) {
-            that.events.onPouchDocRetrieved.fire(retrievedDoc);
-            return retrievedDoc;
+        db.get(docId).then(
+            function (retrievedDoc) {
+                that.events.onPouchDocRetrieved.fire(retrievedDoc);
+                return retrievedDoc;
         // Return undefined on a 404
-        }).catch(function (err) {
-            if (err.status === 404) {
-                that.events.onPouchDocRetrieved.fire(undefined);
-                return undefined;
-            }
-        });
+            },
+            function (err) {
+                if (err.status === 404) {
+                    that.events.onPouchDocRetrieved.fire(undefined);
+                    return undefined;
+                }
+            });
     };
 
     // Creates or updates the persisted model
@@ -107,14 +109,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
-        db.get(docId).then(function (retrievedDoc) {
-            // Update the doc if it exists
-            doc._rev = retrievedDoc._rev;
-            db.put(doc).then(function () {
-                that.events.onPouchDocStored.fire();
-            });
+        db.get(docId).then(
+            function (retrievedDoc) {
+                // Update the doc if it exists
+                doc._rev = retrievedDoc._rev;
+                db.put(doc).then(function () {
+                    that.events.onPouchDocStored.fire();
+                });
         // Create the doc on a 404 (doesn't exist yet)
-        }).catch(function (err) {
+            },  function (err) {
             if (err.status === 404) {
                 db.put(doc).then(function () {
                     that.events.onPouchDocStored.fire();
