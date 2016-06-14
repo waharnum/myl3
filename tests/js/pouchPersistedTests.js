@@ -103,10 +103,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 name: "Test basic storage",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.store"
+                        func: "{pouchPersistedComponent}.storePersisted"
                     },
                     {
-                        listener: "{pouchPersistedComponent}.retrieve",
+                        listener: "{pouchPersistedComponent}.retrievePersisted",
                         event: "{pouchPersistedComponent}.events.onPouchDocStored"
                     },
                     {
@@ -135,10 +135,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 name: "Test basic delete",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.store"
+                        func: "{pouchPersistedComponent}.storePersisted"
                     },
                     {
-                        listener: "{pouchPersistedComponent}.delete",
+                        listener: "{pouchPersistedComponent}.deletePersisted",
                         event: "{pouchPersistedComponent}.events.onPouchDocStored"
                     },
                     {
@@ -154,7 +154,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.testPouchPersistedDelete = function (that) {
-        jqUnit.assertUndefined(that.retrieve());
+        jqUnit.assertUndefined(that.retrievePersisted());
     };
 
     $(document).ready(function () {
