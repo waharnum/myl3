@@ -22,10 +22,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             remoteName: "http://localhost:5984/test"
         },
         model: {
-            "boolean": true,
-            "integer": 3,
-            "string": "Hello World",
-            "decimal": 3.76,
+            "persistedValues": {
+                "boolean": true,
+                "integer": 3,
+                "string": "Hello World",
+                "decimal": 3.76,
+            }
+        },
+        modelListeners: {
+            "persistedValues": {
+                func: "{that}.store",
+                excludeSource: "init"
+            }
         }
     });
 
@@ -105,7 +113,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
                         args: ["{pouchPersistedComponent}", "{arguments}.0"]
                     }
-
                 ]
             }
             ]
@@ -153,46 +160,5 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storage();
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.delete();
     });
-
-    // jqUnit.test("Test pouchPersisted grade", function () {
-    //
-    //     jqUnit.expect(0);
-    //     var that = floe.tests.dashboard.pouchPersistedComponent();
-    //     console.log(that);
-    //
-    //     new PouchDB(that.options.dbOptions.localName).destroy()
-    //         .then(function () {
-    //             that.store();
-    //         });
-    //
-    //     that.delete();
-    //
-    //
-    //     jqUnit.assertTrue("If created without a timestamp, gets a timestamp", that.model.timeEvents.created);
-    //
-    //     jqUnit.assertTrue("Automatic timestamp generates a parseable time", floe.tests.dashboard.isParseableTime(that.model.timeEvents.created));
-    //
-    //     jqUnit.assertTrue("A lastModified time event is generated", that.model.timeEvents.lastModified);
-    //
-    //     jqUnit.assertTrue("LastModified time event is parseable", floe.tests.dashboard.isParseableTime(that.model.timeEvents.created));
-    //
-    //     var userSuppliedTime = "May, 2016";
-    //     // Expected result of cnverting new Date(userSuppliedTime) via
-    //     // Date.toJSON();
-    //     var convertedUserSuppliedTime = "2016-05-01T04:00:00.000Z";
-    //
-    //     that = floe.dashboard.eventInTimeAware({
-    //         model: {
-    //             timeEvents: {
-    //                 created: userSuppliedTime
-    //             }
-    //         },
-    //     });
-    //
-    //     jqUnit.assertEquals("User-supplied timestamp is respected", convertedUserSuppliedTime, that.model.timeEvents.created);
-    //
-    //     jqUnit.assertTrue("A lastModified time event is generated", that.model.timeEvents.lastModified);
-    //
-    // });
 
 })(jQuery, fluid);
