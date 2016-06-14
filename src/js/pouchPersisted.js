@@ -63,7 +63,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         invokers: {
             "remoteSync": {
-                funcName: "floe.dashboard.couchSyncing",
+                funcName: "floe.dashboard.couchSyncing.remoteSync",
                 args: "{that}"
             }
         },
@@ -141,7 +141,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Syncs to the remote
-    floe.dashboard.couchSyncing = function (that) {
+    floe.dashboard.couchSyncing.remoteSync = function (that) {
         // console.log("floe.dashboard.note.pouchPersisted.remoteSync");
         var localDB = new PouchDB(that.options.dbOptions.localName);
         var remoteDB = new PouchDB(that.options.dbOptions.remoteName);
