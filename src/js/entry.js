@@ -15,19 +15,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     "use strict";
 
-    fluid.defaults("floe.dashboard.note", {
-        gradeNames: ["floe.dashboard.couchSyncing"],
-        model: {
-            "text": ""
-        },
-        modelListeners: {
-            "text": {
-                func: "{that}.storePersisted",
-                excludeSource: "init"
-            }
-        }
-    });
-
     // Mixin for creation
     fluid.defaults("floe.dashboard.entry.new", {
         listeners: {
@@ -89,10 +76,41 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
+    fluid.defaults("floe.dashboard.note", {
+        gradeNames: ["floe.dashboard.couchSyncing"],
+        model: {
+            "text": ""
+        },
+        modelListeners: {
+            "text": {
+                func: "{that}.storePersisted",
+                excludeSource: "init"
+            }
+        }
+    });
+
     fluid.defaults("floe.dashboard.note.persisted", {
         gradeNames: ["floe.dashboard.note", "floe.dashboard.entry.new"],
         events: {
             onNoteStored: "{that}.events.onPouchDocStored"
+        }
+    });
+
+    fluid.defaults("floe.dashboard.note.displayed", {
+        gradeNames: ["floe.dashboard.note", "floe.dashboard.displayedEntry"],
+        // A key/value of selectorName: model.path
+        selectors: {
+            created: ".flc-note-created",
+            lastModified: ".flc-note-lastModified",
+            text: ".flc-note-text"
+        },
+        bindings: {
+            created: "createdDatePretty",
+            lastModified: "lastModifiedDatePretty",
+            text: "text"
+        },
+        resources: {
+            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
         }
     });
 
@@ -119,24 +137,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.new"],
         events: {
             onPreferenceChangeStored: "{that}.events.onPouchDocStored"
-        }
-    });
-
-    fluid.defaults("floe.dashboard.note.displayed", {
-        gradeNames: ["floe.dashboard.note", "floe.dashboard.displayedEntry"],
-        // A key/value of selectorName: model.path
-        selectors: {
-            created: ".flc-note-created",
-            lastModified: ".flc-note-lastModified",
-            text: ".flc-note-text"
-        },
-        bindings: {
-            created: "createdDatePretty",
-            lastModified: "lastModifiedDatePretty",
-            text: "text"
-        },
-        resources: {
-            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
         }
     });
 
