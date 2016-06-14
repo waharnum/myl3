@@ -17,10 +17,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     fluid.registerNamespace("floe.tests.dashboard");
 
-    jqUnit.test("Test note component", function () {
+    jqUnit.test("Test base  component", function () {
         jqUnit.expect(0);
     });
-
-
 
 })(jQuery, fluid);

@@ -27,25 +27,25 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    // Base mixin grade for displaying entries
-    fluid.defaults("floe.dashboard.displayedEntry", {
+    // Mixin grade for displaying entries
+    fluid.defaults("floe.dashboard.entry.displayed", {
         gradeNames: ["floe.chartAuthoring.valueBinding"],
         selectors: {
             delete: ".flc-entry-delete"
         },
         listeners: {
             "onPouchDocDeleted.removeNoteMarkup": {
-                funcName: "floe.dashboard.displayedEntry.removeEntryMarkup",
+                funcName: "floe.dashboard.entry.displayed.removeEntryMarkup",
                 args: "{that}"
             },
             "onCreate.renderEntryTemplate": {
-                funcName: "floe.dashboard.displayedEntry.renderEntryTemplate",
+                funcName: "floe.dashboard.entry.displayed.renderEntryTemplate",
                 args: "{that}",
                 // Needs to beat any value binding
                 priority: "first"
             },
             "onEntryTemplateRendered.bindDelete": {
-                funcName: "floe.dashboard.displayedEntry.bindDelete",
+                funcName: "floe.dashboard.entry.displayed.bindDelete",
                 args: "{that}"
             }
         },
@@ -54,21 +54,22 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
         // Must be set by implementing grade
         // resources: {
-        //     entryTemplate: ""
+        //     stringTemplate: "" // fluid.stringTemplate syntax
+        //     templateValues: {} // template values for stringTemplate
         // }
     });
 
-    floe.dashboard.displayedEntry.removeEntryMarkup = function (that) {
+    floe.dashboard.entry.displayed.removeEntryMarkup = function (that) {
         that.container.remove();
     };
 
-    floe.dashboard.displayedEntry.renderEntryTemplate = function (that) {
-        var entryTemplate = that.options.resources.entryTemplate;
+    floe.dashboard.entry.displayed.renderEntryTemplate = function (that) {
+        var entryTemplate = fluid.stringTemplate(that.options.resources.stringTemplate, that.options.resources.templateValues);
         that.container.append(entryTemplate);
         that.events.onEntryTemplateRendered.fire();
     };
 
-    floe.dashboard.displayedEntry.bindDelete = function (that) {
+    floe.dashboard.entry.displayed.bindDelete = function (that) {
         var deleteControl = that.locate("delete");
         deleteControl.click(function (e) {
             e.preventDefault();
@@ -97,7 +98,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.note.displayed", {
-        gradeNames: ["floe.dashboard.note", "floe.dashboard.displayedEntry"],
+        gradeNames: ["floe.dashboard.note", "floe.dashboard.entry.displayed"],
         // A key/value of selectorName: model.path
         selectors: {
             created: ".flc-note-created",
@@ -110,7 +111,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             text: "text"
         },
         resources: {
-            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
+            stringTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
         }
     });
 
@@ -141,14 +142,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.preferenceChange.displayed", {
-        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.displayedEntry"],
+        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.displayed"],
         // A key/value of selectorName: model.path
         selectors: {
             created: ".flc-note-created",
             lastModified: ".flc-note-lastModified",
             preferenceType: ".flc-preferenceChange-type",
             preferenceValue: ".flc-preferenceChange-value",
-            helpfulRadioButtons: ".flc-preferenceChange-helpul-radio"
+            helpfulRadioButtons: ".flc-preferenceChange-helpful-radio"
         },
         bindings: {
             created: "createdDatePretty",
@@ -157,7 +158,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceValue: "preferenceChange.preferenceValue",
         },
         resources: {
-            entryTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><span class='flc-preferenceChange-type'></span> changed to <span class='flc-preferenceChange-value'></span><br/>This preference change helps me<br/>Yes <input type='radio' class='flc-preferenceChange-helpul-radio flc-preferenceChange-helpul-true' name='helpful' value='true'></input> No <input type='radio' name='helpful' value='false' class='flc-preferenceChange-helpul-radio flc-preferenceChange-helpul-false'></input>"
+            stringTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><span class='flc-preferenceChange-type'></span> changed to <span class='flc-preferenceChange-value'></span><br/>This preference change helps me<br/>Yes <input type='radio' class='flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true' name='%radioName' value='true'></input> No <input type='radio' name='%radioName' value='false' class='flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false'></input>",
+            templateValues: {
+                radioName: {
+                    expander: {
+                        func: "floe.dashboard.preferenceChange.displayed.getRadioButtonName",
+                        args: "{that}"
+                    }
+                }
+            }
         },
         listeners: {
             "onEntryTemplateRendered.setHelpfulValueFromModel": {
@@ -171,6 +180,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         }
     });
+
+    floe.dashboard.preferenceChange.displayed.getRadioButtonName = function (that) {
+        console.log(that);
+        return "helpful-" + that.id;
+    };
 
     floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {
         var helpfulRadioButtons = that.locate("helpfulRadioButtons");
