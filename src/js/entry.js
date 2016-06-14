@@ -16,7 +16,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     "use strict";
 
     // Mixin for creation
-    fluid.defaults("floe.dashboard.entry.new", {
+    fluid.defaults("floe.dashboard.entry.persisted", {
         listeners: {
             "onCreate.storeEntry": {
                 func: "{that}.storePersisted"
@@ -77,7 +77,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     fluid.defaults("floe.dashboard.note", {
-        gradeNames: ["floe.dashboard.couchSyncing"],
+        gradeNames: ["floe.dashboard.pouchPersisted"],
         model: {
             "text": ""
         },
@@ -90,7 +90,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.note.persisted", {
-        gradeNames: ["floe.dashboard.note", "floe.dashboard.entry.new"],
+        gradeNames: ["floe.dashboard.note", "floe.dashboard.entry.persisted"],
         events: {
             onNoteStored: "{that}.events.onPouchDocStored"
         }
@@ -115,7 +115,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.preferenceChange", {
-        gradeNames: ["floe.dashboard.couchSyncing"],
+        gradeNames: ["floe.dashboard.pouchPersisted"],
         model: {
             "preferenceChange": {
                 // What preference was changed
@@ -134,7 +134,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.preferenceChange.persisted", {
-        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.new"],
+        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.persisted"],
         events: {
             onPreferenceChangeStored: "{that}.events.onPouchDocStored"
         }
