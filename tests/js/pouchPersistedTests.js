@@ -60,7 +60,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
         components: {
             pouchPersistedComponentTester: {
-                type: "floe.tests.dashboard.pouchPersistedComponentTester.delete"
+                type: "floe.tests.dashboard.pouchPersistedComponentTester.deleteTest"
             }
         }
     });
@@ -126,7 +126,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertDeepEq("Component model and retrieved document are identical, except for _rev", that.model, retrievedDocMinusRev);
     };
 
-    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.delete", {
+    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.deleteTest", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTester.base"],
         modules: [ {
             name: "PouchDB persisted component - delete test cases",
