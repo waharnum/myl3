@@ -9,69 +9,73 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, floe, chance, PouchDB */
+/* global fluid, floe, chance */
 
-// PouchDB.debug.enable('*');
-PouchDB.debug.disable('*');
+(function ($, fluid) {
 
-// var notesDB = new PouchDB('notes');
+    "use strict";
 
-// destroy the DB
-// new PouchDB('notes').destroy();
+    // PouchDB.debug.enable('*');
+    // PouchDB.debug.disable("*");
 
-// var note = floe.dashboard.note.persisted({
-//     model: {
-//         "text": chance.sentence()
-//     }
-// });
+    // var notesDB = new PouchDB('notes');
 
-var journalPage = floe.dashboard.page(".floec-journal", {
-    model: {
-        "name": "Alan's Journal"
-    },
-    listeners: {
-        "onCreate.bindSubmitEntryClick": {
-            func: "floe.dashboard.page.bindSubmitEntryClick",
-            args: "{that}"
+    // destroy the DB
+    // new PouchDB('notes').destroy();
+
+    // var note = floe.dashboard.note.persisted({
+    //     model: {
+    //         "text": chance.sentence()
+    //     }
+    // });
+
+    floe.dashboard.page(".floec-journal", {
+        model: {
+            "name": "Alan's Journal"
         },
-        "onCreate.bindBackLink": {
-            func: "floe.dashboard.page.bindBackLink",
-            args: "{that}"
+        listeners: {
+            "onCreate.bindSubmitEntryClick": {
+                func: "floe.dashboard.page.bindSubmitEntryClick",
+                args: "{that}"
+            },
+            "onCreate.bindBackLink": {
+                func: "floe.dashboard.page.bindBackLink",
+                args: "{that}"
+            },
+            "onCreate.bindForwardLink": {
+                func: "floe.dashboard.page.bindForwardLink",
+                args: "{that}"
+            }
         },
-        "onCreate.bindForwardLink": {
-            func: "floe.dashboard.page.bindForwardLink",
-            args: "{that}"
+        dbOptions: {
+            localName: "notes",
+            remoteName: "http://localhost:5984/notes"
         }
-    },
-    dbOptions: {
-        localName: "notes",
-        remoteName: "http://localhost:5984/notes"
-    }
-});
+    });
 
-fluid.registerNamespace("floe.tests.dashboard");
+    fluid.registerNamespace("floe.tests.dashboard");
 
-// Get a random positive integer
-floe.tests.dashboard.randInt = function (min, max) {
+    // Get a random positive integer
+    floe.tests.dashboard.randInt = function (min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-};
+    };
 
-// Generates a random note
-floe.tests.dashboard.randomNote = function () {
+    // Generates a random note
+    floe.tests.dashboard.randomNote = function () {
 
-    var randomText = chance.sentence();
-    var randomDate = new Date();
-    console.log(randomDate);
-    // Get a number between -1 & -14
+        var randomText = chance.sentence();
+        var randomDate = new Date();
+        console.log(randomDate);
+        // Get a number between -1 & -14
 
-    var daysBack = floe.tests.dashboard.randInt(0, 14);
-    console.log(daysBack);
+        var daysBack = floe.tests.dashboard.randInt(0, 14);
+        console.log(daysBack);
 
-    randomDate.setDate(randomDate.getDate() - daysBack);
-    console.log(randomDate);
-    randomDate = randomDate.toJSON();
+        randomDate.setDate(randomDate.getDate() - daysBack);
+        console.log(randomDate);
+        randomDate = randomDate.toJSON();
 
-        var note = floe.dashboard.note.persisted({
+        floe.dashboard.note.persisted({
             model: {
                 "text": randomText,
                 timeEvents: {
@@ -85,74 +89,75 @@ floe.tests.dashboard.randomNote = function () {
                 remoteName: "http://localhost:5984/notes"
             }
         });
-};
+    };
 
-// Random note generator
-// Set to number of random notes to generate
-var i = 0;
-for(i; i > 0; i--) {
-    floe.tests.dashboard.randomNote();
-}
+    // Random note generator
+    // Set to number of random notes to generate
+    var i = 0;
+    for(i; i > 0; i--) {
+        floe.tests.dashboard.randomNote();
+    }
 
-// Note creator
+    // Note creator
 
-    // var note = floe.dashboard.note.persisted({
-    //     model: {
-    //         "text": chance.sentence()
-    //     }
+        // var note = floe.dashboard.note.persisted({
+        //     model: {
+        //         "text": chance.sentence()
+        //     }
+        // });
+
+
+    // notesDB.allDocs({include_docs: true}).then(function (response) {
+    //     console.log(response);
     // });
 
-
-// notesDB.allDocs({include_docs: true}).then(function (response) {
-//     console.log(response);
-// });
-
-$(document).ready(function () {
-    fluid.uiOptions.prefsEditor(".flc-prefsEditor-separatedPanel", {
-        terms: {
-            "templatePrefix": "/src/lib/infusion/src/framework/preferences/html",
-            "messagePrefix": "/src/lib/infusion/src/framework/preferences/messages"
-        },
-        "tocTemplate": "/src/lib/infusion/src/components/tableOfContents/html/TableOfContents.html",
-        "ignoreForToC": {
-            "overviewPanel": ".flc-overviewPanel"
-        },
-        components: {
-            prefsEditorLoader: {
-                options: {
-                    components: {
-                        messageLoader: {
-                            options: {
-                                listeners: {
-                                    // "onResourcesLoaded.log": {
-                                    //     this: "console",
-                                    //     method: "log",
-                                    //     args: "{that}"
-                                    // }
+    $(document).ready(function () {
+        fluid.uiOptions.prefsEditor(".flc-prefsEditor-separatedPanel", {
+            terms: {
+                "templatePrefix": "/src/lib/infusion/src/framework/preferences/html",
+                "messagePrefix": "/src/lib/infusion/src/framework/preferences/messages"
+            },
+            "tocTemplate": "/src/lib/infusion/src/components/tableOfContents/html/TableOfContents.html",
+            "ignoreForToC": {
+                "overviewPanel": ".flc-overviewPanel"
+            },
+            components: {
+                prefsEditorLoader: {
+                    options: {
+                        components: {
+                            messageLoader: {
+                                options: {
+                                    listeners: {
+                                        // "onResourcesLoaded.log": {
+                                        //     this: "console",
+                                        //     method: "log",
+                                        //     args: "{that}"
+                                        // }
+                                    }
                                 }
-                            }
-                        },
-                        slidingPanel: {
-                            options: {
-                                listeners: {
-                                    "onPanelHide.log": {
-                                        func: "floe.dashboard.page.compareCurrentPreferences",
-                                        args: ["{prefsEditor}", "{floe.dashboard.page}"]
-                                    },
-                                    "onPanelShow.log": {
-                                        func: "floe.dashboard.page.compareCurrentPreferences",
-                                        args: ["{prefsEditor}", "{floe.dashboard.page}"]
-                                    },
+                            },
+                            slidingPanel: {
+                                options: {
+                                    listeners: {
+                                        "onPanelHide.log": {
+                                            func: "floe.dashboard.page.compareCurrentPreferences",
+                                            args: ["{prefsEditor}", "{floe.dashboard.page}"]
+                                        },
+                                        "onPanelShow.log": {
+                                            func: "floe.dashboard.page.compareCurrentPreferences",
+                                            args: ["{prefsEditor}", "{floe.dashboard.page}"]
+                                        },
+                                    }
                                 }
-                            }
-                        },
-                        prefsEditor: {
-                            options: {
-                                listeners: {
-                                    "onReady.relayInitialPreferences": {
-                                        func: "floe.dashboard.page.relayInitialPreferences",
-                                        args: ["{that}", "{floe.dashboard.page}"],
-                                        priority: "last"
+                            },
+                            prefsEditor: {
+                                options: {
+                                    listeners: {
+                                        "onReady.relayInitialPreferences": {
+                                            func: "floe.dashboard.page.relayInitialPreferences",
+                                            args: ["{that}", "{floe.dashboard.page}"],
+                                            priority: "last"
+                                        }
                                     }
                                 }
                             }
@@ -160,6 +165,7 @@ $(document).ready(function () {
                     }
                 }
             }
-        }
+        });
     });
-});
+
+})(jQuery, fluid);
