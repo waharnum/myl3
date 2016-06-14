@@ -88,12 +88,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         console.log("floe.dashboard.pouchPersisted.retrievePersisted");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
+
         db.get(docId).then(function (retrievedDoc) {
             that.events.onPouchDocRetrieved.fire(retrievedDoc);
             return retrievedDoc;
         // Return undefined on a 404
         }).catch(function (err) {
             if (err.status === 404) {
+                that.events.onPouchDocRetrieved.fire(undefined);
                 return undefined;
             }
         });
