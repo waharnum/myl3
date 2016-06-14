@@ -1,4 +1,19 @@
+/*
+Copyright 2016 OCAD University
+
+Licensed under the Educational Community License (ECL), Version 2.0 or the New
+BSD license. You may not use this file except in compliance with one these
+Licenses.
+
+You may obtain a copy of the ECL 2.0 License and BSD License at
+https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
+*/
+
+/* global fluid, floe */
+
 (function ($, fluid) {
+
+    "use strict";
 
     fluid.defaults("floe.dashboard.note", {
         gradeNames: ["floe.dashboard.couchSyncing"],
@@ -7,7 +22,7 @@
         },
         modelListeners: {
             "text": {
-                func: "{that}.store",
+                func: "{that}.storePersisted",
                 excludeSource: "init"
             }
         }
@@ -17,7 +32,7 @@
     fluid.defaults("floe.dashboard.entry.new", {
         listeners: {
             "onCreate.storeEntry": {
-                func: "{that}.store"
+                func: "{that}.storePersisted"
             }
         },
         events: {
@@ -70,7 +85,7 @@
         var deleteControl = that.locate("delete");
         deleteControl.click(function (e) {
             e.preventDefault();
-            that.delete();
+            that.deletePersisted();
         });
     };
 
@@ -94,7 +109,7 @@
         },
         modelListeners: {
             "preferenceChange.*": {
-                func: "{that}.store",
+                func: "{that}.storePersisted",
                 excludeSource: "init"
             }
         }
@@ -159,7 +174,7 @@
 
     floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {
         var helpfulRadioButtons = that.locate("helpfulRadioButtons");
-        helpfulRadioButtons.click(function (e) {
+        helpfulRadioButtons.click(function () {
             var clickedRadioButton = $(this);
             that.applier.change("preferenceChange.helpful", clickedRadioButton.val());
         });

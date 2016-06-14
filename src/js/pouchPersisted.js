@@ -1,4 +1,19 @@
+/*
+Copyright 2016 OCAD University
+
+Licensed under the Educational Community License (ECL), Version 2.0 or the New
+BSD license. You may not use this file except in compliance with one these
+Licenses.
+
+You may obtain a copy of the ECL 2.0 License and BSD License at
+https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
+*/
+
+/* global fluid, floe, PouchDB */
+
 (function ($, fluid) {
+
+    "use strict";
 
     // Base grade for persistence of model components to Pouch
     fluid.defaults("floe.dashboard.pouchPersisted", {
@@ -25,16 +40,16 @@
             // localName: "test",
         },
         invokers: {
-            "retrieve": {
-                funcName: "floe.dashboard.pouchPersisted.retrieve",
+            "retrievePersisted": {
+                funcName: "floe.dashboard.pouchPersisted.retrievePersisted",
                 args: "{that}"
             },
-            "store": {
-                funcName: "floe.dashboard.pouchPersisted.store",
+            "storePersisted": {
+                funcName: "floe.dashboard.pouchPersisted.storePersisted",
                 args: "{that}"
             },
-            "delete": {
-                funcName: "floe.dashboard.pouchPersisted.delete",
+            "deletePersisted": {
+                funcName: "floe.dashboard.pouchPersisted.deletePersisted",
                 args: "{that}"
             }
         }
@@ -69,8 +84,8 @@
     // Tries to get the stored version of the document
     // Fires the document as argument to the event when retrieved,
     // and also returns it
-    floe.dashboard.pouchPersisted.retrieve = function (that) {
-        console.log("floe.dashboard.pouchPersisted.retrieve");
+    floe.dashboard.pouchPersisted.retrievePersisted = function (that) {
+        console.log("floe.dashboard.pouchPersisted.retrievePersisted");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (retrievedDoc) {
@@ -85,7 +100,7 @@
     };
 
     // Creates or updates the persisted model
-    floe.dashboard.pouchPersisted.store = function (that) {
+    floe.dashboard.pouchPersisted.storePersisted = function (that) {
         console.log("floe.dashboard.note.pouchPersisted.store");
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
@@ -108,7 +123,7 @@
     };
 
     // Delete the persisted document
-    floe.dashboard.pouchPersisted.delete = function (that) {
+    floe.dashboard.pouchPersisted.deletePersisted = function (that) {
         // console.log("floe.dashboard.note.pouchPersisted.delete");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);

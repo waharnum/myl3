@@ -9,6 +9,8 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
+/* global fluid, floe, jqUnit, PouchDB */
+
 (function ($, fluid) {
 
     "use strict";
@@ -18,8 +20,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.tests.dashboard.pouchPersistedComponent", {
         gradeNames: ["floe.dashboard.pouchPersisted"],
         dbOptions: {
-            localName: "test",
-            remoteName: "http://localhost:5984/test"
+            localName: "test"
         },
         model: {
             "persistedValues": {
@@ -31,7 +32,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         modelListeners: {
             "persistedValues": {
-                func: "{that}.store",
+                func: "{that}.storePersisted",
                 excludeSource: "init"
             }
         }
@@ -46,7 +47,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storage", {
+    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
         components: {
             pouchPersistedComponentTester: {
@@ -55,7 +56,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTestEnvironment.delete", {
+    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
         components: {
             pouchPersistedComponentTester: {
@@ -67,8 +68,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.base", {
         gradeNames: ["fluid.test.testCaseHolder"],
         dbOptions: {
-            localName: "test",
-            remoteName: "http://localhost:5984/test"
+            localName: "test"
         },
         listeners: {
             "onCreate.setupPouchTestDB": {
@@ -77,19 +77,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             "onDestroy.tearDownPouchTestDB": {
                 funcName: "floe.tests.dashboard.pouchPersistedComponentTester.tearDownPouchTestDB",
-                args: ["{that}.options.dbOptions.localName", "{that}.options.dbOptions.remoteName"]
+                args: ["{that}.options.dbOptions.localName"]
             }
         }
     });
 
     // Any necessary setup
-    floe.tests.dashboard.pouchPersistedComponentTester.setupPouchTestDB = function (localName, remoteName) {
-
+    floe.tests.dashboard.pouchPersistedComponentTester.setupPouchTestDB = function (localName) {
+        console.log(".setupPouchTestDB");
+        console.log(localName);
     };
 
     // Any necessary teardown
-    floe.tests.dashboard.pouchPersistedComponentTester.tearDownPouchTestDB = function (localName, remoteName) {
-        console.log(".tearDownPouchTestDB")
+    floe.tests.dashboard.pouchPersistedComponentTester.tearDownPouchTestDB = function (localName) {
+        console.log(".tearDownPouchTestDB");
         new PouchDB(localName).destroy();
     };
 
@@ -156,9 +157,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertUndefined(that.retrieve());
     };
 
-    $(document).ready( function() {
-        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storage();
-        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.delete();
+    $(document).ready(function () {
+        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest();
+        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
     });
 
 })(jQuery, fluid);

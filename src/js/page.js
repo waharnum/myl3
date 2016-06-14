@@ -1,4 +1,20 @@
+/*
+Copyright 2016 OCAD University
+
+Licensed under the Educational Community License (ECL), Version 2.0 or the New
+BSD license. You may not use this file except in compliance with one these
+Licenses.
+
+You may obtain a copy of the ECL 2.0 License and BSD License at
+https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
+*/
+
+/* global fluid, floe, PouchDB */
+
 (function ($, fluid) {
+
+    "use strict";
+
     fluid.defaults("floe.dashboard.page", {
         gradeNames: ["floe.dashboard.eventInTimeAware", "fluid.viewComponent"],
         selectors: {
@@ -79,7 +95,7 @@
         that.applier.change("date", currentDate);
     };
 
-    floe.dashboard.page.getEntries = function (that, date) {
+    floe.dashboard.page.getEntries = function (that) {
         // console.log("floe.dashboard.page.getEntries");
 
         var pageDate = new Date(that.model.date);
@@ -92,12 +108,11 @@
             // start and end date filtering
             startkey: pageUTCDate + that.options.constants.startOfDayUTC,
             endkey: pageUTCDate + that.options.constants.endOfDayUTC
-            }).then(function (response) {
+        }).then(function (response) {
             that.entryIDCounter = 0;
             fluid.each(response.rows, function (row) {
                 var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
-                console.log(displayComponentType);
-                entryContainer = floe.dashboard.page.injectEntryContainer(that);
+                var entryContainer = floe.dashboard.page.injectEntryContainer(that);
                 that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
             });
         });
@@ -106,9 +121,9 @@
     floe.dashboard.page.injectEntryContainer = function (that) {
         // console.log(that);
         var entryList = that.locate("entryList");
-        var currentId = "note-"+that.entryIDCounter;
+        var currentId = "note-" + that.entryIDCounter;
         entryList.append("<li id='" + currentId + "'></li>");
-        var entryContainer = $("#"+currentId);
+        var entryContainer = $("#" + currentId);
         that.entryIDCounter++;
         // console.log(entryContainer);
         return entryContainer;
@@ -116,8 +131,8 @@
 
     floe.dashboard.page.createPageMarkup = function (that) {
         that.container.empty();
-        var journalHeading = that.container.append("<h1>" + that.model.name + "</h1>");
-        var pageHeading = that.container.append("<h2>" + that.model.date + "</h2>");
+        that.container.append("<h1>" + that.model.name + "</h1>");
+        that.container.append("<h2>" + that.model.date + "</h2>");
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 
@@ -125,7 +140,7 @@
         var page = that;
         $("#floec-submitEntry").click(function (e) {
             var entryText = $("#floec-newEntry").val();
-            var note = floe.dashboard.note.persisted({
+            floe.dashboard.note.persisted({
                 model: {
                     "text": entryText
                 },
@@ -188,11 +203,10 @@
         var stats = {changes: 0, unchanged: 0, changeMap: {}};
         if(fluid.model.diff(prefsEditorPreferences, pagePreferences, stats) === false) {
             page.applier.change("preferences", prefsEditor.model.preferences);
-            var prefChangeNote = "";
             fluid.each(stats.changeMap, function (changeType, changePath) {
                 var preferenceType = changePath;
-                var preferenceValue = fluid.get(page, "model.preferences."+changePath);
-                var preferenceChange = floe.dashboard.preferenceChange.persisted({
+                var preferenceValue = fluid.get(page, "model.preferences." + changePath);
+                floe.dashboard.preferenceChange.persisted({
                     model: {
                         "preferenceChange": {
                             // What preference was changed
