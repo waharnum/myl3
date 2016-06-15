@@ -26,6 +26,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         events: {
             // Event signature should include retrieved doc
+            "onSetPouchId": null,
             "onPouchDocRetrieved": null,
             "onPouchDocStored": null,
             "onPouchDocDeleted": null
@@ -79,11 +80,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.pouchPersisted.setPouchId = function (that) {
         that.model._id = that.model.timeEvents.created;
+        that.events.onSetPouchId.fire();
     };
 
     // Tries to get the stored version of the document
-    // Fires the document as argument to the event when retrieved,
-    // and also returns it
+    // Fires the document as argument to the retrieved event when retrieved
+
     floe.dashboard.pouchPersisted.retrievePersisted = function (that) {
         console.log("floe.dashboard.pouchPersisted.retrievePersisted");
         var docId = that.model._id;
@@ -91,14 +93,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         db.get(docId).then(
             function (retrievedDoc) {
-                that.events.onPouchDocRetrieved.fire(retrievedDoc);
-                return retrievedDoc;
+                that.events.onPouchDocRetrieved.fire(retrievedDoc); 
         // Return undefined on a 404
             },
             function (err) {
                 if (err.status === 404) {
                     that.events.onPouchDocRetrieved.fire(undefined);
-                    return undefined;
                 }
             });
     };
@@ -130,7 +130,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Delete the persisted document
     floe.dashboard.pouchPersisted.deletePersisted = function (that) {
-        // console.log("floe.dashboard.note.pouchPersisted.delete");
+        console.log("floe.dashboard.note.pouchPersisted.delete");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {

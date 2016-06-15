@@ -11,6 +11,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
 /* global fluid, jqUnit */
 
+PouchDB.debug.enable('*');
+// PouchDB.debug.disable("*");
+
 (function ($, fluid) {
 
     "use strict";
@@ -56,25 +59,60 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "Common displayed entry component tests",
             tests: [{
-                expect: 1,
+                expect: 2,
                 name: "Test note component behaviour",
-                sequence: [{
-                    listener: "floe.tests.dashboard.entry.verifyRender",
-                    args: ["{note}"],
-                    priority: "last",
-                    event: "{noteTestEnvironment note}.events.onEntryTemplateRendered"
-                }]
+                sequence:
+                    [{
+                        listener: "floe.tests.dashboard.entry.verifyRender",
+                        args: ["{note}"],
+                        event: "{noteTestEnvironment note}.events.onEntryTemplateRendered"
+                    },
+                    // To work around the issue when two listeners are registered back to back, the second one doesn't get triggered.
+                    {
+                        func: "fluid.identity"
+                    },
+                    {
+                        listener: "{note}.retrievePersisted",
+                        event: "{note}.events.onPouchDocStored"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.entry.verifyEntryStored",
+                        event: "{note}.events.onPouchDocRetrieved",
+                        args: ["{note}", "{arguments}.0"]
+                    },
+                    {
+                        jQueryTrigger: "click",
+                        element: "{note}.dom.delete"
+                    },
+                    {
+                        jQueryBind: "click",
+                        element: "{note}.dom.delete",
+                        listener: "floe.tests.dashboard.entry.verifyDeleteInteraction",
+                        args: ["{note}"]
+                    }]
             }
             ]
         }]
     });
 
     floe.tests.dashboard.entry.verifyRender = function (entry) {
+        console.log("floe.tests.dashboard.entry.verifyRender");
         var expectedRenderedTemplate = fluid.stringTemplate(entry.options.resources.stringTemplate, entry.options.resources.templateValues);
-        console.log(entry.container.html().trim());
-        console.log(expectedRenderedTemplate);
         jqUnit.assertEquals("Initial rendered entry markup matches the expected stringTemplate", expectedRenderedTemplate, entry.container.html().trim());
+    };
 
+    floe.tests.dashboard.entry.verifyEntryStored = function (entry, retrievedEntry) {
+        console.log(retrievedEntry);
+        // Remove the _rev
+        var retrievedEntryMinusRev = fluid.censorKeys(retrievedEntry, ["_rev"]);
+        jqUnit.assertDeepEq("Entry component model and retrieved entry are identical, except for _rev", entry.model, retrievedEntryMinusRev);
+    };
+
+    floe.tests.dashboard.entry.verifyDeleteInteraction = function (entry) {
+        console.log("floe.tests.dashboard.entry.verifyDeleteInteraction");
+        // Click the delete button
+        // Verify entry deleted from DB
+        // Verify container removed
     };
 
     // jqUnit.test("Test note entry", function () {

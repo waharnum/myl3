@@ -50,7 +50,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         events: {
-            onEntryTemplateRendered: null
+            onEntryTemplateRendered: null,
+            onBindDelete: null,
+            onEntryReady: {
+                events: {
+                    onEntryTemplateRendered: "onEntryTemplateRendered",
+                    onBindDelete: "onBindDelete",
+                    onSetPouchId: "onSetPouchId"
+                }
+            }
         },
         invokers: {
             getEntryTemplate: {
@@ -81,6 +89,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             e.preventDefault();
             that.deletePersisted();
         });
+        that.events.onBindDelete.fire();
     };
 
     fluid.defaults("floe.dashboard.note", {
@@ -104,7 +113,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.note.displayed", {
-        gradeNames: ["floe.dashboard.note", "floe.dashboard.entry.displayed"],
+        gradeNames: ["floe.dashboard.note.persisted", "floe.dashboard.entry.displayed"],
         // A key/value of selectorName: model.path
         selectors: {
             created: ".flc-note-created",
@@ -148,7 +157,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.preferenceChange.displayed", {
-        gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.displayed"],
+        gradeNames: ["floe.dashboard.preferenceChange.persisted", "floe.dashboard.entry.displayed"],
         // A key/value of selectorName: model.path
         selectors: {
             created: ".flc-note-created",
