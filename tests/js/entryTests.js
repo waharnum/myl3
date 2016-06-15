@@ -24,6 +24,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    fluid.defaults("floe.tests.dashboard.entry.preferenceChange", {
+        gradeNames: ["floe.dashboard.preferenceChange.displayed"],
+        dbOptions: {
+            localName: "test"
+        }
+    });
+
     fluid.defaults("floe.tests.dashboard.entry.noteTestEnvironment", {
         gradeNames: ["fluid.test.testEnvironment"],
         components: {
@@ -38,15 +45,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 createOnEvent: "{noteTester}.events.onTestCaseStart"
             },
             noteTester: {
-                type: "floe.tests.dashboard.entry.noteTester"
+                type: "floe.tests.dashboard.entry.entryTester"
             }
         }
     });
 
-    fluid.defaults("floe.tests.dashboard.entry.noteTester", {
+    // Common tests
+    fluid.defaults("floe.tests.dashboard.entry.entryTester", {
         gradeNames: ["fluid.test.testCaseHolder"],
         modules: [ {
-            name: "Note-type entry component",
+            name: "Common displayed entry component tests",
             tests: [{
                 expect: 1,
                 name: "Test note component behaviour",
@@ -61,10 +69,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
-    floe.tests.dashboard.entry.verifyRender = function (note) {
-        var renderedText = note.locate("text");
-        console.log(renderedText.text);
-        jqUnit.assertEquals("Note model.text and rendered text are identical", note.model.text, renderedText.text());
+    floe.tests.dashboard.entry.verifyRender = function (entry) {
+        var expectedRenderedTemplate = fluid.stringTemplate(entry.options.resources.stringTemplate, entry.options.resources.templateValues);
+        console.log(entry.container.html().trim());
+        console.log(expectedRenderedTemplate);
+        jqUnit.assertEquals("Initial rendered entry markup matches the expected stringTemplate", expectedRenderedTemplate, entry.container.html().trim());
+
     };
 
     // jqUnit.test("Test note entry", function () {

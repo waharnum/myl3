@@ -51,6 +51,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         events: {
             onEntryTemplateRendered: null
+        },
+        invokers: {
+            getEntryTemplate: {
+                func: fluid.stringTemplate,
+                args: ["{that}.options.resources.stringTemplate", "{that}.options.resources.templateValues"]
+            }
         }
         // Must be set by implementing grade
         // resources: {
@@ -63,8 +69,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.container.remove();
     };
 
-    floe.dashboard.entry.displayed.renderEntryTemplate = function (that) { 
-        var entryTemplate = fluid.stringTemplate(that.options.resources.stringTemplate, that.options.resources.templateValues);
+    floe.dashboard.entry.displayed.renderEntryTemplate = function (that) {
+        var entryTemplate = that.getEntryTemplate();
         that.container.append(entryTemplate);
         that.events.onEntryTemplateRendered.fire();
     };
@@ -111,7 +117,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             text: "text"
         },
         resources: {
-            stringTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><textarea  class='flc-note-text' cols=50 rows=3></textarea>"
+            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><textarea class=\"flc-note-text\" cols=\"50\" rows=\"3\"></textarea>"
         }
     });
 
