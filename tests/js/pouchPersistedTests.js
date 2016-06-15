@@ -155,7 +155,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.testPouchPersistedDelete = function (that) {
-        jqUnit.assertUndefined(that.retrievePersisted());
+        jqUnit.assertUndefined("No persisted entry retrieved", that.retrievePersisted());
     };
 
     $(document).ready(function () {

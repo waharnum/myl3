@@ -34,7 +34,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             delete: ".flc-entry-delete"
         },
         listeners: {
-            "onPouchDocDeleted.removeNoteMarkup": {
+            "onPouchDocDeleted.removeEntryMarkup": {
                 funcName: "floe.dashboard.entry.displayed.removeEntryMarkup",
                 args: "{that}"
             },
@@ -58,7 +58,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     onBindDelete: "onBindDelete",
                     onSetPouchId: "onSetPouchId"
                 }
-            }
+            },
+            afterRemoveEntryMarkup: null
         },
         invokers: {
             getEntryTemplate: {
@@ -74,7 +75,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.dashboard.entry.displayed.removeEntryMarkup = function (that) {
+        console.log("floe.dashboard.entry.displayed.removeEntryMarkup")
         that.container.remove();
+        console.log(that);
+        that.events.afterRemoveEntryMarkup.fire();
     };
 
     floe.dashboard.entry.displayed.renderEntryTemplate = function (that) {

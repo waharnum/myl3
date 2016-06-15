@@ -56,7 +56,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "Common displayed entry component tests",
             tests: [{
-                expect: 2,
+                expect: 3,
                 name: "Test note component behaviour",
                 sequence:
                     [{
@@ -73,6 +73,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         event: "{note}.events.onPouchDocStored"
                     },
                     {
+                        func: "fluid.identity"
+                    },
+                    {
                         listener: "floe.tests.dashboard.entry.verifyEntryStored",
                         event: "{note}.events.onPouchDocRetrieved",
                         args: ["{note}", "{arguments}.0"]
@@ -82,11 +85,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         element: "{note}.dom.delete"
                     },
                     {
-                        jQueryBind: "click",
-                        element: "{note}.dom.delete",
-                        listener: "floe.tests.dashboard.entry.verifyDeleteInteraction",
+                        listener: "floe.tests.dashboard.entry.verifyDeleteEntry",
+                        event: "{note}.events.onPouchDocDeleted",
                         args: ["{note}"]
-                    }]
+                    },
+                    {
+                        func: "fluid.identity"
+                    },                    
+                    {
+                        listener: "floe.tests.dashboard.entry.verifyContainerRemoved",
+                        event: "{note}.events.afterRemoveEntryMarkup",
+                        args: ["{note}"]
+                    }
+                ]
             }
             ]
         }]
@@ -99,18 +110,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.tests.dashboard.entry.verifyEntryStored = function (entry, retrievedEntry) {
-        console.log(retrievedEntry);
         // Remove the _rev
         var retrievedEntryMinusRev = fluid.censorKeys(retrievedEntry, ["_rev"]);
         jqUnit.assertDeepEq("Entry component model and retrieved entry are identical, except for _rev", entry.model, retrievedEntryMinusRev);
     };
 
-    floe.tests.dashboard.entry.verifyDeleteInteraction = function (entry) {
-        console.log("floe.tests.dashboard.entry.verifyDeleteInteraction");
-        console.log(entry);
-        // Click the delete button
+    floe.tests.dashboard.entry.verifyDeleteEntry = function (entry) {
         // Verify entry deleted from DB
-        // Verify container removed
+        jqUnit.assertUndefined("No persisted entry retrieved", entry.retrievePersisted());
+    };
+
+    floe.tests.dashboard.entry.verifyContainerRemoved = function (entry) {
+        // Verify entry deleted from DB
+        console.log(entry);
     };
 
     // jqUnit.test("Test note entry", function () {
