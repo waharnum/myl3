@@ -9,10 +9,7 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, jqUnit */
-
-PouchDB.debug.enable('*');
-// PouchDB.debug.disable("*");
+/* global fluid, jqUnit, floe */
 
 (function ($, fluid) {
 
@@ -110,6 +107,7 @@ PouchDB.debug.enable('*');
 
     floe.tests.dashboard.entry.verifyDeleteInteraction = function (entry) {
         console.log("floe.tests.dashboard.entry.verifyDeleteInteraction");
+        console.log(entry);
         // Click the delete button
         // Verify entry deleted from DB
         // Verify container removed

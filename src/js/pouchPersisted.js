@@ -93,7 +93,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         db.get(docId).then(
             function (retrievedDoc) {
-                that.events.onPouchDocRetrieved.fire(retrievedDoc); 
+                that.events.onPouchDocRetrieved.fire(retrievedDoc);
         // Return undefined on a 404
             },
             function (err) {

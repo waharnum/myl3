@@ -43,7 +43,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         components: {
             pouchPersistedComponent: {
                 type: "floe.tests.dashboard.pouchPersistedComponent",
-                createOnEvent: "{pouchPersistedComponentTester}.events.onTestCaseStart"        
+                createOnEvent: "{pouchPersistedComponentTester}.events.onTestCaseStart"
             }
         }
     });

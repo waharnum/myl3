@@ -15,6 +15,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     "use strict";
 
+    // PouchDB debug logging
     // PouchDB.debug.enable('*');
     // PouchDB.debug.disable("*");
 
