@@ -50,6 +50,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         events: {
+            onRemoveEntryMarkup: null,
             onEntryTemplateRendered: null,
             onBindDelete: null,
             onEntryReady: {
@@ -59,7 +60,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     onSetPouchId: "onSetPouchId"
                 }
             },
-            afterRemoveEntryMarkup: null
+            onEntryRemoved: {
+                events: {
+                    onPouchDocDeleted: "onPouchDocDeleted",
+                    onRemoveEntryMarkup: "onRemoveEntryMarkup"
+                }
+            }
         },
         invokers: {
             getEntryTemplate: {
@@ -76,9 +82,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.entry.displayed.removeEntryMarkup = function (that) {
         console.log("floe.dashboard.entry.displayed.removeEntryMarkup")
-        that.container.remove();
-        console.log(that);
-        that.events.afterRemoveEntryMarkup.fire();
+        that.container.empty();
+        that.events.onRemoveEntryMarkup.fire();
     };
 
     floe.dashboard.entry.displayed.renderEntryTemplate = function (that) {

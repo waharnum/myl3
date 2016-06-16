@@ -56,7 +56,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "Common displayed entry component tests",
             tests: [{
-                expect: 3,
+                expect: 4,
                 name: "Test note component behaviour",
                 sequence:
                     [{
@@ -85,16 +85,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         element: "{note}.dom.delete"
                     },
                     {
-                        listener: "floe.tests.dashboard.entry.verifyDeleteEntry",
-                        event: "{note}.events.onPouchDocDeleted",
-                        args: ["{note}"]
-                    },
-                    {
-                        func: "fluid.identity"
-                    },                    
-                    {
-                        listener: "floe.tests.dashboard.entry.verifyContainerRemoved",
-                        event: "{note}.events.afterRemoveEntryMarkup",
+                        listener: "floe.tests.dashboard.entry.verifyEntryRemoved",
+                        event: "{note}.events.onEntryRemoved",
                         args: ["{note}"]
                     }
                 ]
@@ -115,14 +107,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertDeepEq("Entry component model and retrieved entry are identical, except for _rev", entry.model, retrievedEntryMinusRev);
     };
 
-    floe.tests.dashboard.entry.verifyDeleteEntry = function (entry) {
+    floe.tests.dashboard.entry.verifyEntryRemoved = function (entry) {
         // Verify entry deleted from DB
-        jqUnit.assertUndefined("No persisted entry retrieved", entry.retrievePersisted());
-    };
-
-    floe.tests.dashboard.entry.verifyContainerRemoved = function (entry) {
-        // Verify entry deleted from DB
-        console.log(entry);
+        jqUnit.assertUndefined("No persisted entry retrieved after delete click", entry.retrievePersisted());
+        // Verify container removed
+        jqUnit.assertTrue("All markup within the entry container has been removed", entry.container.children().length === 0);
     };
 
     // jqUnit.test("Test note entry", function () {
