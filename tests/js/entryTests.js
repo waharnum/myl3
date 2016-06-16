@@ -34,7 +34,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.tests.dashboard.entry.noteTestEnvironment", {
         gradeNames: ["fluid.test.testEnvironment"],
         components: {
-            note: {
+            entry: {
                 type: "floe.tests.dashboard.entry.note",
                 container: ".floec-entry-note",
                 options: {
@@ -42,10 +42,35 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         text: "Initial note text."
                     }
                 },
-                createOnEvent: "{noteTester}.events.onTestCaseStart"
+                createOnEvent: "{entryTester}.events.onTestCaseStart"
             },
-            noteTester: {
-                type: "floe.tests.dashboard.entry.entryTester"
+            entryTester: {
+                type: "floe.tests.dashboard.entry.entryTester",
+                options: {
+                    entryType: "preferenceChange"
+                }
+            }
+        }
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.preferenceChangeTestEnvironment", {
+        gradeNames: ["fluid.test.testEnvironment"],
+        components: {
+            entry: {
+                type: "floe.tests.dashboard.entry.preferenceChange",
+                container: ".floec-entry-preferenceChange",
+                options: {
+                    model: {
+
+                    }
+                },
+                createOnEvent: "{entryTester}.events.onTestCaseStart"
+            },
+            entryTester: {
+                type: "floe.tests.dashboard.entry.entryTester",
+                options: {
+                    entryType: "preferenceChange"
+                }
             }
         }
     });
@@ -57,37 +82,37 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             name: "Common displayed entry component tests",
             tests: [{
                 expect: 4,
-                name: "Test note component behaviour",
+                name: "{that}.options.entryType",
                 sequence:
                     [{
                         listener: "floe.tests.dashboard.entry.verifyRender",
-                        args: ["{note}"],
-                        event: "{noteTestEnvironment note}.events.onEntryTemplateRendered"
+                        args: ["{entry}"],
+                        event: "{testEnvironment entry}.events.onEntryTemplateRendered"
                     },
                     // To work around the issue when two listeners are registered back to back, the second one doesn't get triggered.
                     {
                         func: "fluid.identity"
                     },
                     {
-                        listener: "{note}.retrievePersisted",
-                        event: "{note}.events.onPouchDocStored"
+                        listener: "{entry}.retrievePersisted",
+                        event: "{entry}.events.onPouchDocStored"
                     },
                     {
                         func: "fluid.identity"
                     },
                     {
                         listener: "floe.tests.dashboard.entry.verifyEntryStored",
-                        event: "{note}.events.onPouchDocRetrieved",
-                        args: ["{note}", "{arguments}.0"]
+                        event: "{entry}.events.onPouchDocRetrieved",
+                        args: ["{entry}", "{arguments}.0"]
                     },
                     {
                         jQueryTrigger: "click",
-                        element: "{note}.dom.delete"
+                        element: "{entry}.dom.delete"
                     },
                     {
                         listener: "floe.tests.dashboard.entry.verifyEntryRemoved",
-                        event: "{note}.events.onEntryRemoved",
-                        args: ["{note}"]
+                        event: "{entry}.events.onEntryRemoved",
+                        args: ["{entry}"]
                     }
                 ]
             }
@@ -124,6 +149,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     $(document).ready(function () {
         floe.tests.dashboard.entry.noteTestEnvironment();
+        floe.tests.dashboard.entry.preferenceChangeTestEnvironment();
     });
 
 })(jQuery, fluid);

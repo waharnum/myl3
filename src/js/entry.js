@@ -181,7 +181,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceValue: "preferenceChange.preferenceValue",
         },
         resources: {
-            stringTemplate: "Created: <span class='flc-note-created'></span><br/>Last Modified: <span class='flc-note-lastModified'></span><br/><a href='#' class='flc-entry-delete'>Delete Note</a><br/><span class='flc-preferenceChange-type'></span> changed to <span class='flc-preferenceChange-value'></span><br/>This preference change helps me<br/>Yes <input type='radio' class='flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true' name='%radioName' value='true'></input> No <input type='radio' name='%radioName' value='false' class='flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false'></input>",
+            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>Yes <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true\" name=\"%radioName\" value=\"true\" type=\"radio\"> No <input type=\"radio\" name=\"%radioName\" value=\"false\" class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false\">",
             templateValues: {
                 radioName: {
                     expander: {
