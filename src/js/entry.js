@@ -219,7 +219,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.preferenceChange.displayed.setHelpfulValueFromModel = function (that) {
         var helpfulRadioButtons = that.locate("helpfulRadioButtons");
         fluid.each(helpfulRadioButtons, function (radioButton) {
-
             if(radioButton.value === that.model.preferenceChange.helpful) {
                 $(radioButton).prop("checked", true);
             }

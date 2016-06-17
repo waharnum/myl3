@@ -45,7 +45,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 createOnEvent: "{entryTester}.events.onTestCaseStart"
             },
             entryTester: {
-                type: "floe.tests.dashboard.entry.entryTester",
+                type: "floe.tests.dashboard.entry.entryTester.note",
                 options: {
                     entryType: "preferenceChange"
                 }
@@ -67,7 +67,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 createOnEvent: "{entryTester}.events.onTestCaseStart"
             },
             entryTester: {
-                type: "floe.tests.dashboard.entry.entryTester",
+                type: "floe.tests.dashboard.entry.entryTester.preferenceChange",
                 options: {
                     entryType: "preferenceChange"
                 }
@@ -82,7 +82,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             name: "Common displayed entry component tests",
             tests: [{
                 expect: 4,
-                name: "{that}.options.entryType",
+                name: "Common displayed entry tests",
                 sequence:
                     [{
                         listener: "floe.tests.dashboard.entry.verifyRender",
@@ -120,6 +120,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
+    fluid.defaults("floe.tests.dashboard.entry.entryTester.note", {
+        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
+        modules: [ {
+            name: "Note displayed entry component tests",
+        }]
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.entryTester.preferenceChange", {
+        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
+        modules: [ {
+            name: "Preference change displayed entry component tests",
+        }]
+    });
+
     floe.tests.dashboard.entry.verifyRender = function (entry) {
         var expectedRenderedTemplate = fluid.stringTemplate(entry.options.resources.stringTemplate, entry.options.resources.templateValues);
         jqUnit.assertEquals("Initial rendered entry markup matches the expected stringTemplate", expectedRenderedTemplate, entry.container.html().trim());
@@ -137,15 +151,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         // Verify container removed
         jqUnit.assertTrue("All markup within the entry container has been removed", entry.container.children().length === 0);
     };
-
-    // jqUnit.test("Test note entry", function () {
-    //     jqUnit.expect(0);
-    //     var note = floe.dashboard.note.displayed(".floec-entry-note", {
-    //         dbOptions: {
-    //             localName: "test"
-    //         }
-    //     });
-    // });
 
     $(document).ready(function () {
         floe.tests.dashboard.entry.noteTestEnvironment();
