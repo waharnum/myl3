@@ -172,7 +172,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             lastModified: ".flc-note-lastModified",
             preferenceType: ".flc-preferenceChange-type",
             preferenceValue: ".flc-preferenceChange-value",
-            helpfulRadioButtons: ".flc-preferenceChange-helpful-radio"
+            helpfulRadioButtons: ".flc-preferenceChange-helpful-radio",
+            helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkbox"
         },
         bindings: {
             created: "createdDatePretty",
@@ -180,13 +181,25 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceType: "preferenceChange.preferenceType",
             preferenceValue: "preferenceChange.preferenceValue",
         },
+        checkboxItems: {
+            mood: "Mood",
+            focus: "Focus",
+            navigation: "Navigation",
+            typing: "Typing"
+        },
         resources: {
-            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>Yes <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true\" name=\"%radioName\" value=\"true\" type=\"radio\"> No <input type=\"radio\" name=\"%radioName\" value=\"false\" class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false\">",
+            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>Yes <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true\" name=\"%radioName\" value=\"true\" type=\"radio\"> No <input type=\"radio\" name=\"%radioName\" value=\"false\" class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false\"><br>This preference change helps me with my:<br>%checkboxes",
             templateValues: {
                 radioName: {
                     expander: {
-                        func: "floe.dashboard.preferenceChange.displayed.getRadioButtonName",
+                        func: "floe.dashboard.preferenceChange.displayed.getPerComponentRadioButtonName",
                         args: "{that}"
+                    }
+                },
+                checkboxes: {
+                    expander: {
+                        func: "floe.dashboard.preferenceChange.displayed.getCheckboxTemplate",
+                        args: "{that}.options.checkboxItems"
                     }
                 }
             }
@@ -200,11 +213,33 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "onEntryTemplateRendered.bindHelpfulControls": {
                 func: "floe.dashboard.preferenceChange.displayed.bindHelpfulControls",
                 args: "{that}"
+            },
+            "onEntryTemplateRendered.sethelpsWithCheckboxesFromModel": {
+                func: "floe.dashboard.preferenceChange.displayed.sethelpsWithCheckboxesFromModel",
+                args: "{that}",
+                priority: "before:bindCheckboxControls"
+            },
+            "onEntryTemplateRendered.bindCheckboxControls": {
+                func: "floe.dashboard.preferenceChange.displayed.bindCheckboxControls",
+                args: "{that}"
             }
         }
     });
 
-    floe.dashboard.preferenceChange.displayed.getRadioButtonName = function (that) {
+    floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems) {
+        var checkboxesTemplateString = "";
+        fluid.each(checkboxItems, function(checkboxItem, checkboxKey) {
+            var checkboxTemplate = "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\"> %checkboxText";
+            var templateValues = {
+                checkboxValue: checkboxKey,
+                checkboxText: checkboxItem
+            };
+            checkboxesTemplateString = checkboxesTemplateString + fluid.stringTemplate(checkboxTemplate, templateValues);
+        });
+        return checkboxesTemplateString;
+    };
+
+    floe.dashboard.preferenceChange.displayed.getPerComponentRadioButtonName = function (that) {
         return "helpful-" + that.id;
     };
 
@@ -221,6 +256,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(helpfulRadioButtons, function (radioButton) {
             if(radioButton.value === that.model.preferenceChange.helpful) {
                 $(radioButton).prop("checked", true);
+            }
+        });
+    };
+
+    floe.dashboard.preferenceChange.displayed.bindCheckboxControls = function (that) {
+        var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
+
+        helpsWithCheckboxes.click(function () {
+            var clickedCheckbox = $(this);
+            var isChecked = clickedCheckbox.prop("checked");
+            that.applier.change("preferenceChange.helpsWith." + clickedCheckbox.val(), isChecked);
+        });
+    };
+
+    floe.dashboard.preferenceChange.displayed.sethelpsWithCheckboxesFromModel = function (that) {
+        var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
+        fluid.each(helpsWithCheckboxes, function (checkbox) {
+            var checkboxValue = checkbox.value;
+            var modelValue = that.model.preferenceChange.helpsWith[checkboxValue];
+            if(modelValue !== undefined) {
+                $(checkbox).prop("checked", modelValue);
             }
         });
     };
