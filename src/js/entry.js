@@ -274,7 +274,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
         fluid.each(helpsWithCheckboxes, function (checkbox) {
             var checkboxValue = checkbox.value;
-            var modelValue = that.model.preferenceChange.helpsWith[checkboxValue];
+            var modelValue = fluid.get(that.model, "preferenceChange.helpsWith." + checkboxValue);
             if(modelValue !== undefined) {
                 $(checkbox).prop("checked", modelValue);
             }
