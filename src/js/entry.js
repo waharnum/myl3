@@ -214,8 +214,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 func: "floe.dashboard.preferenceChange.displayed.bindHelpfulControls",
                 args: "{that}"
             },
-            "onEntryTemplateRendered.sethelpsWithCheckboxesFromModel": {
-                func: "floe.dashboard.preferenceChange.displayed.sethelpsWithCheckboxesFromModel",
+            "onEntryTemplateRendered.setHelpsWithCheckboxesFromModel": {
+                func: "floe.dashboard.preferenceChange.displayed.setHelpsWithCheckboxesFromModel",
                 args: "{that}",
                 priority: "before:bindCheckboxControls"
             },
@@ -270,7 +270,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    floe.dashboard.preferenceChange.displayed.sethelpsWithCheckboxesFromModel = function (that) {
+    floe.dashboard.preferenceChange.displayed.setHelpsWithCheckboxesFromModel = function (that) {
         var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
         fluid.each(helpsWithCheckboxes, function (checkbox) {
             var checkboxValue = checkbox.value;
