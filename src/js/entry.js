@@ -203,13 +203,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             navigation: "Navigation",
             typing: "Typing"
         },
+        radioButtonItems: {
+            true: "Yes",
+            false: "No"
+        },
         resources: {
-            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>Yes <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true\" name=\"%radioName\" value=\"true\" type=\"radio\"> No <input type=\"radio\" name=\"%radioName\" value=\"false\" class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false\"><br>This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes",
+            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>%radioButtons<br>This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes",
             templateValues: {
-                radioName: {
+                radioButtons: {
                     expander: {
-                        func: "floe.dashboard.preferenceChange.displayed.getPerComponentRadioButtonName",
-                        args: "{that}"
+                        func: "floe.dashboard.preferenceChange.displayed.getRadioButtonTemplate",
+                        args: ["{that}.options.radioButtonItems", "{that}"]
                     }
                 },
                 checkboxes: {
@@ -245,10 +249,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems) {
         var checkboxesTemplateString = "";
         fluid.each(checkboxItems, function(checkboxItem, checkboxKey) {
-            var checkboxTemplate = "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkboxId\"> <label for=\"%checkboxId\">%checkboxText</label>";
+            var checkboxTemplate = "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkboxId\"> <label for=\"%checkboxId\">%checkboxLabelText</label>";
             var templateValues = {
                 checkboxValue: checkboxKey,
-                checkboxText: checkboxItem,
+                checkboxLabelText: checkboxItem,
                 checkboxId: "checkbox-"+fluid.allocateGuid()
             };
             checkboxesTemplateString = checkboxesTemplateString + fluid.stringTemplate(checkboxTemplate, templateValues);
@@ -256,8 +260,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return checkboxesTemplateString;
     };
 
-    floe.dashboard.preferenceChange.displayed.getPerComponentRadioButtonName = function (that) {
-        return "helpful-" + that.id;
+    floe.dashboard.preferenceChange.displayed.getRadioButtonTemplate = function (radioButtonItems, that) {
+        var radioButtonTemplateString = "";
+        fluid.each(radioButtonItems, function (radioButtonItem, radioButtonKey) {
+            var radioButtonTemplate = "<label for=\"%radioButtonId\">%radioButtonLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%radioButtonValue\" id=\"%radioButtonId\" name=\"%radioButtonName\" value=\"%radioButtonValue\" type=\"radio\">";
+
+            var templateValues = {
+                radioButtonValue: radioButtonKey,
+                radioButtonLabelText: radioButtonItem,
+                radioButtonName: "helpful-" + that.id,
+                radioButtonId: "radioButton-"+fluid.allocateGuid()
+            };
+
+            radioButtonTemplateString = radioButtonTemplateString + fluid.stringTemplate(radioButtonTemplate, templateValues);
+
+        });
+
+        return radioButtonTemplateString;
     };
 
     floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {
