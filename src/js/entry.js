@@ -246,6 +246,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    // TODO: this and getRadioButtonTemplate are similar, and a base function
+    // may be extractable
     floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems) {
         var checkboxesTemplateString = "";
         fluid.each(checkboxItems, function(checkboxItem, checkboxKey) {
