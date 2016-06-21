@@ -250,12 +250,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // may be extractable
     floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems) {
         var checkboxesTemplateString = "";
-        fluid.each(checkboxItems, function(checkboxItem, checkboxKey) {
+        fluid.each(checkboxItems, function (checkboxItem, checkboxKey) {
             var checkboxTemplate = "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkboxId\"> <label for=\"%checkboxId\">%checkboxLabelText</label>";
             var templateValues = {
                 checkboxValue: checkboxKey,
                 checkboxLabelText: checkboxItem,
-                checkboxId: "checkbox-"+fluid.allocateGuid()
+                checkboxId: "checkbox-" + fluid.allocateGuid()
             };
             checkboxesTemplateString = checkboxesTemplateString + fluid.stringTemplate(checkboxTemplate, templateValues);
         });
@@ -271,7 +271,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 radioButtonValue: radioButtonKey,
                 radioButtonLabelText: radioButtonItem,
                 radioButtonName: "helpful-" + that.id,
-                radioButtonId: "radioButton-"+fluid.allocateGuid()
+                radioButtonId: "radioButton-" + fluid.allocateGuid()
             };
 
             radioButtonTemplateString = radioButtonTemplateString + fluid.stringTemplate(radioButtonTemplate, templateValues);
