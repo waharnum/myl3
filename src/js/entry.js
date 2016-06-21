@@ -147,15 +147,29 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 // What was it changed to
                 "preferenceValue": "",
                 "helpful": ""
-            }
+            },
+            "helpsWithValue": "helps me with"
         },
         modelListeners: {
             "preferenceChange.*": {
                 func: "{that}.storePersisted",
                 excludeSource: "init"
             }
+        },
+        modelRelay: {
+            target: "{that}.model.helpsWithValue",
+            singleTransform: {
+                input: "{that}.model.preferenceChange.helpful",
+                type: "fluid.transforms.free",
+                args: ["{that}.model.preferenceChange.helpful"],
+                func: "floe.dashboard.preferenceChange.getHelpfulValue"
+            }
         }
     });
+
+    floe.dashboard.preferenceChange.getHelpfulValue = function (helpful) {
+        return helpful === "true" ? "helps me with" : "does not help me with";
+    };
 
     fluid.defaults("floe.dashboard.preferenceChange.persisted", {
         gradeNames: ["floe.dashboard.preferenceChange", "floe.dashboard.entry.persisted"],
@@ -173,13 +187,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceType: ".flc-preferenceChange-type",
             preferenceValue: ".flc-preferenceChange-value",
             helpfulRadioButtons: ".flc-preferenceChange-helpful-radio",
-            helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkbox"
+            helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkbox",
+            helpsWithValue: ".flc-preferenceChange-helpsWith-value"
         },
         bindings: {
             created: "createdDatePretty",
             lastModified: "lastModifiedDatePretty",
             preferenceType: "preferenceChange.preferenceType",
             preferenceValue: "preferenceChange.preferenceValue",
+            helpsWithValue: "helpsWithValue"
         },
         checkboxItems: {
             mood: "Mood",
@@ -188,7 +204,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             typing: "Typing"
         },
         resources: {
-            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>Yes <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true\" name=\"%radioName\" value=\"true\" type=\"radio\"> No <input type=\"radio\" name=\"%radioName\" value=\"false\" class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false\"><br>This preference change helps me with my:<br>%checkboxes",
+            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>Yes <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-true\" name=\"%radioName\" value=\"true\" type=\"radio\"> No <input type=\"radio\" name=\"%radioName\" value=\"false\" class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-false\"><br>This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes",
             templateValues: {
                 radioName: {
                     expander: {
