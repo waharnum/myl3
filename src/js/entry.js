@@ -197,12 +197,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceValue: "preferenceChange.preferenceValue",
             helpsWithValue: "helpsWithValue"
         },
+        checkboxTemplate: "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkboxId\"> <label for=\"%checkboxId\">%checkboxLabelText</label>",
         checkboxItems: {
             mood: "Mood",
             focus: "Focus",
             navigation: "Navigation",
             typing: "Typing"
         },
+        radioButtonTemplate: "<label for=\"%radioButtonId\">%radioButtonLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%radioButtonValue\" id=\"%radioButtonId\" name=\"%radioButtonName\" value=\"%radioButtonValue\" type=\"radio\">",
         radioButtonItems: {
             true: "Yes",
             false: "No"
@@ -213,13 +215,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 radioButtons: {
                     expander: {
                         func: "floe.dashboard.preferenceChange.displayed.getRadioButtonTemplate",
-                        args: ["{that}.options.radioButtonItems", "{that}"]
+                        args: ["{that}.options.radioButtonItems", "{that}.options.radioButtonTemplate", "{that}"]
                     }
                 },
                 checkboxes: {
                     expander: {
                         func: "floe.dashboard.preferenceChange.displayed.getCheckboxTemplate",
-                        args: "{that}.options.checkboxItems"
+                        args: ["{that}.options.checkboxItems", "{that}.options.checkboxTemplate"]
                     }
                 }
             }
@@ -248,10 +250,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // TODO: this and getRadioButtonTemplate are similar, and a base function
     // may be extractable
-    floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems) {
+    floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems, checkboxTemplate) {
         var checkboxesTemplateString = "";
         fluid.each(checkboxItems, function (checkboxValue, checkboxKey) {
-            var checkboxTemplate = "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkboxId\"> <label for=\"%checkboxId\">%checkboxLabelText</label>";
             var templateValues = {
                 checkboxValue: checkboxKey,
                 checkboxLabelText: checkboxValue,
@@ -262,11 +263,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return checkboxesTemplateString;
     };
 
-    floe.dashboard.preferenceChange.displayed.getRadioButtonTemplate = function (radioButtonItems, that) {
+    floe.dashboard.preferenceChange.displayed.getRadioButtonTemplate = function (radioButtonItems, radioButtonTemplate, that) {
         var radioButtonTemplateString = "";
         fluid.each(radioButtonItems, function (radioButtonValue, radioButtonKey) {
-            var radioButtonTemplate = "<label for=\"%radioButtonId\">%radioButtonLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%radioButtonValue\" id=\"%radioButtonId\" name=\"%radioButtonName\" value=\"%radioButtonValue\" type=\"radio\">";
-
             var templateValues = {
                 radioButtonValue: radioButtonKey,
                 radioButtonLabelText: radioButtonValue,
@@ -311,8 +310,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.preferenceChange.displayed.setHelpsWithCheckboxesFromModel = function (that) {
         var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
         fluid.each(helpsWithCheckboxes, function (checkbox) {
-            var checkboxValue = checkbox.value;
-            var modelValue = fluid.get(that.model, "preferenceChange.helpsWith." + checkboxValue);
+            var modelValue = fluid.get(that.model, "preferenceChange.helpsWith." + checkbox.value);
             if(modelValue !== undefined) {
                 $(checkbox).prop("checked", modelValue);
             }
