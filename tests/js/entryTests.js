@@ -162,7 +162,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         preferenceChange: {
                             preferenceType: "fluid_prefs_textFont",
                             preferenceValue: "arial",
-                            helpful: "true",
+                            helpful: {
+                                yes: true
+                            },
                             helpsWith: {
                                 mood: true,
                                 navigation: true

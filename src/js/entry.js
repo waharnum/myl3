@@ -146,7 +146,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "preferenceType": "",
                 // What was it changed to
                 "preferenceValue": "",
-                "helpful": ""
+                // exclusive choices about whether or not it was helpful
+                "helpful": {},
+                // what it does / does not help with
+                "helpsWith": {}
             },
             "helpsWithValue": "helps me with"
         },
@@ -168,7 +171,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.dashboard.preferenceChange.getHelpfulValue = function (helpful) {
-        return helpful === "true" ? "helps me with" : "does not help me with";
+        return helpful.yes ? "helps me with" : "does not help me with";
     };
 
     fluid.defaults("floe.dashboard.preferenceChange.persisted", {
@@ -206,8 +209,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         radioButtonTemplate: "<label for=\"%buttonId\">%buttonLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%buttonValue\" id=\"%buttonId\" name=\"%buttonName\" value=\"%buttonValue\" type=\"radio\">",
         radioButtonItems: {
-            true: "Yes",
-            false: "No"
+            yes: "Yes",
+            no: "No"
         },
         resources: {
             stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>%radioButtons<br>This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes",
@@ -233,8 +236,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 priority: "before:bindHelpfulControls"
             },
             "onEntryTemplateRendered.bindHelpfulControls": {
-                func: "floe.dashboard.preferenceChange.displayed.bindHelpfulControls",
-                args: "{that}"
+                func: "floe.dashboard.preferenceChange.displayed.bindButtonControls",
+                args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful", true]
             },
             "onEntryTemplateRendered.setHelpsWithCheckboxesFromModel": {
                 func: "floe.dashboard.preferenceChange.displayed.setHelpsWithCheckboxesFromModel",
@@ -242,8 +245,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 priority: "before:bindCheckboxControls"
             },
             "onEntryTemplateRendered.bindCheckboxControls": {
-                func: "floe.dashboard.preferenceChange.displayed.bindCheckboxControls",
-                args: "{that}"
+                func: "floe.dashboard.preferenceChange.displayed.bindButtonControls",
+                args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith", false]
             }
         }
     });
@@ -264,30 +267,30 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return buttonTemplateString;
     };
 
-    floe.dashboard.preferenceChange.displayed.bindHelpfulControls = function (that) {
-        var helpfulRadioButtons = that.locate("helpfulRadioButtons");
-        helpfulRadioButtons.click(function () {
-            var clickedRadioButton = $(this);
-            that.applier.change("preferenceChange.helpful", clickedRadioButton.val());
+    floe.dashboard.preferenceChange.displayed.bindButtonControls = function (that, buttonSelector, modelPath, exclusiveControl) {
+        var controlButtons = that.locate(buttonSelector);
+        controlButtons.click(function () {
+            var clickedButton = $(this);
+            var isChecked = clickedButton.prop("checked");
+            var modelValues = fluid.get(that.model, modelPath);
+            var changeObject = fluid.transform(modelValues, function (value, key) {
+                if(key !== clickedButton.val()) {
+                    return exclusiveControl ? false : value;
+                } else {
+                    return isChecked;
+                }
+            });
+            that.applier.change(modelPath, changeObject);
         });
     };
 
     floe.dashboard.preferenceChange.displayed.setHelpfulValueFromModel = function (that) {
         var helpfulRadioButtons = that.locate("helpfulRadioButtons");
         fluid.each(helpfulRadioButtons, function (radioButton) {
-            if(radioButton.value === that.model.preferenceChange.helpful) {
-                $(radioButton).prop("checked", true);
+            var modelValue = fluid.get(that.model, "preferenceChange.helpful." + radioButton.value);
+            if(modelValue !== undefined) {
+                $(radioButton).prop("checked", modelValue);
             }
-        });
-    };
-
-    floe.dashboard.preferenceChange.displayed.bindCheckboxControls = function (that) {
-        var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
-
-        helpsWithCheckboxes.click(function () {
-            var clickedCheckbox = $(this);
-            var isChecked = clickedCheckbox.prop("checked");
-            that.applier.change("preferenceChange.helpsWith." + clickedCheckbox.val(), isChecked);
         });
     };
 
