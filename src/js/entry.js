@@ -147,9 +147,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 // What was it changed to
                 "preferenceValue": "",
                 // exclusive choices about whether or not it was helpful
-                "helpful": {},
+                "helpful": {
+                    "yes": false,
+                    "no": false
+                },
                 // what it does / does not help with
-                "helpsWith": {}
+                "helpsWith": {
+                    "mood": false,
+                    "focus": false,
+                    "navigation": false,
+                    "tying": false
+                }
             },
             "helpsWithValue": "helps me with"
         },
@@ -268,10 +276,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.preferenceChange.displayed.bindButtonControls = function (that, buttonSelector, modelPath, exclusiveControl) {
+        console.log("bindButtonControls");
         var controlButtons = that.locate(buttonSelector);
         controlButtons.click(function () {
             var clickedButton = $(this);
             var isChecked = clickedButton.prop("checked");
+            console.log(that);
             var modelValues = fluid.get(that.model, modelPath);
             var changeObject = fluid.transform(modelValues, function (value, key) {
                 if(key !== clickedButton.val()) {
