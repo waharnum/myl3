@@ -198,7 +198,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceType: ".flc-preferenceChange-type",
             preferenceValue: ".flc-preferenceChange-value",
             helpfulRadioButtons: ".flc-preferenceChange-helpful-radio",
+            helpfulYes: ".flc-preferenceChange-helpful-yes",
+            helpfulNo: ".flc-preferenceChange-helpful-no",
             helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkbox",
+            helpsWithMood: ".flc.preferenceChange-helpsWith-mood",
+            helpsWithFocus: ".flc.preferenceChange-helpsWith-focus",
+            helpsWithNavigation: ".flc.preferenceChange-helpsWith-navigation",
+            helpsWithTyping: ".flc.preferenceChange-helpsWith-typing",
             helpsWithValue: ".flc-preferenceChange-helpsWith-value"
         },
         bindings: {
@@ -208,7 +214,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceValue: "preferenceChange.preferenceValue",
             helpsWithValue: "helpsWithValue"
         },
-        checkboxTemplate: "<input type=\"checkbox\" value=\"%checkableValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkableId\"> <label for=\"%checkableId\">%checkableLabelText</label>",
+        checkboxTemplate: "<input type=\"checkbox\" value=\"%checkableValue\" class=\"flc-preferenceChange-helpsWith-checkbox flc-preferenceChange-helpsWith-%checkableValue\" id=\"%checkableId\"> <label for=\"%checkableId\">%checkableLabelText</label>",
         checkboxItems: {
             mood: "Mood",
             focus: "Focus",
@@ -237,10 +243,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 }
             }
         },
+        events: {
+            onCheckablesSetFromModel: {
+                events: {
+                    onRadioButtonsSetFromModel: "onRadioButtonsSetFromModel",
+                    onCheckboxesSetFromModel: "onCheckboxesSetFromModel"
+                }
+            },
+            onRadioButtonsSetFromModel: null,
+            onCheckboxesSetFromModel: null
+        },
         listeners: {
             "onEntryTemplateRendered.setHelpfulRadioButtonsFromModel": {
                 func: "floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel",
-                args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful"],
+                args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful", "{that}.events.onRadioButtonsSetFromModel"],
                 priority: "before:bindHelpfulControls"
             },
             "onEntryTemplateRendered.bindHelpfulRadioButtonControls": {
@@ -249,7 +265,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             "onEntryTemplateRendered.setHelpsWithCheckboxesFromModel": {
                 func: "floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel",
-                args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith"],
+                args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith", "{that}.events.onCheckboxesSetFromModel"],
                 priority: "before:bindCheckboxControls"
             },
             "onEntryTemplateRendered.bindCheckboxControls": {
@@ -275,13 +291,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return checkableTemplateString;
     };
 
+    floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel = function (that, checkableSelector, modelPath, completionEvent) {
+        var helpfulcheckables = that.locate(checkableSelector);
+        fluid.each(helpfulcheckables, function (checkable) {
+            var modelValue = fluid.get(that.model, modelPath + "." + checkable.value);
+            if(modelValue !== undefined) {
+                $(checkable).prop("checked", modelValue);
+            }
+        });
+        completionEvent.fire();
+    };
+
     floe.dashboard.preferenceChange.displayed.bindCheckableControls = function (that, checkableSelector, modelPath, exclusiveControl) {
         console.log("bindButtonControls");
         var controlButtons = that.locate(checkableSelector);
-        controlButtons.click(function () {
+        controlButtons.change(function () {
             var clickedButton = $(this);
             var isChecked = clickedButton.prop("checked");
-            console.log(that);
             var modelValues = fluid.get(that.model, modelPath);
             var changeObject = fluid.transform(modelValues, function (value, key) {
                 if(key !== clickedButton.val()) {
@@ -291,16 +317,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 }
             });
             that.applier.change(modelPath, changeObject);
-        });
-    };
-
-    floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel = function (that, checkableSelector, modelPath) {
-        var helpfulcheckables = that.locate(checkableSelector);
-        fluid.each(helpfulcheckables, function (checkable) {
-            var modelValue = fluid.get(that.model, modelPath + "." + checkable.value);
-            if(modelValue !== undefined) {
-                $(checkable).prop("checked", modelValue);
-            }
         });
     };
 

@@ -185,29 +185,49 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "preferenceChanges entry component tests",
             tests: [{
-                expect: 8,
+                expect: 14,
                 name: "Basic verification",
                 sequence:
                     [{
-                        listener: "floe.tests.dashboard.entry.verifyButtonCreation",
+                        listener: "floe.tests.dashboard.entry.verifyInitialRender",
                         args: ["{prefChange}"],
                         event: "{testEnvironment prefChange}.events.onEntryTemplateRendered"
                     },
-                    // To work around the issue when two listeners are registered back to back, the second one doesn't get triggered.
                     {
                         func: "fluid.identity"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.entry.verifyCheckables",
+                        args: ["{prefChange}"],
+                        event: "{prefChange}.events.onCheckablesSetFromModel"
                     }
+                    // Check "No" radio button
+                    // {
+                    //     jQueryTrigger: "click",
+                    //     element: "{prefChange}.dom.helpfulNo"
+                    // },
+                    // {
+                    //     jQueryBind: "change",
+                    //     element: "{prefChange}.dom.helpfulNo",
+                    //     listener: "floe.tests.dashboard.entry.verifyControlBinding",
+                    //     args: ["{prefChange}"]
+                    // }
                 ]
             }
             ]
         }]
     });
 
-    floe.tests.dashboard.entry.verifyButtonCreation = function (prefChange) {
+    floe.tests.dashboard.entry.verifyInitialRender = function (prefChange) {
         floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpfulRadioButtons", "radioButtonItems", prefChange);
 
         floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpsWithCheckboxes", "checkboxItems", prefChange);
+    };
 
+    floe.tests.dashboard.entry.verifyCheckables = function (prefChange) {
+        floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel("helpfulRadioButtons", "preferenceChange.helpful", prefChange);
+
+        floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel("helpsWithCheckboxes", "preferenceChange.helpsWith", prefChange);
     };
 
     floe.tests.dashboard.entry.verifyDynamicButtonCreation = function (dynamicButtonSelector, dynamicButtonConfigBlockPath, prefChange) {
@@ -222,6 +242,26 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             });
             jqUnit.assertEquals("Button option item with key " + buttonKey + " has a corresponding button", buttonKey, correspondingRenderedButton.val());
         });
+    };
+
+
+    floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel = function (dynamicButtonSelector, modelPath, prefChange) {
+        var renderedButtons = prefChange.locate(dynamicButtonSelector);
+        var modelValues = fluid.get(prefChange.model, modelPath);
+        // Each model item with the value 'true' should be checked;
+        // otherwise it should be false
+        fluid.each(modelValues, function (modelValue, modelKey) {
+            var correspondingRenderedButton = renderedButtons.filter(function (idx, elem){
+                return (elem.value === modelKey);
+            });
+            console.log(correspondingRenderedButton.prop("checked"));
+            jqUnit.assertEquals("Model value item with key " + modelKey + " has a corresponding button", modelValue, correspondingRenderedButton.prop("checked"));
+        });
+
+    };
+
+    floe.tests.dashboard.entry.verifyControlBinding = function (that) {
+        console.log(that);
     };
 
     $(document).ready(function () {
