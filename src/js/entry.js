@@ -250,11 +250,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // may be extractable
     floe.dashboard.preferenceChange.displayed.getCheckboxTemplate = function (checkboxItems) {
         var checkboxesTemplateString = "";
-        fluid.each(checkboxItems, function (checkboxItem, checkboxKey) {
+        fluid.each(checkboxItems, function (checkboxValue, checkboxKey) {
             var checkboxTemplate = "<input type=\"checkbox\" value=\"%checkboxValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkboxId\"> <label for=\"%checkboxId\">%checkboxLabelText</label>";
             var templateValues = {
                 checkboxValue: checkboxKey,
-                checkboxLabelText: checkboxItem,
+                checkboxLabelText: checkboxValue,
                 checkboxId: "checkbox-" + fluid.allocateGuid()
             };
             checkboxesTemplateString = checkboxesTemplateString + fluid.stringTemplate(checkboxTemplate, templateValues);
@@ -264,12 +264,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.preferenceChange.displayed.getRadioButtonTemplate = function (radioButtonItems, that) {
         var radioButtonTemplateString = "";
-        fluid.each(radioButtonItems, function (radioButtonItem, radioButtonKey) {
+        fluid.each(radioButtonItems, function (radioButtonValue, radioButtonKey) {
             var radioButtonTemplate = "<label for=\"%radioButtonId\">%radioButtonLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%radioButtonValue\" id=\"%radioButtonId\" name=\"%radioButtonName\" value=\"%radioButtonValue\" type=\"radio\">";
 
             var templateValues = {
                 radioButtonValue: radioButtonKey,
-                radioButtonLabelText: radioButtonItem,
+                radioButtonLabelText: radioButtonValue,
                 radioButtonName: "helpful-" + that.id,
                 radioButtonId: "radioButton-" + fluid.allocateGuid()
             };

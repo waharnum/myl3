@@ -31,48 +31,60 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    fluid.defaults("floe.tests.dashboard.entry.noteTestEnvironment", {
+    fluid.defaults("floe.tests.dashboard.entry.noteTestEnvironmentCommon", {
         gradeNames: ["fluid.test.testEnvironment"],
         components: {
             entry: {
                 type: "floe.tests.dashboard.entry.note",
-                container: ".floec-entry-note",
+                container: ".floec-entry-note-common",
                 options: {
                     model: {
-                        text: "Initial note text."
                     }
                 },
                 createOnEvent: "{entryTester}.events.onTestCaseStart"
             },
             entryTester: {
-                type: "floe.tests.dashboard.entry.entryTester.note",
-                options: {
-                    entryType: "preferenceChange"
-                }
+                type: "floe.tests.dashboard.entry.entryTester.noteCommon",
             }
         }
     });
 
-    fluid.defaults("floe.tests.dashboard.entry.preferenceChangeTestEnvironment", {
+    fluid.defaults("floe.tests.dashboard.entry.preferenceChangeTestEnvironmentCommon", {
         gradeNames: ["fluid.test.testEnvironment"],
         components: {
             entry: {
                 type: "floe.tests.dashboard.entry.preferenceChange",
-                container: ".floec-entry-preferenceChange",
+                container: ".floec-entry-preferenceChange-common",
                 options: {
                     model: {
-
                     }
                 },
                 createOnEvent: "{entryTester}.events.onTestCaseStart"
             },
             entryTester: {
-                type: "floe.tests.dashboard.entry.entryTester.preferenceChange",
-                options: {
-                    entryType: "preferenceChange"
-                }
+                type: "floe.tests.dashboard.entry.entryTester.preferenceChangeCommon",
             }
         }
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.entryTester.noteCommon", {
+        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
+        modules: [ {
+            name: "Note displayed entry component tests",
+            tests: [{
+                name: "Common displayed entry tests (note)"
+            }]
+        }]
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.entryTester.preferenceChangeCommon", {
+        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
+        modules: [ {
+            name: "Preference change displayed entry component tests",
+            tests: [{
+                name: "Common displayed entry tests (preferenceChange)"
+            }]
+        }]
     });
 
     // Common tests
@@ -120,20 +132,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
-    fluid.defaults("floe.tests.dashboard.entry.entryTester.note", {
-        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
-        modules: [ {
-            name: "Note displayed entry component tests",
-        }]
-    });
-
-    fluid.defaults("floe.tests.dashboard.entry.entryTester.preferenceChange", {
-        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
-        modules: [ {
-            name: "Preference change displayed entry component tests",
-        }]
-    });
-
     floe.tests.dashboard.entry.verifyRender = function (entry) {
         var expectedRenderedTemplate = fluid.stringTemplate(entry.options.resources.stringTemplate, entry.options.resources.templateValues);
         jqUnit.assertEquals("Initial rendered entry markup matches the expected stringTemplate", expectedRenderedTemplate, entry.container.html().trim());
@@ -152,8 +150,81 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertTrue("All markup within the entry container has been removed", entry.container.children().length === 0);
     };
 
+
+    fluid.defaults("floe.tests.dashboard.entry.preferenceChangeTestEnvironment", {
+        gradeNames: ["fluid.test.testEnvironment"],
+        components: {
+            prefChange: {
+                type: "floe.tests.dashboard.entry.preferenceChange",
+                container: ".floec-entry-preferenceChange",
+                options: {
+                    model: {
+                        preferenceChange: {
+                            preferenceType: "fluid_prefs_textFont",
+                            preferenceValue: "arial",
+                            helpful: "true",
+                            helpsWith: {
+                                mood: true,
+                                navigation: true
+                            }
+                        }
+                    }
+                },
+                createOnEvent: "{preferencesChangeTester}.events.onTestCaseStart"
+            },
+            preferencesChangeTester: {
+                type: "floe.tests.dashboard.entry.preferencesChangeTester",
+            }
+        }
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.preferencesChangeTester", {
+        gradeNames: ["fluid.test.testCaseHolder"],
+        modules: [ {
+            name: "preferenceChanges entry component tests",
+            tests: [{
+                expect: 8,
+                name: "Basic verification",
+                sequence:
+                    [{
+                        listener: "floe.tests.dashboard.entry.verifyRadioButtonCreation",
+                        args: ["{prefChange}"],
+                        event: "{testEnvironment prefChange}.events.onEntryTemplateRendered"
+                    },
+                    // To work around the issue when two listeners are registered back to back, the second one doesn't get triggered.
+                    {
+                        func: "fluid.identity"
+                    }
+                ]
+            }
+            ]
+        }]
+    });
+
+    floe.tests.dashboard.entry.verifyRadioButtonCreation = function (prefChange) {
+        floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpfulRadioButtons", "radioButtonItems", prefChange);
+
+        floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpsWithCheckboxes", "checkboxItems", prefChange);
+
+    };
+
+    floe.tests.dashboard.entry.verifyDynamicButtonCreation = function (dynamicButtonSelector, dynamicButtonConfigBlockPath, prefChange) {
+        var dynamicButtonItems = prefChange.options[dynamicButtonConfigBlockPath];
+        var renderedButtons = prefChange.locate(dynamicButtonSelector);
+
+        jqUnit.assertEquals("Length of " + dynamicButtonConfigBlockPath + " config block and rendered # of buttons found by selector " + dynamicButtonSelector + " are equal", fluid.hashToArray(dynamicButtonItems, "key").length, renderedButtons.length);
+
+        fluid.each(dynamicButtonItems, function (buttonValue, buttonKey) {
+            var correspondingRenderedButton = renderedButtons.filter(function (idx, elem){
+                return (elem.value === buttonKey);
+            });
+            jqUnit.assertEquals("Button option item with key " + buttonKey + " has a corresponding button", buttonKey, correspondingRenderedButton.val());
+        });
+    };
+
     $(document).ready(function () {
-        floe.tests.dashboard.entry.noteTestEnvironment();
+        floe.tests.dashboard.entry.noteTestEnvironmentCommon();
+        floe.tests.dashboard.entry.preferenceChangeTestEnvironmentCommon();
         floe.tests.dashboard.entry.preferenceChangeTestEnvironment();
     });
 
