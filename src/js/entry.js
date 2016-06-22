@@ -208,14 +208,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceValue: "preferenceChange.preferenceValue",
             helpsWithValue: "helpsWithValue"
         },
-        checkboxTemplate: "<input type=\"checkbox\" value=\"%buttonValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%buttonId\"> <label for=\"%buttonId\">%buttonLabelText</label>",
+        checkboxTemplate: "<input type=\"checkbox\" value=\"%checkableValue\" class=\"flc-preferenceChange-helpsWith-checkbox\" id=\"%checkableId\"> <label for=\"%checkableId\">%checkableLabelText</label>",
         checkboxItems: {
             mood: "Mood",
             focus: "Focus",
             navigation: "Navigation",
             typing: "Typing"
         },
-        radioButtonTemplate: "<label for=\"%buttonId\">%buttonLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%buttonValue\" id=\"%buttonId\" name=\"%buttonName\" value=\"%buttonValue\" type=\"radio\">",
+        radioButtonTemplate: "<label for=\"%checkableId\">%checkableLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%checkableValue\" id=\"%checkableId\" name=\"%checkableName\" value=\"%checkableValue\" type=\"radio\">",
         radioButtonItems: {
             yes: "Yes",
             no: "No"
@@ -225,59 +225,59 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             templateValues: {
                 radioButtons: {
                     expander: {
-                        func: "floe.dashboard.preferenceChange.displayed.getDynamicButtonTemplate",
+                        func: "floe.dashboard.preferenceChange.displayed.getDynamicCheckableTemplate",
                         args: ["{that}.options.radioButtonItems", "{that}.options.radioButtonTemplate", "radioButton", "helpful", "{that}"]
                     }
                 },
                 checkboxes: {
                     expander: {
-                        func: "floe.dashboard.preferenceChange.displayed.getDynamicButtonTemplate",
+                        func: "floe.dashboard.preferenceChange.displayed.getDynamicCheckableTemplate",
                         args: ["{that}.options.checkboxItems", "{that}.options.checkboxTemplate", "checkbox", "helpsWith", "{that}"]
                     }
                 }
             }
         },
         listeners: {
-            "onEntryTemplateRendered.setHelpfulValueFromModel": {
-                func: "floe.dashboard.preferenceChange.displayed.setButtonValuesFromModel",
+            "onEntryTemplateRendered.setHelpfulRadioButtonsFromModel": {
+                func: "floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel",
                 args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful"],
                 priority: "before:bindHelpfulControls"
             },
-            "onEntryTemplateRendered.bindHelpfulControls": {
-                func: "floe.dashboard.preferenceChange.displayed.bindButtonControls",
+            "onEntryTemplateRendered.bindHelpfulRadioButtonControls": {
+                func: "floe.dashboard.preferenceChange.displayed.bindCheckableControls",
                 args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful", true]
             },
             "onEntryTemplateRendered.setHelpsWithCheckboxesFromModel": {
-                func: "floe.dashboard.preferenceChange.displayed.setButtonValuesFromModel",
+                func: "floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel",
                 args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith"],
                 priority: "before:bindCheckboxControls"
             },
             "onEntryTemplateRendered.bindCheckboxControls": {
-                func: "floe.dashboard.preferenceChange.displayed.bindButtonControls",
+                func: "floe.dashboard.preferenceChange.displayed.bindCheckableControls",
                 args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith", false]
             }
         }
     });
 
-    floe.dashboard.preferenceChange.displayed.getDynamicButtonTemplate = function (buttonItems, buttonTemplate, idPrefix, namePrefix, that) {
-        var buttonTemplateString = "";
-        fluid.each(buttonItems, function (buttonValue, buttonKey) {
+    floe.dashboard.preferenceChange.displayed.getDynamicCheckableTemplate = function (checkableItems, checkableTemplate, idPrefix, namePrefix, that) {
+        var checkableTemplateString = "";
+        fluid.each(checkableItems, function (checkableValue, checkableKey) {
             var templateValues = {
-                buttonValue: buttonKey,
-                buttonLabelText: buttonValue,
-                buttonName: namePrefix + "-" + that.id,
-                buttonId: idPrefix + "-" + fluid.allocateGuid()
+                checkableValue: checkableKey,
+                checkableLabelText: checkableValue,
+                checkableName: namePrefix + "-" + that.id,
+                checkableId: idPrefix + "-" + fluid.allocateGuid()
             };
 
-            buttonTemplateString = buttonTemplateString + fluid.stringTemplate(buttonTemplate, templateValues);
+            checkableTemplateString = checkableTemplateString + fluid.stringTemplate(checkableTemplate, templateValues);
 
         });
-        return buttonTemplateString;
+        return checkableTemplateString;
     };
 
-    floe.dashboard.preferenceChange.displayed.bindButtonControls = function (that, buttonSelector, modelPath, exclusiveControl) {
+    floe.dashboard.preferenceChange.displayed.bindCheckableControls = function (that, checkableSelector, modelPath, exclusiveControl) {
         console.log("bindButtonControls");
-        var controlButtons = that.locate(buttonSelector);
+        var controlButtons = that.locate(checkableSelector);
         controlButtons.click(function () {
             var clickedButton = $(this);
             var isChecked = clickedButton.prop("checked");
@@ -294,12 +294,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    floe.dashboard.preferenceChange.displayed.setButtonValuesFromModel = function (that, buttonSelector, modelPath) {
-        var helpfulbuttons = that.locate(buttonSelector);
-        fluid.each(helpfulbuttons, function (button) {
-            var modelValue = fluid.get(that.model, modelPath + "." + button.value);
+    floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel = function (that, checkableSelector, modelPath) {
+        var helpfulcheckables = that.locate(checkableSelector);
+        fluid.each(helpfulcheckables, function (checkable) {
+            var modelValue = fluid.get(that.model, modelPath + "." + checkable.value);
             if(modelValue !== undefined) {
-                $(button).prop("checked", modelValue);
+                $(checkable).prop("checked", modelValue);
             }
         });
     };
