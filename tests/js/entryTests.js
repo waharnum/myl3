@@ -187,7 +187,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 name: "Basic verification",
                 sequence:
                     [{
-                        listener: "floe.tests.dashboard.entry.verifyRadioButtonCreation",
+                        listener: "floe.tests.dashboard.entry.verifyButtonCreation",
                         args: ["{prefChange}"],
                         event: "{testEnvironment prefChange}.events.onEntryTemplateRendered"
                     },
@@ -201,7 +201,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
-    floe.tests.dashboard.entry.verifyRadioButtonCreation = function (prefChange) {
+    floe.tests.dashboard.entry.verifyButtonCreation = function (prefChange) {
         floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpfulRadioButtons", "radioButtonItems", prefChange);
 
         floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpsWithCheckboxes", "checkboxItems", prefChange);
