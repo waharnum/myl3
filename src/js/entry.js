@@ -156,7 +156,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     "mood": false,
                     "focus": false,
                     "navigation": false,
-                    "tying": false
+                    "typing": false
                 }
             },
             "helpsWithValue": "helps me with"
@@ -239,8 +239,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         listeners: {
             "onEntryTemplateRendered.setHelpfulValueFromModel": {
-                func: "floe.dashboard.preferenceChange.displayed.setHelpfulValueFromModel",
-                args: "{that}",
+                func: "floe.dashboard.preferenceChange.displayed.setButtonValuesFromModel",
+                args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful"],
                 priority: "before:bindHelpfulControls"
             },
             "onEntryTemplateRendered.bindHelpfulControls": {
@@ -248,8 +248,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful", true]
             },
             "onEntryTemplateRendered.setHelpsWithCheckboxesFromModel": {
-                func: "floe.dashboard.preferenceChange.displayed.setHelpsWithCheckboxesFromModel",
-                args: "{that}",
+                func: "floe.dashboard.preferenceChange.displayed.setButtonValuesFromModel",
+                args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith"],
                 priority: "before:bindCheckboxControls"
             },
             "onEntryTemplateRendered.bindCheckboxControls": {
@@ -294,22 +294,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    floe.dashboard.preferenceChange.displayed.setHelpfulValueFromModel = function (that) {
-        var helpfulRadioButtons = that.locate("helpfulRadioButtons");
-        fluid.each(helpfulRadioButtons, function (radioButton) {
-            var modelValue = fluid.get(that.model, "preferenceChange.helpful." + radioButton.value);
+    floe.dashboard.preferenceChange.displayed.setButtonValuesFromModel = function (that, buttonSelector, modelPath) {
+        var helpfulbuttons = that.locate(buttonSelector);
+        fluid.each(helpfulbuttons, function (button) {
+            var modelValue = fluid.get(that.model, modelPath + "." + button.value);
             if(modelValue !== undefined) {
-                $(radioButton).prop("checked", modelValue);
-            }
-        });
-    };
-
-    floe.dashboard.preferenceChange.displayed.setHelpsWithCheckboxesFromModel = function (that) {
-        var helpsWithCheckboxes = that.locate("helpsWithCheckboxes");
-        fluid.each(helpsWithCheckboxes, function (checkbox) {
-            var modelValue = fluid.get(that.model, "preferenceChange.helpsWith." + checkbox.value);
-            if(modelValue !== undefined) {
-                $(checkbox).prop("checked", modelValue);
+                $(button).prop("checked", modelValue);
             }
         });
     };
