@@ -35,9 +35,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "name": "Alan's Journal"
         },
         listeners: {
-            "onCreate.bindSubmitEntryClick": {
+            "onCreate.bindFeelSubmitEntryClick": {
                 func: "floe.dashboard.page.bindSubmitEntryClick",
-                args: "{that}"
+                args: ["{that}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "How do I feel right now?"]
+            },
+            "onCreate.bindAchieveSubmitEntryClick": {
+                func: "floe.dashboard.page.bindSubmitEntryClick",
+                args: ["{that}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "What do I want to achieve today?"]
             },
             "onCreate.bindBackLink": {
                 func: "floe.dashboard.page.bindBackLink",

@@ -81,7 +81,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.dashboard.entry.displayed.removeEntryMarkup = function (that) {
-        that.container.empty();
+        that.container.remove();
         that.events.onRemoveEntryMarkup.fire();
     };
 
@@ -126,15 +126,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         selectors: {
             created: ".flc-note-created",
             lastModified: ".flc-note-lastModified",
-            text: ".flc-note-text"
+            text: ".flc-note-text",
+            prompt: ".flc-note-prompt"
         },
         bindings: {
             created: "createdDatePretty",
             lastModified: "lastModifiedDatePretty",
-            text: "text"
+            text: "text",
+            prompt: "prompt"
         },
         resources: {
-            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><textarea class=\"flc-note-text\" cols=\"50\" rows=\"3\"></textarea>"
+            stringTemplate: "At <span class=\"flc-note-created\"></span> in response to \"<span class=\"flc-note-prompt\"></span>\", I wrote \"<span class=\"flc-note-text\"></span>\" <a href=\"#\" class=\"flc-entry-delete\">Delete</a>"
         }
     });
 

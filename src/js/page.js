@@ -136,13 +136,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 
-    floe.dashboard.page.bindSubmitEntryClick = function (that) {
+    floe.dashboard.page.bindSubmitEntryClick = function (that, promptId, buttonId, textAreaId, prompt) {
         var page = that;
-        $("#floec-submitEntry").click(function (e) {
-            var entryText = $("#floec-newEntry").val();
+        $(buttonId).click(function (e) {
+            var entryText = $(textAreaId).val();
             floe.dashboard.note.persisted({
                 model: {
-                    "text": entryText
+                    "text": entryText,
+                    "prompt": prompt
                 },
                 listeners: {
                     "onNoteStored.AddNote": {
@@ -155,7 +156,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     remoteName: page.options.dbOptions.remoteName
                 }
             });
-
+            $(promptId).remove();
+            $(buttonId).remove();
+            $(textAreaId).remove();
             e.preventDefault();
         });
     };
