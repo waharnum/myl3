@@ -200,18 +200,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         listener: "floe.tests.dashboard.entry.verifyCheckables",
                         args: ["{prefChange}"],
                         event: "{prefChange}.events.onCheckablesSetFromModel"
-                    }
+                    },
                     // Check "No" radio button
-                    // {
-                    //     jQueryTrigger: "click",
-                    //     element: "{prefChange}.dom.helpfulNo"
-                    // },
-                    // {
-                    //     jQueryBind: "change",
-                    //     element: "{prefChange}.dom.helpfulNo",
-                    //     listener: "floe.tests.dashboard.entry.verifyControlBinding",
-                    //     args: ["{prefChange}"]
-                    // }
+                    {
+                        jQueryTrigger: "click",
+                        element: "{prefChange}.dom.helpfulNo"
+                    },
+                    {
+                        path: "preferenceChange.helpful.no",
+                        changeEvent: "{prefChange}.applier.modelChanged",
+                        listener: "floe.tests.dashboard.entry.verifyControlBinding",
+                        args: ["{prefChange}"]
+                    }
                 ]
             }
             ]
@@ -254,14 +254,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             var correspondingRenderedButton = renderedButtons.filter(function (idx, elem){
                 return (elem.value === modelKey);
             });
-            console.log(correspondingRenderedButton.prop("checked"));
             jqUnit.assertEquals("Model value item with key " + modelKey + " has a corresponding button", modelValue, correspondingRenderedButton.prop("checked"));
         });
 
     };
 
-    floe.tests.dashboard.entry.verifyControlBinding = function (that) {
-        console.log(that);
+    floe.tests.dashboard.entry.verifyControlBinding = function (prefChange) {
+        console.log(prefChange);
     };
 
     $(document).ready(function () {
