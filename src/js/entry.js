@@ -136,7 +136,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             prompt: "prompt"
         },
         resources: {
-            stringTemplate: "At <span class=\"flc-note-created\"></span> in response to \"<span class=\"flc-note-prompt\"></span>\", I wrote \"<span class=\"flc-note-text\"></span>\" <a href=\"#\" class=\"flc-entry-delete\">Delete</a>"
+            stringTemplate: "<span class=\"flc-note-created\"></span>: <span class=\"flc-note-prompt\"></span> \"<span class=\"flc-note-text\"></span>\" <a href=\"#\" class=\"flc-entry-delete\">Delete</a>"
         }
     });
 

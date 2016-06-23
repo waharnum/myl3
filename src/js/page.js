@@ -156,9 +156,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     remoteName: page.options.dbOptions.remoteName
                 }
             });
-            $(promptId).remove();
-            $(buttonId).remove();
-            $(textAreaId).remove();
             e.preventDefault();
         });
     };

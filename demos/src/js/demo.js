@@ -37,11 +37,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         listeners: {
             "onCreate.bindFeelSubmitEntryClick": {
                 func: "floe.dashboard.page.bindSubmitEntryClick",
-                args: ["{that}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "How do I feel right now?"]
+                args: ["{that}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Today I feel..."]
             },
             "onCreate.bindAchieveSubmitEntryClick": {
                 func: "floe.dashboard.page.bindSubmitEntryClick",
-                args: ["{that}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "What do I want to achieve today?"]
+                args: ["{that}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
             },
             "onCreate.bindBackLink": {
                 func: "floe.dashboard.page.bindBackLink",
