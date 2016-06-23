@@ -20,33 +20,57 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.dashboard.eventInTimeAware", {
         gradeNames: "fluid.modelComponent",
         model: {
-            "createdDatePretty": null,
-            "lastModifiedDatePretty": null,
             // A series of key-timestamp pairs
             timeEvents: {
                 // created: "",
                 // lastModified: ""
+            },
+            formattedDates: {
+                "created": null,
+                "lastModified": null
+            },
+            formattedTimes: {
+                "created": null,
+                "lastModified": null
             }
         },
         modelRelay: [
             {
-                target: "{that}.model.createdDatePretty",
+                target: "{that}.model.formattedDates.created",
                 singleTransform: {
                     input: "{that}.model.timeEvents.created",
                     type: "fluid.transforms.free",
                     args: ["{that}.model.timeEvents.created"],
-                    func: "floe.dashboard.eventInTimeAware.getPrettyDate"
+                    func: "floe.dashboard.eventInTimeAware.getFormattedDate"
                 }
             },
             {
-                target: "{that}.model.lastModifiedDatePretty",
+                target: "{that}.model.formattedTimes.created",
+                singleTransform: {
+                    input: "{that}.model.timeEvents.created",
+                    type: "fluid.transforms.free",
+                    args: ["{that}.model.timeEvents.created"],
+                    func: "floe.dashboard.eventInTimeAware.getFormattedTime"
+                }
+            },
+            {
+                target: "{that}.model.formattedDates.lastModified",
                 singleTransform: {
                     input: "{that}.model.timeEvents.lastModified",
                     type: "fluid.transforms.free",
                     args: ["{that}.model.timeEvents.lastModified"],
-                    func: "floe.dashboard.eventInTimeAware.getPrettyDate"
+                    func: "floe.dashboard.eventInTimeAware.getFormattedDate"
                 }
-            }
+            },
+            {
+                target: "{that}.model.formattedTimes.lastModified",
+                singleTransform: {
+                    input: "{that}.model.timeEvents.lastModified",
+                    type: "fluid.transforms.free",
+                    args: ["{that}.model.timeEvents.lastModified"],
+                    func: "floe.dashboard.eventInTimeAware.getFormattedTime"
+                }
+            },
         ],
         listeners: {
             "onCreate.setCreatedTimeStamp": {
@@ -54,7 +78,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: ["{that}"]
             },
         },
-        // We update "timeEvents.lastModified"  whenever the model is updated
+        // We update "timeEvents.lastModified" whenever the model is updated
         // except on initialization
         modelListeners: {
             "": {
@@ -76,9 +100,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.applier.change("timeEvents.lastModified", modifiedTimestamp.toJSON());
     };
 
-    floe.dashboard.eventInTimeAware.getPrettyDate = function (timestamp) {
-        var pretty = new Date(timestamp);
-        return pretty.toLocaleString();
+    floe.dashboard.eventInTimeAware.getFormattedDate = function (timestamp) {
+        var formatted = new Date(timestamp);
+        return formatted.toLocaleDateString();
+    };
+
+    floe.dashboard.eventInTimeAware.getFormattedTime = function (timestamp) {
+        var formatted = new Date(timestamp);
+        return formatted.toLocaleTimeString();
     };
 
 })(jQuery, fluid);

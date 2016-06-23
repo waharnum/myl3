@@ -131,8 +131,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             prompt: ".flc-note-prompt"
         },
         bindings: {
-            created: "createdDatePretty",
-            lastModified: "lastModifiedDatePretty",
+            created: "formattedTimes.created",
+            lastModified: "formattedTimes.lastModified",
             text: "text",
             prompt: "prompt"
         },
@@ -213,8 +213,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             helpsWithValue: ".flc-preferenceChange-helpsWith-value"
         },
         bindings: {
-            created: "createdDatePretty",
-            lastModified: "lastModifiedDatePretty",
+            created: "formattedTimes.created",
+            lastModified: "formattedTimes.lastModified",
             preferenceType: "preferenceChange.preferenceType",
             preferenceValue: "preferenceChange.preferenceValue",
             helpsWithValue: "helpsWithValue"
