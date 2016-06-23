@@ -200,10 +200,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             lastModified: ".flc-note-lastModified",
             preferenceType: ".flc-preferenceChange-type",
             preferenceValue: ".flc-preferenceChange-value",
-            helpfulRadioButtons: ".flc-preferenceChange-helpful-radio",
+            helpfulRadioButtons: ".flc-preferenceChange-helpful-radioButtons",
+            helpfulRadioButton: ".flc-preferenceChange-helpful-radio",
             helpfulYes: ".flc-preferenceChange-helpful-yes",
             helpfulNo: ".flc-preferenceChange-helpful-no",
-            helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkbox",
+            helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkboxes",
+            helpsWithCheckbox: ".flc-preferenceChange-helpsWith-checkbox",
             helpsWithMood: ".flc-preferenceChange-helpsWith-mood",
             helpsWithFocus: ".flc-preferenceChange-helpsWith-focus",
             helpsWithNavigation: ".flc-preferenceChange-helpsWith-navigation",
@@ -230,7 +232,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             no: "No"
         },
         resources: {
-            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<br>%radioButtons<br>This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes",
+            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<div class=\"flc-preferenceChange-helpful-radioButtons\">%radioButtons</div><div class=\"flc-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div>",
             templateValues: {
                 radioButtons: {
                     expander: {
@@ -257,26 +259,47 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             onCheckboxesSetFromModel: null
         },
         listeners: {
-            "onEntryTemplateRendered.setHelpfulRadioButtonsFromModel": {
+            "onEntryTemplateRendered.setHepsWithCheckboxVisibility": {
+                func: "floe.dashboard.preferenceChange.displayed.showIfModelValueTrue",
+                args: ["preferenceChange.helpful.yes", "helpsWithCheckboxes", "{that}"],
+                priority: "before:setHelpfulRadioButtonFromModel"
+            },
+            "onEntryTemplateRendered.setHelpfulRadioButtonFromModel": {
                 func: "floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel",
-                args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful", "{that}.events.onRadioButtonsSetFromModel"],
+                args: ["{that}", "helpfulRadioButton", "preferenceChange.helpful", "{that}.events.onRadioButtonsSetFromModel"],
                 priority: "before:bindHelpfulControls"
             },
             "onEntryTemplateRendered.bindHelpfulRadioButtonControls": {
                 func: "floe.dashboard.preferenceChange.displayed.bindCheckableControls",
-                args: ["{that}", "helpfulRadioButtons", "preferenceChange.helpful", true]
+                args: ["{that}", "helpfulRadioButton", "preferenceChange.helpful", true]
             },
-            "onEntryTemplateRendered.setHelpsWithCheckboxesFromModel": {
+            "onEntryTemplateRendered.setHelpsWithCheckboxFromModel": {
                 func: "floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel",
-                args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith", "{that}.events.onCheckboxesSetFromModel"],
+                args: ["{that}", "helpsWithCheckbox", "preferenceChange.helpsWith", "{that}.events.onCheckboxesSetFromModel"],
                 priority: "before:bindCheckboxControls"
             },
             "onEntryTemplateRendered.bindCheckboxControls": {
                 func: "floe.dashboard.preferenceChange.displayed.bindCheckableControls",
-                args: ["{that}", "helpsWithCheckboxes", "preferenceChange.helpsWith", false]
+                args: ["{that}", "helpsWithCheckbox", "preferenceChange.helpsWith", false]
+            }
+        },
+        modelListeners: {
+            "preferenceChange.helpful": {
+                func: "floe.dashboard.preferenceChange.displayed.showIfModelValueTrue",
+                args: ["preferenceChange.helpful.yes", "helpsWithCheckboxes", "{that}"]
             }
         }
     });
+
+    floe.dashboard.preferenceChange.displayed.showIfModelValueTrue = function (modelPath, selectorToToggle, that) {
+        var helpsWithCheckboxes = that.locate(selectorToToggle);
+        var isHelpful = fluid.get(that.model, modelPath);
+        if(isHelpful) {
+            helpsWithCheckboxes.show();
+        } else {
+            helpsWithCheckboxes.hide();
+        }
+    };
 
     floe.dashboard.preferenceChange.displayed.getDynamicCheckableTemplate = function (checkableItems, checkableTemplate, idPrefix, namePrefix, that) {
         var checkableTemplateString = "";

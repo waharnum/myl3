@@ -233,15 +233,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.entry.verifyInitialRender = function (prefChange) {
-        floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpfulRadioButtons", "radioButtonItems", prefChange);
+        floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpfulRadioButton", "radioButtonItems", prefChange);
 
-        floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpsWithCheckboxes", "checkboxItems", prefChange);
+        floe.tests.dashboard.entry.verifyDynamicButtonCreation("helpsWithCheckbox", "checkboxItems", prefChange);
     };
 
     floe.tests.dashboard.entry.verifyCheckables = function (prefChange) {
-        floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel("helpfulRadioButtons", "preferenceChange.helpful", prefChange);
+        floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel("helpfulRadioButton", "preferenceChange.helpful", prefChange);
 
-        floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel("helpsWithCheckboxes", "preferenceChange.helpsWith", prefChange);
+        floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel("helpsWithCheckbox", "preferenceChange.helpsWith", prefChange);
     };
 
     floe.tests.dashboard.entry.verifyDynamicButtonCreation = function (dynamicButtonSelector, dynamicButtonConfigBlockPath, prefChange) {
