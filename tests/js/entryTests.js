@@ -277,7 +277,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         floe.tests.dashboard.entry.verifyCheckedBinding("preferenceChange.helpful.yes", prefChange.locate("helpfulYes"), prefChange, false);
     };
 
-    floe.tests.dashboard.entry.verifyCheckedBinding = function (modelPath, boundElem, prefChange, expectedBool) {        
+    floe.tests.dashboard.entry.verifyCheckedBinding = function (modelPath, boundElem, prefChange, expectedBool) {
         jqUnit.assertEquals("Model path has expected boolean value", expectedBool, fluid.get(prefChange.model, modelPath));
 
         jqUnit.assertEquals("Checked value of control is expected boolean value", expectedBool, boundElem.prop("checked"));
