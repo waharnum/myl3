@@ -201,10 +201,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             helpfulYes: ".flc-preferenceChange-helpful-yes",
             helpfulNo: ".flc-preferenceChange-helpful-no",
             helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkbox",
-            helpsWithMood: ".flc.preferenceChange-helpsWith-mood",
-            helpsWithFocus: ".flc.preferenceChange-helpsWith-focus",
-            helpsWithNavigation: ".flc.preferenceChange-helpsWith-navigation",
-            helpsWithTyping: ".flc.preferenceChange-helpsWith-typing",
+            helpsWithMood: ".flc-preferenceChange-helpsWith-mood",
+            helpsWithFocus: ".flc-preferenceChange-helpsWith-focus",
+            helpsWithNavigation: ".flc-preferenceChange-helpsWith-navigation",
+            helpsWithTyping: ".flc-preferenceChange-helpsWith-typing",
             helpsWithValue: ".flc-preferenceChange-helpsWith-value"
         },
         bindings: {

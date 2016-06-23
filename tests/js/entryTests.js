@@ -185,7 +185,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "preferenceChanges entry component tests",
             tests: [{
-                expect: 14,
+                expect: 23,
                 name: "Basic verification",
                 sequence:
                     [{
@@ -201,17 +201,31 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         args: ["{prefChange}"],
                         event: "{prefChange}.events.onCheckablesSetFromModel"
                     },
-                    // Check "No" radio button
+                    // Click "No" radio button
                     {
                         jQueryTrigger: "click",
                         element: "{prefChange}.dom.helpfulNo"
                     },
+                    // Listen for model path change and check radio button /
+                    // model binding
                     {
-                        path: "preferenceChange.helpful.no",
+                        path: "preferenceChange.helpful",
                         changeEvent: "{prefChange}.applier.modelChanged",
-                        listener: "floe.tests.dashboard.entry.verifyControlBinding",
+                        listener: "floe.tests.dashboard.entry.verifyRadioBinding",
                         args: ["{prefChange}"]
-                    }
+                    },
+                    // Uncheck "Mood" radio button
+                    {
+                        jQueryTrigger: "click",
+                        element: "{prefChange}.dom.helpsWithMood"
+                    },
+                    {
+                        path: "preferenceChange.helpsWith.mood",
+                        changeEvent: "{prefChange}.applier.modelChanged",
+                        listener: "floe.tests.dashboard.entry.verifyCheckedBinding",
+                        args: ["preferenceChange.helpsWith.mood", "{prefChange}.dom.helpsWithMood", "{prefChange}", false]
+                        // modelPath, boundElem, that, expectedBool
+                    },
                 ]
             }
             ]
@@ -244,7 +258,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-
     floe.tests.dashboard.entry.verifyDynamicButtonUpdateFromModel = function (dynamicButtonSelector, modelPath, prefChange) {
         var renderedButtons = prefChange.locate(dynamicButtonSelector);
         var modelValues = fluid.get(prefChange.model, modelPath);
@@ -259,8 +272,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     };
 
-    floe.tests.dashboard.entry.verifyControlBinding = function (prefChange) {
-        console.log(prefChange);
+    floe.tests.dashboard.entry.verifyRadioBinding = function (prefChange) {
+        floe.tests.dashboard.entry.verifyCheckedBinding("preferenceChange.helpful.no", prefChange.locate("helpfulNo"), prefChange, true);
+        floe.tests.dashboard.entry.verifyCheckedBinding("preferenceChange.helpful.yes", prefChange.locate("helpfulYes"), prefChange, false);
+    };
+
+    floe.tests.dashboard.entry.verifyCheckedBinding = function (modelPath, boundElem, prefChange, expectedBool) {        
+        jqUnit.assertEquals("Model path has expected boolean value", expectedBool, fluid.get(prefChange.model, modelPath));
+
+        jqUnit.assertEquals("Checked value of control is expected boolean value", expectedBool, boundElem.prop("checked"));
+
+        jqUnit.assertEquals("Checked value of control is reflected in model path", boundElem.prop("checked"), fluid.get(prefChange.model, modelPath));
+
     };
 
     $(document).ready(function () {
