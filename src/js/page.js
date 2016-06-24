@@ -28,7 +28,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // The date of the page to display
             currentDate: new Date().toJSON(),
             // Formatted date for display
-            formattedCurrentDate: null
+            formattedCurrentDate: null,
+            // Who does the journal belong to?
+            journalName: "My Journal"
         },
         dynamicComponents: {
             entry: {
@@ -142,7 +144,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.page.createPageMarkup = function (that) {
         that.container.empty();
-        that.container.append("<h1>" + that.model.name + "</h1>");
+        that.container.append("<h1>" + that.model.journalName + "</h1>");
         that.container.append("<h2>" + that.model.formattedCurrentDate + "</h2>");
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };

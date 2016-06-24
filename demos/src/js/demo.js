@@ -32,7 +32,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.page(".floec-journal", {
         model: {
-            "name": "Alan's Journal"
+            "journalName": "Alan's Journal"
         },
         listeners: {
             "onCreate.bindFeelSubmitEntryClick": {
