@@ -17,9 +17,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // The journal handles overall journal behaviour - navigation primarily
     fluid.defaults("floe.dashboard.journal", {
-        gradeNames: ["fluid.viewComponent"],
+        gradeNames: ["floe.chartAuthoring.valueBinding"],
+        model: {
+            // Who does the journal belong to?
+            journalName: "My Journal"
+        },
         selectors: {
-            page: ".floec-journal-page"
+            page: ".floec-journal-page",
+            journalName: ".floec-journal-name"
+        },
+        bindings: {
+            journalName: "journalName",
         },
         components: {
             page: {
@@ -35,17 +43,85 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "onCreate.createJournalMarkup": {
                 this: "{that}.container",
                 method: "append",
-                args: "{that}.options.resources.markup"
+                args: "{that}.options.resources.markup",
+                priority: "first"
             },
             "onCreate.journalMarkupReady": {
                 priority: "after:createJournalMarkup",
                 func: "{that}.events.onJournalMarkupReady.fire"
+            },
+            "onCreate.bindFeelSubmitEntryClick": {
+                func: "floe.dashboard.journal.bindSubmitEntryClick",
+                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Today I feel..."]
+            },
+            "onCreate.bindAchieveSubmitEntryClick": {
+                func: "floe.dashboard.journal.bindSubmitEntryClick",
+                args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
+            },
+            "onCreate.bindBackLink": {
+                func: "floe.dashboard.journal.bindBackLink",
+                args: "{page}"
+            },
+            "onCreate.bindForwardLink": {
+                func: "floe.dashboard.journal.bindForwardLink",
+                args: "{page}"
             }
         },
         resources: {
-            markup: "<div class=\"floec-journal-page\"></div>"
+            markup: "<h1 class=\"floec-journal-name\">My Journal</h1><div class=\"floec-journal-page\"></div><h3 id=\"floec-prompt-feel\">Today I feel...</h3><form><p><input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Add Entry</button></p></form><h3 id=\"floec-prompt-achieve\">Today I want to...</h3><form><p><input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Add Entry</button></p></form><a href=\"#\" id=\"floec-page-back\">Back One Day</a> | <a href=\"#\" id=\"floec-page-forward\">Forward One Day</a>"
         }
     });
+
+    floe.dashboard.journal.bindSubmitEntryClick = function (that, promptId, buttonId, textAreaId, prompt) {
+        var page = that;
+        $(buttonId).click(function (e) {
+            var entryText = $(textAreaId).val();
+            floe.dashboard.note.persisted({
+                model: {
+                    "text": entryText,
+                    "prompt": prompt
+                },
+                listeners: {
+                    "onNoteStored.AddNote": {
+                        func: "floe.dashboard.journal.addEntry",
+                        args: ["{that}", page]
+                    }
+                },
+                dbOptions: {
+                    localName: page.options.dbOptions.localName,
+                    remoteName: page.options.dbOptions.remoteName
+                }
+            });
+            e.preventDefault();
+        });
+    };
+
+    floe.dashboard.journal.bindBackLink = function (that) {
+        $("#floec-page-back").click(function (e) {
+            console.log("back");
+            that.rollDate(-1);
+            e.preventDefault();
+        });
+    };
+
+    floe.dashboard.journal.bindForwardLink = function (that) {
+        $("#floec-page-forward").click(function (e) {
+            console.log("forward");
+            that.rollDate(1);
+            e.preventDefault();
+        });
+    };
+
+    floe.dashboard.journal.addEntry = function (note, page) {
+        console.log("floe.dashboard.journal.addEntry");
+        // console.log(that);
+        var db = new PouchDB(page.options.dbOptions.localName);
+        db.get(note.model._id).then(function (dbNote) {
+            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
+            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
+            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
+        });
+    };
 
     // The page represents a particular "page"
     fluid.defaults("floe.dashboard.page", {
@@ -61,9 +137,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // The date of the page to display
             currentDate: new Date().toJSON(),
             // Formatted date for display
-            formattedCurrentDate: null,
-            // Who does the journal belong to?
-            journalName: "My Journal"
+            formattedCurrentDate: null
         },
         dynamicComponents: {
             entry: {
@@ -135,7 +209,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             endOfDayUTC: "T23:59:59.999Z"
         },
         resources: {
-            stringTemplate: "<h1>%journalName</h1><h2>%formattedCurrentDate</h2><ol class=\"floec-entryList floe-entryList\">",
+            stringTemplate: "<h2>%formattedCurrentDate</h2><ol class=\"floec-entryList floe-entryList\">",
             entryContainerTemplate: "<li id=\"%noteId\"></li>"
         }
     });
@@ -182,63 +256,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.page.createPageMarkup = function (that) {
         that.container.empty();
         var templateValues = {
-            journalName: that.model.journalName,
             formattedCurrentDate: that.model.formattedCurrentDate
         };
         that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, templateValues));
     };
-
-    floe.dashboard.page.bindSubmitEntryClick = function (that, promptId, buttonId, textAreaId, prompt) {
-        var page = that;
-        $(buttonId).click(function (e) {
-            var entryText = $(textAreaId).val();
-            floe.dashboard.note.persisted({
-                model: {
-                    "text": entryText,
-                    "prompt": prompt
-                },
-                listeners: {
-                    "onNoteStored.AddNote": {
-                        func: "floe.dashboard.page.addEntry",
-                        args: ["{that}", page]
-                    }
-                },
-                dbOptions: {
-                    localName: page.options.dbOptions.localName,
-                    remoteName: page.options.dbOptions.remoteName
-                }
-            });
-            e.preventDefault();
-        });
-    };
-
-    floe.dashboard.page.bindBackLink = function (that) {
-        $("#floec-page-back").click(function (e) {
-            console.log("back");
-            that.rollDate(-1);
-            e.preventDefault();
-        });
-    };
-
-    floe.dashboard.page.bindForwardLink = function (that) {
-        $("#floec-page-forward").click(function (e) {
-            console.log("forward");
-            that.rollDate(1);
-            e.preventDefault();
-        });
-    };
-
-    floe.dashboard.page.addEntry = function (note, page) {
-        console.log("floe.dashboard.page.addEntry");
-        // console.log(that);
-        var db = new PouchDB(page.options.dbOptions.localName);
-        db.get(note.model._id).then(function (dbNote) {
-            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
-            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
-            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
-        });
-    };
-
 
     // Relay initial preferences
     floe.dashboard.page.relayInitialPreferences = function (prefsEditor, page) {
@@ -269,7 +290,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     listeners: {
                         "onPreferenceChangeStored.addEntry": {
-                            func: "floe.dashboard.page.addEntry",
+                            func: "floe.dashboard.journal.addEntry",
                             args: ["{that}", page]
                         }
                     },

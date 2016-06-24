@@ -31,30 +31,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // });
 
     floe.dashboard.journal(".floec-journal", {
+        model: {
+            journalName: "Alan's Journal"
+        },
         components: {
             page: {
-                options: {
-                    model: {
-                        "journalName": "Alan's Journal"
-                    },
-                    listeners: {
-                        "onCreate.bindFeelSubmitEntryClick": {
-                            func: "floe.dashboard.page.bindSubmitEntryClick",
-                            args: ["{that}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Today I feel..."]
-                        },
-                        "onCreate.bindAchieveSubmitEntryClick": {
-                            func: "floe.dashboard.page.bindSubmitEntryClick",
-                            args: ["{that}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
-                        },
-                        "onCreate.bindBackLink": {
-                            func: "floe.dashboard.page.bindBackLink",
-                            args: "{that}"
-                        },
-                        "onCreate.bindForwardLink": {
-                            func: "floe.dashboard.page.bindForwardLink",
-                            args: "{that}"
-                        }
-                    },
+                options: {                    
                     dbOptions: {
                         localName: "notes",
                         remoteName: "http://localhost:5984/notes"
