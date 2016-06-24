@@ -30,31 +30,37 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     //     }
     // });
 
-    floe.dashboard.page(".floec-journal", {
-        model: {
-            "journalName": "Alan's Journal"
-        },
-        listeners: {
-            "onCreate.bindFeelSubmitEntryClick": {
-                func: "floe.dashboard.page.bindSubmitEntryClick",
-                args: ["{that}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Today I feel..."]
-            },
-            "onCreate.bindAchieveSubmitEntryClick": {
-                func: "floe.dashboard.page.bindSubmitEntryClick",
-                args: ["{that}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
-            },
-            "onCreate.bindBackLink": {
-                func: "floe.dashboard.page.bindBackLink",
-                args: "{that}"
-            },
-            "onCreate.bindForwardLink": {
-                func: "floe.dashboard.page.bindForwardLink",
-                args: "{that}"
+    floe.dashboard.journal(".floec-journal", {
+        components: {
+            page: {
+                options: {
+                    model: {
+                        "journalName": "Alan's Journal"
+                    },
+                    listeners: {
+                        "onCreate.bindFeelSubmitEntryClick": {
+                            func: "floe.dashboard.page.bindSubmitEntryClick",
+                            args: ["{that}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Today I feel..."]
+                        },
+                        "onCreate.bindAchieveSubmitEntryClick": {
+                            func: "floe.dashboard.page.bindSubmitEntryClick",
+                            args: ["{that}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
+                        },
+                        "onCreate.bindBackLink": {
+                            func: "floe.dashboard.page.bindBackLink",
+                            args: "{that}"
+                        },
+                        "onCreate.bindForwardLink": {
+                            func: "floe.dashboard.page.bindForwardLink",
+                            args: "{that}"
+                        }
+                    },
+                    dbOptions: {
+                        localName: "notes",
+                        remoteName: "http://localhost:5984/notes"
+                    }
+                }
             }
-        },
-        dbOptions: {
-            localName: "notes",
-            remoteName: "http://localhost:5984/notes"
         }
     });
 
@@ -146,11 +152,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                                     listeners: {
                                         "onPanelHide.log": {
                                             func: "floe.dashboard.page.compareCurrentPreferences",
-                                            args: ["{prefsEditor}", "{floe.dashboard.page}"]
+                                            args: ["{prefsEditor}", "{floe.dashboard.journal}.page"]
                                         },
                                         "onPanelShow.log": {
                                             func: "floe.dashboard.page.compareCurrentPreferences",
-                                            args: ["{prefsEditor}", "{floe.dashboard.page}"]
+                                            args: ["{prefsEditor}", "{floe.dashboard.journal}.page"]
                                         },
                                     }
                                 }
@@ -160,7 +166,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                                     listeners: {
                                         "onReady.relayInitialPreferences": {
                                             func: "floe.dashboard.page.relayInitialPreferences",
-                                            args: ["{that}", "{floe.dashboard.page}"],
+                                            args: ["{that}", "{floe.dashboard.journal}.page"],
                                             priority: "last"
                                         }
                                     }

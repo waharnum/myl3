@@ -15,6 +15,39 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     "use strict";
 
+    // The journal handles overall journal behaviour - navigation primarily
+    fluid.defaults("floe.dashboard.journal", {
+        gradeNames: ["fluid.viewComponent"],
+        selectors: {
+            page: ".floec-journal-page"
+        },
+        components: {
+            page: {
+                type: "floe.dashboard.page",
+                container: "{journal}.dom.page",
+                createOnEvent: "onJournalMarkupReady"
+            }
+        },
+        events: {
+            onJournalMarkupReady: null
+        },
+        listeners: {
+            "onCreate.createJournalMarkup": {
+                this: "{that}.container",
+                method: "append",
+                args: "{that}.options.resources.markup"
+            },
+            "onCreate.journalMarkupReady": {
+                priority: "after:createJournalMarkup",
+                func: "{that}.events.onJournalMarkupReady.fire"
+            }
+        },
+        resources: {
+            markup: "<div class=\"floec-journal-page\"></div>"
+        }
+    });
+
+    // The page represents a particular "page"
     fluid.defaults("floe.dashboard.page", {
         gradeNames: ["floe.dashboard.eventInTimeAware", "fluid.viewComponent"],
         selectors: {
