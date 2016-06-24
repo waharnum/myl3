@@ -31,7 +31,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.dashboard.entry.displayed", {
         gradeNames: ["floe.chartAuthoring.valueBinding"],
         selectors: {
-            delete: ".flc-entry-delete"
+            delete: ".floec-entry-delete"
         },
         listeners: {
             "onPouchDocDeleted.removeEntryMarkup": {
@@ -125,10 +125,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.dashboard.note.persisted", "floe.dashboard.entry.displayed"],
         // A key/value of selectorName: model.path
         selectors: {
-            created: ".flc-note-created",
-            lastModified: ".flc-note-lastModified",
-            text: ".flc-note-text",
-            prompt: ".flc-note-prompt"
+            created: ".floec-note-created",
+            lastModified: ".floec-note-lastModified",
+            text: ".floec-note-text",
+            prompt: ".floec-note-prompt"
         },
         bindings: {
             created: "formattedTimes.created",
@@ -137,7 +137,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             prompt: "prompt"
         },
         resources: {
-            stringTemplate: "<span class=\"flc-note-created\"></span>: <span class=\"flc-note-prompt\"></span> \"<span class=\"flc-note-text\"></span>\" <a href=\"#\" class=\"flc-entry-delete\">Delete</a>"
+            stringTemplate: "<span class=\"floec-note-created\"></span>: <span class=\"floec-note-prompt\"></span> \"<span class=\"floec-note-text\"></span>\" <a href=\"#\" class=\"floec-entry-delete\">Delete</a>"
         }
     });
 
@@ -196,21 +196,21 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.dashboard.preferenceChange.persisted", "floe.dashboard.entry.displayed"],
         // A key/value of selectorName: model.path
         selectors: {
-            created: ".flc-note-created",
-            lastModified: ".flc-note-lastModified",
-            preferenceType: ".flc-preferenceChange-type",
-            preferenceValue: ".flc-preferenceChange-value",
-            helpfulRadioButtons: ".flc-preferenceChange-helpful-radioButtons",
-            helpfulRadioButton: ".flc-preferenceChange-helpful-radio",
-            helpfulYes: ".flc-preferenceChange-helpful-yes",
-            helpfulNo: ".flc-preferenceChange-helpful-no",
-            helpsWithCheckboxes: ".flc-preferenceChange-helpsWith-checkboxes",
-            helpsWithCheckbox: ".flc-preferenceChange-helpsWith-checkbox",
-            helpsWithMood: ".flc-preferenceChange-helpsWith-mood",
-            helpsWithFocus: ".flc-preferenceChange-helpsWith-focus",
-            helpsWithNavigation: ".flc-preferenceChange-helpsWith-navigation",
-            helpsWithTyping: ".flc-preferenceChange-helpsWith-typing",
-            helpsWithValue: ".flc-preferenceChange-helpsWith-value"
+            created: ".floec-note-created",
+            lastModified: ".floec-note-lastModified",
+            preferenceType: ".floec-preferenceChange-type",
+            preferenceValue: ".floec-preferenceChange-value",
+            helpfulRadioButtons: ".floec-preferenceChange-helpful-radioButtons",
+            helpfulRadioButton: ".floec-preferenceChange-helpful-radio",
+            helpfulYes: ".floec-preferenceChange-helpful-yes",
+            helpfulNo: ".floec-preferenceChange-helpful-no",
+            helpsWithCheckboxes: ".floec-preferenceChange-helpsWith-checkboxes",
+            helpsWithCheckbox: ".floec-preferenceChange-helpsWith-checkbox",
+            helpsWithMood: ".floec-preferenceChange-helpsWith-mood",
+            helpsWithFocus: ".floec-preferenceChange-helpsWith-focus",
+            helpsWithNavigation: ".floec-preferenceChange-helpsWith-navigation",
+            helpsWithTyping: ".floec-preferenceChange-helpsWith-typing",
+            helpsWithValue: ".floec-preferenceChange-helpsWith-value"
         },
         bindings: {
             created: "formattedTimes.created",
@@ -219,20 +219,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             preferenceValue: "preferenceChange.preferenceValue",
             helpsWithValue: "helpsWithValue"
         },
-        checkboxTemplate: "<input type=\"checkbox\" value=\"%checkableValue\" class=\"flc-preferenceChange-helpsWith-checkbox flc-preferenceChange-helpsWith-%checkableValue\" id=\"%checkableId\"> <label for=\"%checkableId\">%checkableLabelText</label>",
+        checkboxTemplate: "<input type=\"checkbox\" value=\"%checkableValue\" class=\"floec-preferenceChange-helpsWith-checkbox floec-preferenceChange-helpsWith-%checkableValue\" id=\"%checkableId\"> <label for=\"%checkableId\">%checkableLabelText</label> ",
         checkboxItems: {
             mood: "Mood",
             focus: "Focus",
             navigation: "Navigation",
             typing: "Typing"
         },
-        radioButtonTemplate: "<label for=\"%checkableId\">%checkableLabelText</label> <input class=\"flc-preferenceChange-helpful-radio flc-preferenceChange-helpful-%checkableValue\" id=\"%checkableId\" name=\"%checkableName\" value=\"%checkableValue\" type=\"radio\">",
+        radioButtonTemplate: "<label for=\"%checkableId\">%checkableLabelText</label> <input class=\"floec-preferenceChange-helpful-radio floec-preferenceChange-helpful-%checkableValue\" id=\"%checkableId\" name=\"%checkableName\" value=\"%checkableValue\" type=\"radio\"> ",
         radioButtonItems: {
             yes: "Yes",
             no: "No"
         },
         resources: {
-            stringTemplate: "Created: <span class=\"flc-note-created\"></span><br>Last Modified: <span class=\"flc-note-lastModified\"></span><br><a href=\"#\" class=\"flc-entry-delete\">Delete Note</a><br><span class=\"flc-preferenceChange-type\"></span> changed to <span class=\"flc-preferenceChange-value\"></span><br>This preference change helps me<div class=\"flc-preferenceChange-helpful-radioButtons\">%radioButtons</div><div class=\"flc-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"flc-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div>",
+            stringTemplate: "<p><span class=\"floec-note-created\"></span>: <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete Note</a></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
             templateValues: {
                 radioButtons: {
                     expander: {
