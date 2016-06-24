@@ -36,7 +36,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         components: {
             page: {
-                options: {                    
+                options: {
                     dbOptions: {
                         localName: "notes",
                         remoteName: "http://localhost:5984/notes"
@@ -114,21 +114,21 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "ignoreForToC": {
                 "overviewPanel": ".flc-overviewPanel"
             },
+            distributeOptions: {
+                target: "{that fluid.prefs.panel}.options",
+                record: {
+                    listeners: {
+                        "onCreate.registerSelf": {
+                            func: "floe.dashboard.page.addPreferenceMessage",
+                            args: ["{that}", "{floe.dashboard.journal}.page"]
+                        }
+                    }
+                }
+            },
             components: {
                 prefsEditorLoader: {
                     options: {
                         components: {
-                            messageLoader: {
-                                options: {
-                                    listeners: {
-                                        // "onResourcesLoaded.log": {
-                                        //     this: "console",
-                                        //     method: "log",
-                                        //     args: "{that}"
-                                        // }
-                                    }
-                                }
-                            },
                             slidingPanel: {
                                 options: {
                                     listeners: {

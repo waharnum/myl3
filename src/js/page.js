@@ -261,11 +261,132 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, templateValues));
     };
 
+    floe.dashboard.page.filterModelOptions = function(prefPanel, filterString) {
+        var copiedModelOptions = fluid.copy(prefPanel.options.model[0]);
+        var filtered = fluid.remove_if(copiedModelOptions, function (modelItem) {
+            return !(modelItem.indexOf(filterString) > -1);
+        });
+        return filtered;
+    };
+
+    floe.dashboard.page.extractPreferenceMessages = function(prefPanelOptions, filterString, messageBaseOptionsBlock) {
+        var messages = {};
+        fluid.each(prefPanelOptions, function (modelItem) {
+                var prefKey = modelItem.replace(filterString + ".", "");
+                // console.log(prefKey);
+
+                    var prefsModelMessages = {
+                        // label,
+                        // description,
+                        // multiplier
+                        // various values...
+                        values: {
+                        }
+                    };
+
+                    fluid.each(messageBaseOptionsBlock, function (message, key) {
+                        if(key.indexOf("Label") > -1) {
+                            // console.log("Label case");
+                            // console.log(key, message);
+                            prefsModelMessages.label = message;
+                        } else if (key.indexOf("Descr") > -1) {
+                            // console.log("Descr case");
+                            // console.log(key, message);
+                            prefsModelMessages.description = message;
+                        } else if (key.indexOf("-") > -1) {
+                            // console.log("Value case");
+                            // console.log(key, message);
+                            var valueKey = key.split("-")[1];
+                            prefsModelMessages.values[valueKey] = message;
+                        } else {
+                            // console.log("other case");
+                            // console.log(key, message);
+                            prefsModelMessages[key] = message;
+                        }
+                    })
+
+                    console.log(prefKey, prefsModelMessages);
+                    messages[prefKey] = prefsModelMessages;
+        });
+        return messages;
+    };
+
+    // Relay initial preferences
+    floe.dashboard.page.addPreferenceMessage = function (prefPanel, page) {
+        // Panel itself
+        console.log(prefPanel);
+
+        var modelOptionsBlock = fluid.copy(prefPanel.options.model[0]);
+
+        var messageBaseOptionsBlock = fluid.copy(prefPanel.options.messageBase);
+
+        var singlePanelFilterString = "{prefsEditor}.model.preferences";
+        var compositePanelFilterString = "{compositePanel}.model";
+
+        var singlePanelOptions = floe.dashboard.page.filterModelOptions(prefPanel, singlePanelFilterString);
+
+        var compositePanelOptions = floe.dashboard.page.filterModelOptions(prefPanel, compositePanelFilterString);
+
+        var singlePanelMessages = floe.dashboard.page.extractPreferenceMessages(singlePanelOptions, singlePanelFilterString, messageBaseOptionsBlock);
+
+        // console.log(singlePanelMessages);
+
+        page.preferencesMessagesSinglePanel = page.preferencesMessagesSinglePanel || {};
+
+        fluid.each(singlePanelMessages, function (message, key) {
+            page.preferencesMessagesSinglePanel[key] = message;
+        });
+
+        console.log(page.preferencesMessagesSinglePanel);
+
+        var compositePanelMessages = floe.dashboard.page.extractPreferenceMessages(compositePanelOptions, compositePanelFilterString, messageBaseOptionsBlock);
+
+        page.preferencesMessagesCompositePanel = page.preferencesMessagesCompositePanel || {};
+
+        // console.log(compositePanelMessages);
+        fluid.each(compositePanelMessages, function (message, key) {
+            page.preferencesMessagesCompositePanel[key] = message;
+        });
+
+        console.log(page.preferencesMessagesCompositePanel);
+
+    };
+
     // Relay initial preferences
     floe.dashboard.page.relayInitialPreferences = function (prefsEditor, page) {
         console.log("floe.dashboard.page.relayInitialPreferences");
         page.applier.change("preferences", prefsEditor.model.preferences);
         console.log(page);
+    };
+
+    floe.dashboard.page.lookupPreferenceMessage = function(preferenceType, preferenceValue, page) {
+        console.log(preferenceType);
+        console.log(preferenceValue);
+        console.log(page);
+        // Try composite panel messages first (assume more specific)
+        var compositeMessages = page.preferencesMessagesCompositePanel;
+        // Try single panel next
+        var singleMessages = page.preferencesMessagesSinglePanel;
+        // Fall back to raw
+        var messageToUse = compositeMessages[preferenceType] ? compositeMessages[preferenceType] : singleMessages[preferenceType] ? singleMessages[preferenceType] : preferenceType;
+
+        console.log(messageToUse);
+
+
+                var typeLabelToUse = messageToUse.label ? messageToUse.label : preferenceType;
+
+        var valueLabelToUse;
+        if(messageToUse.values) {
+            valueLabelToUse = messageToUse.values[preferenceValue] ? messageToUse.values[preferenceValue] : preferenceValue;
+        } else valueLabelToUse = preferenceValue;
+
+        console.log(typeLabelToUse);
+        console.log(valueLabelToUse);
+        return {
+            typeLabelToUse: typeLabelToUse,
+            valueLabelToUse: valueLabelToUse
+        };
+
     };
 
     // Compares the current preferences
@@ -279,11 +400,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             fluid.each(stats.changeMap, function (changeType, changePath) {
                 var preferenceType = changePath;
                 var preferenceValue = fluid.get(page, "model.preferences." + changePath);
+
+                var lookedUpValues = floe.dashboard.page.lookupPreferenceMessage(preferenceType, preferenceValue, page);
+
                 floe.dashboard.preferenceChange.persisted({
                     model: {
                         "preferenceChange": {
                             // What preference was changed
                             "preferenceType": preferenceType,
+                            "preferenceTypeLabel": lookedUpValues.typeLabelToUse,
+                            "preferenceValueLabel": lookedUpValues.valueLabelToUse,
                             // What was it changed to
                             "preferenceValue": preferenceValue
                         }

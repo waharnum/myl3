@@ -147,6 +147,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "preferenceChange": {
                 // What preference was changed
                 "preferenceType": "",
+                // Human-readable preferenceType,
+                "preferenceTypeLabel": "",
                 // What was it changed to
                 "preferenceValue": "",
                 // exclusive choices about whether or not it was helpful
@@ -215,8 +217,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         bindings: {
             created: "formattedTimes.created",
             lastModified: "formattedTimes.lastModified",
-            preferenceType: "preferenceChange.preferenceType",
-            preferenceValue: "preferenceChange.preferenceValue",
+            preferenceType: "preferenceChange.preferenceTypeLabel",
+            preferenceValue: "preferenceChange.preferenceValueLabel",
             helpsWithValue: "helpsWithValue"
         },
         checkboxTemplate: "<input type=\"checkbox\" value=\"%checkableValue\" class=\"floec-preferenceChange-helpsWith-checkbox floec-preferenceChange-helpsWith-%checkableValue\" id=\"%checkableId\"> <label for=\"%checkableId\">%checkableLabelText</label> ",
@@ -232,7 +234,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             no: "No"
         },
         resources: {
-            stringTemplate: "<p><span class=\"floec-note-created\"></span>: <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete Note</a></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
+            stringTemplate: "<p><span class=\"floec-note-created\"></span>: <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
             templateValues: {
                 radioButtons: {
                     expander: {
