@@ -100,6 +100,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         constants: {
             startOfDayUTC: "T00:00:00.000Z",
             endOfDayUTC: "T23:59:59.999Z"
+        },
+        resources: {
+            stringTemplate: "<h1>%journalName</h1><h2>%formattedCurrentDate</h2><ol class=\"floec-entryList floe-entryList\">",
+            entryContainerTemplate: "<li id=\"%noteId\"></li>"
         }
     });
 
@@ -132,21 +136,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.page.injectEntryContainer = function (that) {
-        // console.log(that);
         var entryList = that.locate("entryList");
-        var currentId = "note-" + fluid.allocateGuid();
-        entryList.append("<li id='" + currentId + "'></li>");
-        var entryContainer = $("#" + currentId);
-        that.entryIDCounter++;
-        // console.log(entryContainer);
+        var noteId = "note-" + fluid.allocateGuid();
+        var templateValues = {
+            noteId: noteId
+        };
+        entryList.append(fluid.stringTemplate(that.options.resources.entryContainerTemplate, templateValues));
+        var entryContainer = $("#" + noteId);
         return entryContainer;
     };
 
     floe.dashboard.page.createPageMarkup = function (that) {
         that.container.empty();
-        that.container.append("<h1>" + that.model.journalName + "</h1>");
-        that.container.append("<h2>" + that.model.formattedCurrentDate + "</h2>");
-        that.container.append("<ol class='floec-entryList floe-entryList'>");
+        var templateValues = {
+            journalName: that.model.journalName,
+            formattedCurrentDate: that.model.formattedCurrentDate
+        };
+        that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, templateValues));
     };
 
     floe.dashboard.page.bindSubmitEntryClick = function (that, promptId, buttonId, textAreaId, prompt) {
