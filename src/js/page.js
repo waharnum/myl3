@@ -25,8 +25,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             onPreferenceChangeRetrieved: null
         },
         model: {
-            // The date of the page
-            date: new Date().toJSON()
+            // The date of the page to display
+            currentDate: new Date().toJSON(),
+            // Formatted date for display
+            formattedCurrentDate: null
         },
         dynamicComponents: {
             entry: {
@@ -58,16 +60,26 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 priority: "before:getEntries"
             }
         },
+        modelRelay: {
+            target: "{that}.model.formattedCurrentDate",
+            singleTransform: {
+                input: "{that}.model.currentDate",
+                type: "fluid.transforms.free",
+                args: ["{that}.model.currentDate"],
+                func: "floe.dashboard.eventInTimeAware.getFormattedDate"
+            }
+        },
+        // Reload entries if date changes, such as on navigation
         modelListeners: {
             "createPageMarkup": {
-                path: "date",
+                path: "currentDate",
                 func: "floe.dashboard.page.createPageMarkup",
                 args: "{that}",
                 priority: "before:getEntries",
                 excludeSource: "init"
             },
             "getEntries": {
-                path: "date",
+                path: "currentDate",
                 func: "floe.dashboard.page.getEntries",
                 args: "{that}",
                 excludeSource: "init"
@@ -90,15 +102,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.dashboard.page.rollDate = function (that, daysToRoll) {
-        var currentDate = new Date(that.model.date);
+        var currentDate = new Date(that.model.currentDate);
         currentDate.setDate(currentDate.getDate() + daysToRoll);
-        that.applier.change("date", currentDate);
+        that.applier.change("currentDate", currentDate);
     };
 
     floe.dashboard.page.getEntries = function (that) {
         // console.log("floe.dashboard.page.getEntries");
 
-        var pageDate = new Date(that.model.date);
+        var pageDate = new Date(that.model.currentDate);
         var pageUTCFull = pageDate.toJSON();
         var pageUTCDate = pageUTCFull.slice(0,pageUTCFull.indexOf("T"));
 
@@ -132,7 +144,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.page.createPageMarkup = function (that) {
         that.container.empty();
         that.container.append("<h1>" + that.model.name + "</h1>");
-        that.container.append("<h2>" + that.model.date + "</h2>");
+        that.container.append("<h2>" + that.model.formattedCurrentDate + "</h2>");
         that.container.append("<ol class='floec-entryList floe-entryList'>");
     };
 
