@@ -121,7 +121,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             startkey: pageUTCDate + that.options.constants.startOfDayUTC,
             endkey: pageUTCDate + that.options.constants.endOfDayUTC
         }).then(function (response) {
-            that.entryIDCounter = 0;
             fluid.each(response.rows, function (row) {
                 var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
                 var entryContainer = floe.dashboard.page.injectEntryContainer(that);
@@ -133,7 +132,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.page.injectEntryContainer = function (that) {
         // console.log(that);
         var entryList = that.locate("entryList");
-        var currentId = "note-" + that.entryIDCounter;
+        var currentId = "note-" + fluid.allocateGuid();
         entryList.append("<li id='" + currentId + "'></li>");
         var entryContainer = $("#" + currentId);
         that.entryIDCounter++;
