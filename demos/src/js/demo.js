@@ -30,7 +30,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     //     }
     // });
 
-    floe.dashboard.journal(".floec-journal", {
+    floe.dashboard.journal(".floec-notes", {
         model: {
             journalName: "Alan's Journal"
         },
