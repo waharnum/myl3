@@ -17,17 +17,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // The journal handles overall journal behaviour - navigation primarily
     fluid.defaults("floe.dashboard.journal", {
-        gradeNames: ["floe.chartAuthoring.valueBinding"],
+        gradeNames: ["fluid.viewComponent"],
         model: {
             // Who does the journal belong to?
             journalName: "My Journal"
         },
         selectors: {
-            page: ".floec-journal-page",
-            journalName: ".floec-journal-name"
-        },
-        bindings: {
-            journalName: "journalName",
+            page: ".floec-journal-page"
         },
         components: {
             page: {
@@ -52,24 +48,40 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             "onCreate.bindFeelSubmitEntryClick": {
                 func: "floe.dashboard.journal.bindSubmitEntryClick",
-                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Today I feel..."]
+                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Right now I feel..."]
             },
             "onCreate.bindAchieveSubmitEntryClick": {
                 func: "floe.dashboard.journal.bindSubmitEntryClick",
                 args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
             },
-            "onCreate.bindBackLink": {
+            "onCreate.bindBackOneMonthLink": {
                 func: "floe.dashboard.journal.bindJournalNavLink",
-                args: ["{page}", "#floec-page-back", -1]
+                args: ["{page}", "#floec-page-back-oneMonth", -30]
             },
-            "onCreate.bindForwardLink": {
+            "onCreate.bindBackOneWeekLink": {
                 func: "floe.dashboard.journal.bindJournalNavLink",
-                args: ["{page}", "#floec-page-forward", 1]
+                args: ["{page}", "#floec-page-back-oneWeek", -7]
+            },
+            "onCreate.bindBackOneDayLink": {
+                func: "floe.dashboard.journal.bindJournalNavLink",
+                args: ["{page}", "#floec-page-back-oneDay", -1]
+            },
+            "onCreate.bindForwardOneDayLink": {
+                func: "floe.dashboard.journal.bindJournalNavLink",
+                args: ["{page}", "#floec-page-forward-oneDay", 1]
+            },
+            "onCreate.bindForwardOneWeekLink": {
+                func: "floe.dashboard.journal.bindJournalNavLink",
+                args: ["{page}", "#floec-page-forward-oneWeek", 7]
+            },
+            "onCreate.bindForwardOneMonthLink": {
+                func: "floe.dashboard.journal.bindJournalNavLink",
+                args: ["{page}", "#floec-page-forward-oneMonth", 30]
             }
         },
         // page, selector, roll
         resources: {
-            markup: "<h1 class=\"floec-journal-name\">My Journal</h1><div class=\"floec-journal-page\"></div><h3 id=\"floec-prompt-feel\">Today I feel...</h3><form><p><input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Add Entry</button></p></form><h3 id=\"floec-prompt-achieve\">Today I want to...</h3><form><p><input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Add Entry</button></p></form><a href=\"#\" id=\"floec-page-back\">Back One Day</a> <a href=\"#\" id=\"floec-page-forward\">Forward One Day</a>"
+            markup: "<div class=\"floec-journal-page\"></div><form><p>Right now, I feel... <input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Submit</button></p></form><form><p>Today I want to... <input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Submit</button></p></form><a href=\"#\" id=\"floec-page-back-oneMonth\">Back One Month</a> <a href=\"#\" id=\"floec-page-back-oneWeek\">Back One Week</a> <a href=\"#\" id=\"floec-page-back-oneDay\">Back One Day</a> <a href=\"#\" id=\"floec-page-forward-oneDay\">Forward One Day</a> <a href=\"#\" id=\"floec-page-forward-oneWeek\">Forward One Week</a> <a href=\"#\" id=\"floec-page-forward-oneMonth\">Forward One Month</a>"
         }
     });
 
@@ -295,7 +307,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                             // console.log(key, message);
                             prefsModelMessages[key] = message;
                         }
-                    })
+                    });
 
                     console.log(prefKey, prefsModelMessages);
                     messages[prefKey] = prefsModelMessages;
