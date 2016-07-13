@@ -181,6 +181,39 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    fluid.defaults("floe.dashboard.goal", {
+        gradeNames: ["floe.dashboard.note"],
+        model: {
+            "due": "",
+        },
+        modelListeners: {
+            "due": {
+                func: "{that}.storePersisted",
+                excludeSource: "init"
+            }
+        }
+    });
+
+    fluid.defaults("floe.dashboard.goal.persisted", {
+        gradeNames: ["floe.dashboard.goal", "floe.dashboard.entry.persisted"],
+        events: {
+            onGoalStored: "{that}.events.onPouchDocStored"
+        }
+    });
+
+    fluid.defaults("floe.dashboard.goal.displayed", {
+        gradeNames: ["floe.dashboard.goal.persisted", "floe.dashboard.note.displayed"],
+        selectors: {
+            due: ".floec-goal-due"
+        },
+        bindings: {
+            due: "due"
+        },
+        resources: {
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floec-goal-icon\">&#10026;</span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input type=\"date\"  class=\"floec-goal-due\"></input>"
+        }
+    });
+
     fluid.defaults("floe.dashboard.preferenceChange", {
         gradeNames: ["floe.dashboard.pouchPersisted"],
         model: {
