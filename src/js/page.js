@@ -47,7 +47,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 func: "{that}.events.onJournalMarkupReady.fire"
             },
             "onCreate.bindFeelSubmitEntryClick": {
-                func: "floe.dashboard.journal.bindSubmitEntryClick",
+                func: "floe.dashboard.journal.bindMoodSubmitClick",
                 args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Right now I feel..."]
             },
             "onCreate.bindAchieveSubmitEntryClick": {
@@ -89,6 +89,30 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    floe.dashboard.journal.bindMoodSubmitClick = function (that, promptId, buttonId, textAreaId, prompt) {
+        var page = that;
+        $(buttonId).click(function (e) {
+            var entryText = $(textAreaId).val();
+            floe.dashboard.mood.persisted({
+                model: {
+                    "text": entryText,
+                    "prompt": prompt
+                },
+                listeners: {
+                    "onMoodStored.addMood": {
+                        func: "floe.dashboard.journal.addEntry",
+                        args: ["{that}", page]
+                    }
+                },
+                dbOptions: {
+                    localName: page.options.dbOptions.localName,
+                    remoteName: page.options.dbOptions.remoteName
+                }
+            });
+            e.preventDefault();
+        });
+    };
+
     floe.dashboard.journal.bindSubmitEntryClick = function (that, promptId, buttonId, textAreaId, prompt) {
         var page = that;
         $(buttonId).click(function (e) {
@@ -99,7 +123,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     "prompt": prompt
                 },
                 listeners: {
-                    "onNoteStored.AddNote": {
+                    "onNoteStored.addNote": {
                         func: "floe.dashboard.journal.addEntry",
                         args: ["{that}", page]
                     }

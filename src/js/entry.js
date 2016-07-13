@@ -141,6 +141,46 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    fluid.defaults("floe.dashboard.mood", {
+        gradeNames: ["floe.dashboard.note"],
+        model: {
+            "comment": ""
+        },
+        modelListeners: {
+            "comment": {
+                func: "{that}.storePersisted",
+                excludeSource: "init"
+            }
+        }
+    });
+
+    fluid.defaults("floe.dashboard.mood.persisted", {
+        gradeNames: ["floe.dashboard.mood", "floe.dashboard.entry.persisted"],
+        events: {
+            onMoodStored: "{that}.events.onPouchDocStored"
+        }
+    });
+
+    fluid.defaults("floe.dashboard.mood.displayed", {
+        gradeNames: ["floe.dashboard.mood.persisted", "floe.dashboard.note.displayed"],
+        selectors: {
+            comment: ".floec-mood-commentArea"
+        },
+        bindings: {
+            comment: "comment"
+        },
+        resources: {
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br> <span class=\"floe-mood-icon\">&#128528; </span><span class=\"floec-note-prompt\"></span> \"<span class=\"floec-note-text\"></span>\"<br><form><label for=\"%commentId\" class=\"floec-mood-commentAreaLabel\">Comment:</label> <textarea type=\"text\" class=\"floec-mood-commentArea\" id=\"%commentId\"></textarea></form>",
+            templateValues: {
+                commentId: {
+                    expander: {
+                        func: "fluid.allocateGuid"
+                    }
+                }
+            }
+        }
+    });
+
     fluid.defaults("floe.dashboard.preferenceChange", {
         gradeNames: ["floe.dashboard.pouchPersisted"],
         model: {
