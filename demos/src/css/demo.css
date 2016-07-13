@@ -1,5 +1,37 @@
-.floe-journalContainer {
-    padding-left: 1em;
+.floe-labContainer {
+    float: left;
+    clear: both;
+    width: 100%;
+    margin-top: 2em;
+}
+
+.floe-notesContainer {
+    float: left;
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid black;
+    width: calc(70% - 2em);
+    box-sizing: border-box;
+}
+
+.floe-goalsContainer {
+    float: left;
+    border: 1px solid black;
+    float: left;
+    margin: 1em;
+    padding: 1em;
+    width: calc(30% - 2em);
+    box-sizing: border-box;
+}
+
+.floe-timelineContainer {
+    float: left;
+    border: 1px solid black;
+    clear: both;
+    margin: 1em;
+    padding: 1em;
+    width: calc(100% - 2em);
+    box-sizing: border-box;
 }
 
 .floe-entryList li {
