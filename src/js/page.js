@@ -59,16 +59,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "Today I want to..."]
             },
             "onCreate.bindBackLink": {
-                func: "floe.dashboard.journal.bindBackLink",
-                args: "{page}"
+                func: "floe.dashboard.journal.bindJournalNavLink",
+                args: ["{page}", "#floec-page-back", -1]
             },
             "onCreate.bindForwardLink": {
-                func: "floe.dashboard.journal.bindForwardLink",
-                args: "{page}"
+                func: "floe.dashboard.journal.bindJournalNavLink",
+                args: ["{page}", "#floec-page-forward", 1]
             }
         },
+        // page, selector, roll
         resources: {
-            markup: "<h1 class=\"floec-journal-name\">My Journal</h1><div class=\"floec-journal-page\"></div><h3 id=\"floec-prompt-feel\">Today I feel...</h3><form><p><input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Add Entry</button></p></form><h3 id=\"floec-prompt-achieve\">Today I want to...</h3><form><p><input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Add Entry</button></p></form><a href=\"#\" id=\"floec-page-back\">Back One Day</a> | <a href=\"#\" id=\"floec-page-forward\">Forward One Day</a>"
+            markup: "<h1 class=\"floec-journal-name\">My Journal</h1><div class=\"floec-journal-page\"></div><h3 id=\"floec-prompt-feel\">Today I feel...</h3><form><p><input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Add Entry</button></p></form><h3 id=\"floec-prompt-achieve\">Today I want to...</h3><form><p><input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Add Entry</button></p></form><a href=\"#\" id=\"floec-page-back\">Back One Day</a> <a href=\"#\" id=\"floec-page-forward\">Forward One Day</a>"
         }
     });
 
@@ -96,18 +97,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    floe.dashboard.journal.bindBackLink = function (that) {
-        $("#floec-page-back").click(function (e) {
-            console.log("back");
-            that.rollDate(-1);
-            e.preventDefault();
-        });
-    };
-
-    floe.dashboard.journal.bindForwardLink = function (that) {
-        $("#floec-page-forward").click(function (e) {
-            console.log("forward");
-            that.rollDate(1);
+    floe.dashboard.journal.bindJournalNavLink = function (page, selector, roll) {
+        $(selector).click(function (e) {
+            page.rollDate(roll);
             e.preventDefault();
         });
     };
