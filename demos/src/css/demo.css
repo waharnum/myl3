@@ -46,6 +46,32 @@
     color: rgb(107, 170, 172);
 }
 
+.floe-journalNav a {
+    text-decoration: none;
+}
+
+.hidden
+{position:absolute;
+left:-10000px;
+top:auto;
+width:1px;
+height:1px;
+overflow:hidden;}
+
 .floe-entryList li {
     margin-top: 1em;
+}
+
+.floe-navArrow {
+    letter-spacing: -0.4em;
+    display: inline-block;
+}
+
+.floe-page-today {
+    display: inline-block;
+    border: 1px solid rgb(107, 170, 172);
+    border-radius: 1em;
+    background-color: rgb(240,240,240);
+    padding: 0.4em 1em;
+    margin: 0 0.4em;
 }
