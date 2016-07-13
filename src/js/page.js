@@ -77,11 +77,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "onCreate.bindForwardOneMonthLink": {
                 func: "floe.dashboard.journal.bindJournalNavLink",
                 args: ["{page}", "#floec-page-forward-oneMonth", 30]
+            },
+            "onCreate.bindTodayLink": {
+                func: "floe.dashboard.journal.bindJournalNavLinkToday",
+                args: ["{page}", "#floec-page-today"]
             }
         },
         // page, selector, roll
         resources: {
-            markup: "<div class=\"floec-journal-page\"></div><form><p>Right now, I feel... <input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Submit</button></p></form><form><p>Today I want to... <input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Submit</button></p></form><span class=\"floe-journalNav\"><a href=\"#\" id=\"floec-page-back-oneMonth\"><span class=\"floe-navArrow floe-navArrow-back\">&#x25C0;&#x25C0;&#x25C0;</span><span class=\"hidden\">Back</span> One Month</a> <a href=\"#\" id=\"floec-page-back-oneWeek\"><span class=\"floe-navArrow floe-navArrow-back\">&#x25C0;&#x25C0;</span><span class=\"hidden\">Back</span> One Week</a> <a href=\"#\" id=\"floec-page-back-oneDay\"><span class=\"floe-navArrow floe-navArrow-back\">&#x25C0;</span><span class=\"hidden\">Back</span> One Day</a> <a href=\"#\" id=\"floec-page-forward-oneDay\"><span id=\"floec-page-today\" class=\"floe-page-today\">Today</span> <span class=\"floe-navArrow floe-navArrow-forward\">&#x25B6;</span><span class=\"hidden\">Forward</span> One Day</a> <a href=\"#\" id=\"floec-page-forward-oneWeek\"><span class=\"floe-navArrow floe-navArrow-forward\">&#x25B6;&#x25B6;</span><span class=\"hidden\">Forward</span> One Week</a> <a href=\"#\" id=\"floec-page-forward-oneMonth\"><span class=\"floe-navArrow floe-navArrow-forward\">&#x25B6;&#x25B6;&#x25B6;</span><span class=\"hidden\">Forward</span> One Month</a></span>"
+            markup: "<div class=\"floec-journal-page\"></div><form><p>Right now, I feel... <input id=\"floec-newEntry-feel\"></input> <button id=\"floec-submitEntry-feel\" type=\"submit\">Submit</button></p></form><form><p>Today I want to... <input id=\"floec-newEntry-achieve\"></input> <button id=\"floec-submitEntry-achieve\" type=\"submit\">Submit</button></p></form><span class=\"floe-journalNav\"><a href=\"#\" id=\"floec-page-back-oneMonth\"><span class=\"floe-navArrow floe-navArrow-back\">&#x25C0;&#x25C0;&#x25C0;</span><span class=\"hidden\">Back</span> One Month</a> <a href=\"#\" id=\"floec-page-back-oneWeek\"><span class=\"floe-navArrow floe-navArrow-back\">&#x25C0;&#x25C0;</span><span class=\"hidden\">Back</span> One Week</a> <a href=\"#\" id=\"floec-page-back-oneDay\"><span class=\"floe-navArrow floe-navArrow-back\">&#x25C0;</span><span class=\"hidden\">Back</span> One Day</a> <span class=\"floe-page-today\"><a href=\"#\" id=\"floec-page-today\">Today</a></span> <a href=\"#\" id=\"floec-page-forward-oneDay\"><span class=\"floe-navArrow floe-navArrow-forward\">&#x25B6;</span><span class=\"hidden\">Forward</span> One Day</a> <a href=\"#\" id=\"floec-page-forward-oneWeek\"><span class=\"floe-navArrow floe-navArrow-forward\">&#x25B6;&#x25B6;</span><span class=\"hidden\">Forward</span> One Week</a> <a href=\"#\" id=\"floec-page-forward-oneMonth\"><span class=\"floe-navArrow floe-navArrow-forward\">&#x25B6;&#x25B6;&#x25B6;</span><span class=\"hidden\">Forward</span> One Month</a></span>"
         }
     });
 
@@ -111,7 +115,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.journal.bindJournalNavLink = function (page, selector, roll) {
         $(selector).click(function (e) {
+            console.log("journalNavLink", selector, roll);
             page.rollDate(roll);
+            e.preventDefault();
+        });
+    };
+
+    floe.dashboard.journal.bindJournalNavLinkToday = function (page, selector) {
+        $(selector).click(function (e) {
+            console.log("journalNavLinkToday", selector);
+            var today = new Date().toJSON();
+            console.log(today);
+            page.applier.change("currentDate", today);
             e.preventDefault();
         });
     };
@@ -225,9 +240,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.page.getEntries = function (that) {
-        // console.log("floe.dashboard.page.getEntries");
+        console.log("floe.dashboard.page.getEntries");
 
         var pageDate = new Date(that.model.currentDate);
+        console.log(pageDate);
         var pageUTCFull = pageDate.toJSON();
         var pageUTCDate = pageUTCFull.slice(0,pageUTCFull.indexOf("T"));
 

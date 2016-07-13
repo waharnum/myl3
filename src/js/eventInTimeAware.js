@@ -79,12 +79,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
         },
         // We update "timeEvents.lastModified" whenever the model is updated
-        // except on initialization
+        // except on initialization, or from the setModifiedTimeStamp
+        // function itself
         modelListeners: {
             "": {
                 funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
                 args: "{that}",
-                excludeSource: "init"
+                excludeSource: ["init", "setModifiedTimeStamp"]
             }
         }
     });
@@ -97,15 +98,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.eventInTimeAware.setModifiedTimeStamp = function (that) {
         var modifiedTimestamp = new Date();
-        that.applier.change("timeEvents.lastModified", modifiedTimestamp.toJSON());
+        that.applier.change("timeEvents.lastModified", modifiedTimestamp.toJSON(), "ADD", "setModifiedTimeStamp");
     };
 
     floe.dashboard.eventInTimeAware.getFormattedDate = function (timestamp) {
+        console.log(timestamp);
         var formatted = new Date(timestamp);
         return formatted.toLocaleDateString();
     };
 
     floe.dashboard.eventInTimeAware.getFormattedTime = function (timestamp) {
+        console.log(timestamp);
         var formatted = new Date(timestamp);
         return formatted.toLocaleTimeString();
     };
