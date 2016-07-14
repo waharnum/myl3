@@ -427,7 +427,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Compares the current preferences
-    floe.dashboard.page.compareCurrentPreferences = function (prefsEditor, page) {
+    floe.dashboard.page.trackPreferenceChanges = function (prefsEditor, page) {
         var prefsEditorPreferences = fluid.get(prefsEditor, "model.preferences");
         var pagePreferences = fluid.get(page, "model.preferences");
         var stats = {changes: 0, unchanged: 0, changeMap: {}};

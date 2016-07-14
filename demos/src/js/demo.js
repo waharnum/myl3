@@ -47,7 +47,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     dbOptions: {
                         localName: "notes",
                         remoteName: "http://localhost:5984/notes"
-                
+
         }
     });
 
@@ -137,12 +137,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                             slidingPanel: {
                                 options: {
                                     listeners: {
-                                        "onPanelHide.log": {
-                                            func: "floe.dashboard.page.compareCurrentPreferences",
+                                        "onPanelHide.trackPreferenceChanges": {
+                                            func: "floe.dashboard.page.trackPreferenceChanges",
                                             args: ["{prefsEditor}", "{floe.dashboard.journal}.page"]
                                         },
-                                        "onPanelShow.log": {
-                                            func: "floe.dashboard.page.compareCurrentPreferences",
+                                        "onPanelShow.trackPreferenceChanges": {
+                                            func: "floe.dashboard.page.trackPreferenceChanges",
                                             args: ["{prefsEditor}", "{floe.dashboard.journal}.page"]
                                         },
                                     }
