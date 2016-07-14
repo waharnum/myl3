@@ -172,7 +172,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             comment: "comment"
         },
         resources: {
-            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br> <span class=\"floe-mood-icon\">&#128528; </span><span class=\"floec-note-prompt\"></span> \"<span class=\"floec-note-text\"></span>\"<br><form><label for=\"%commentId\" class=\"floec-mood-commentAreaLabel\">Comment:</label> <textarea type=\"text\" class=\"floec-mood-commentArea\" id=\"%commentId\"></textarea></form>",
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br> <span class=\"floe-mood-icon floe-entry-icon\">&#128528; </span><span class=\"floec-note-prompt\"></span> \"<span class=\"floec-note-text\"></span>\"<br><form><label for=\"%commentId\" class=\"floec-mood-commentAreaLabel\">Comment:</label> <textarea type=\"text\" class=\"floec-mood-commentArea floe-mood-commentArea\" id=\"%commentId\"></textarea></form>",
             templateValues: {
                 commentId: {
                     expander: {
@@ -212,7 +212,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             due: "due"
         },
         resources: {
-            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floec-goal-icon\">&#10026;</span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input type=\"date\"  class=\"floec-goal-due\"></input>"
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floe-goal-icon floe-entry-icon\">&#10026;</span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input type=\"date\"  class=\"floec-goal-due\"></input>"
         }
     });
 
@@ -270,7 +270,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.preferenceChange.displayed", {
-        gradeNames: ["floe.dashboard.preferenceChange.persisted", "floe.dashboard.entry.displayed"],        
+        gradeNames: ["floe.dashboard.preferenceChange.persisted", "floe.dashboard.entry.displayed"],
         selectors: {
             created: ".floec-note-created",
             lastModified: ".floec-note-lastModified",
@@ -308,7 +308,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             no: "No"
         },
         resources: {
-            stringTemplate: "<p><span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br/><span class=\"floe-preferenceChange-icon\">&#128187;</span> <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
+            stringTemplate: "<p><span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br/><span class=\"floe-preferenceChange-icon floe-entry-icon\">&#128187;</span> <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
             templateValues: {
                 radioButtons: {
                     expander: {

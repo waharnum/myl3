@@ -28,7 +28,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             entry: {
                 options: {
                     resources: {
-                        stringTemplate: "<span class=\"floec-goal-icon\">&#10026;</span> <span class=\"floec-note-text\"></span><br><span   class=\"floec-goal-due\"></span>"
+                        stringTemplate: "<span class=\"floe-goal-icon floe-entry-icon\">&#10026;</span> <span class=\"floec-note-text\"></span><br><span   class=\"floec-goal-due\"></span>"
                     }
                 }
             }

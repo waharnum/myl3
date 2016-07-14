@@ -60,6 +60,16 @@ overflow:hidden;}
 
 .floe-entryList li {
     margin-top: 1em;
+    list-style: none;
+    margin-left: -1em;    
+}
+
+.floe-entry-icon {
+    font-size:150%
+}
+
+.floe-mood-commentArea {
+    width: 100%;
 }
 
 .floe-navArrow {
