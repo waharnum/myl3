@@ -186,8 +186,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 func: "{that}.getEntries"
             },
             "onCreate.createPageMarkup": {
-                func: "floe.dashboard.pouchEntries.createPageMarkup",
-                args: "{that}",
+                func: "{that}.createPageMarkup",
                 priority: "before:getEntries"
             }
         },
@@ -199,6 +198,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "addEntry": {
                 funcName: "floe.dashboard.pouchEntries.addEntry",
                 args: ["{arguments}.0", "{that}"]
+            },
+            "createPageMarkup": {
+                funcName: "floe.dashboard.pouchEntries.createPageMarkup",
+                args: ["{that}"]
             }
         },
         dbOptions: {
@@ -269,7 +272,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modelListeners: {
             "refreshPageMarkup": {
                 path: "currentDate",
-                func: "floe.dashboard.pouchEntries.createPageMarkup",
+                func: "floe.dashboard.page.createPageMarkup",
                 args: "{that}",
                 priority: "before:getEntries",
                 excludeSource: "init"
@@ -289,6 +292,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "rollDate": {
                 funcName: "floe.dashboard.page.rollDate",
                 args: ["{that}", "{arguments}.0"]
+            },
+            "createPageMarkup": {
+                funcName: "floe.dashboard.page.createPageMarkup",
+                args: ["{that}"]
             }
         },
         // Some key constants
@@ -297,12 +304,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             endOfDayUTC: "T23:59:59.999Z"
         },
         resources: {
-            stringTemplate: "<h2>%formattedCurrentDate</h2><ol class=\"floec-entryList floe-entryList\">",
-            templateValues: {
-                formattedCurrentDate: "{that}.model.formattedCurrentDate"
-            }
+            stringTemplate: "<h2>%formattedCurrentDate</h2><ol class=\"floec-entryList floe-entryList\">"
         }
     });
+
+    //
+    floe.dashboard.page.createPageMarkup = function (that) {
+        that.container.empty();
+        var templateValues = {
+            formattedCurrentDate: that.model.formattedCurrentDate
+        };
+        that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, templateValues));
+    };
 
     floe.dashboard.page.rollDate = function (that, daysToRoll) {
         var currentDate = new Date(that.model.currentDate);
