@@ -186,7 +186,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 func: "{that}.getEntries"
             },
             "onCreate.createPageMarkup": {
-                func: "floe.dashboard.page.createPageMarkup",
+                func: "floe.dashboard.pouchEntries.createPageMarkup",
                 args: "{that}",
                 priority: "before:getEntries"
             }
@@ -209,7 +209,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             entryContainerTemplate: "<li id=\"%noteId\"></li>"
         }
     });
-    
+
     floe.dashboard.pouchEntries.injectEntryContainer = function (that) {
         var entryList = that.locate("entryList");
         var noteId = "note-" + fluid.allocateGuid();
@@ -242,6 +242,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
+    floe.dashboard.pouchEntries.createPageMarkup = function (that) {
+        that.container.empty();
+        that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, that.options.resources.templateValues));
+    };
+
     // The page represents a particular "page"
     fluid.defaults("floe.dashboard.page", {
         gradeNames: ["floe.dashboard.eventInTimeAware", "floe.dashboard.pouchEntries"],
@@ -264,7 +269,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modelListeners: {
             "refreshPageMarkup": {
                 path: "currentDate",
-                func: "floe.dashboard.page.createPageMarkup",
+                func: "floe.dashboard.pouchEntries.createPageMarkup",
                 args: "{that}",
                 priority: "before:getEntries",
                 excludeSource: "init"
@@ -323,11 +328,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             dbName = that.options.dbOptions.localName;
 
         floe.dashboard.pouchEntries.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.page.createEntriesFromPouchResponse);
-    };
-
-    floe.dashboard.page.createPageMarkup = function (that) {
-        that.container.empty();
-        that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, that.options.resources.templateValues));
     };
 
     floe.dashboard.page.filterModelOptions = function(prefPanel, filterString) {
