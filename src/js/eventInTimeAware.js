@@ -102,13 +102,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.eventInTimeAware.getFormattedDate = function (timestamp) {
-        console.log(timestamp);
         var formatted = new Date(timestamp);
         return formatted.toLocaleDateString();
     };
 
     floe.dashboard.eventInTimeAware.getFormattedTime = function (timestamp) {
-        console.log(timestamp);
         var formatted = new Date(timestamp);
         return formatted.toLocaleTimeString();
     };

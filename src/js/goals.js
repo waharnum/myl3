@@ -56,7 +56,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
 
         fluid.each(goals, function (row) {
-            console.log(row);
             var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
             var entryContainer = floe.dashboard.pouchEntries.injectEntryContainer(that);
             that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);

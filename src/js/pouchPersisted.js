@@ -87,7 +87,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Fires the document as argument to the retrieved event when retrieved
 
     floe.dashboard.pouchPersisted.retrievePersisted = function (that) {
-        console.log("floe.dashboard.pouchPersisted.retrievePersisted");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
 
@@ -105,7 +104,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.storePersisted = function (that) {
-        console.log("floe.dashboard.note.pouchPersisted.store");
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
@@ -130,7 +128,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Delete the persisted document
     floe.dashboard.pouchPersisted.deletePersisted = function (that) {
-        console.log("floe.dashboard.note.pouchPersisted.delete");
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {
