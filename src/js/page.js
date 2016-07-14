@@ -48,11 +48,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             "onCreate.bindMoodSubmitClick": {
                 func: "floe.dashboard.journal.bindMoodSubmitClick",
-                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "Right now I feel..."]
+                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "I felt..."]
             },
             "onCreate.bindAchieveSubmitEntryClick": {
                 func: "floe.dashboard.journal.bindGoalSubmitClick",
-                args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "#floec-newEntry-achieve-date", "I want to set a goal to..."]
+                args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "#floec-newEntry-achieve-date", "I set a goal to..."]
             },
             "onCreate.bindBackOneMonthLink": {
                 func: "floe.dashboard.journal.bindJournalNavLink",
@@ -89,8 +89,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.journal.bindMoodSubmitClick = function (that, promptId, buttonId, textAreaId, prompt) {
-        var page = that;
+    floe.dashboard.journal.bindMoodSubmitClick = function (page, promptId, buttonId, textAreaId, prompt) {
         $(buttonId).click(function (e) {
             var entryText = $(textAreaId).val();
             floe.dashboard.mood.persisted({
@@ -99,9 +98,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     "prompt": prompt
                 },
                 listeners: {
-                    "onMoodStored.addMood": {
-                        func: "floe.dashboard.journal.addEntry",
-                        args: ["{that}", page]
+                    "onMoodStored.addMoodEntry": {
+                        func: page.addEntry,
+                        args: ["{that}"]
                     }
                 },
                 dbOptions: {
@@ -113,8 +112,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    floe.dashboard.journal.bindGoalSubmitClick = function (that, promptId, buttonId, textAreaId, entryDueId, prompt) {
-        var page = that;
+    floe.dashboard.journal.bindGoalSubmitClick = function (page, promptId, buttonId, textAreaId, entryDueId, prompt) {
         $(buttonId).click(function (e) {
             var entryText = $(textAreaId).val();
             var entryDue = $(entryDueId).val();
@@ -125,9 +123,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     "due": entryDue
                 },
                 listeners: {
-                    "onGoalStored.addGoal": {
-                        func: "floe.dashboard.journal.addEntry",
-                        args: ["{that}", page]
+                    "onGoalStored.addGoalEntry": {
+                        func: page.addEntry,
+                        args: ["{that}"]
                     }
                 },
                 dbOptions: {
@@ -151,15 +149,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             var today = new Date().toJSON();
             page.applier.change("currentDate", today);
             e.preventDefault();
-        });
-    };
-
-    floe.dashboard.journal.addEntry = function (note, page) {
-        var db = new PouchDB(page.options.dbOptions.localName);
-        db.get(note.model._id).then(function (dbNote) {
-            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
-            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
-            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
         });
     };
 
@@ -241,6 +230,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "getEntries": {
                 funcName: "floe.dashboard.page.getEntries",
                 args: "{that}"
+            },
+            "addEntry": {
+                funcName: "floe.dashboard.page.addEntry",
+                args: ["{arguments}.0", "{that}"]
             }
         },
         dbOptions: {
@@ -256,6 +249,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             entryContainerTemplate: "<li id=\"%noteId\"></li>"
         }
     });
+
+    floe.dashboard.page.addEntry = function (entry, page) {
+        var db = new PouchDB(page.options.dbOptions.localName);
+        db.get(entry.model._id).then(function (dbNote) {
+            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
+            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
+            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
+        });
+    };
 
     floe.dashboard.page.rollDate = function (that, daysToRoll) {
         var currentDate = new Date(that.model.currentDate);
@@ -450,8 +452,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     listeners: {
                         "onPreferenceChangeStored.addEntry": {
-                            func: "floe.dashboard.journal.addEntry",
-                            args: ["{that}", page]
+                            func: page.addEntry,
+                            args: ["{that}"]
                         }
                     },
                     dbOptions: {

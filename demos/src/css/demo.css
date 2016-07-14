@@ -37,11 +37,11 @@
     font-weight: normal;
 }
 
-.floe-notes {
+.floe-notes, .floe-goals {
     padding: 0 1em 1em 1em;
 }
 
-.floe-notes h2 {
+.floe-notes h2, .floe-goals h2 {
     font-size: 1.2em;
     color: rgb(107, 170, 172);
 }

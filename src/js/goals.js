@@ -24,6 +24,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: "{that}"
             }
         },
+        resources: {
+            stringTemplate: "<ol class=\"floec-entryList floe-entryList\">"
+        },
         dynamicComponents: {
             entry: {
                 options: {
