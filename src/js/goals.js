@@ -50,9 +50,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             return componentType.indexOf("floe.dashboard.goal") === -1;
         });
 
-        // Sort by date
+        // Sort by date, put non-date values at the end
         fluid.stableSort(goals, function (a, b) {
-            return new Date(a.doc.due) - new Date(b.doc.due);
+            if(!a.doc.due) {
+                return 1;
+            } else if(!b.doc.due) {
+                return -1;
+            } else return new Date(a.doc.due) - new Date(b.doc.due);
+
+
         });
 
         fluid.each(goals, function (row) {

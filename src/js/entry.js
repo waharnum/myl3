@@ -186,7 +186,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.dashboard.goal", {
         gradeNames: ["floe.dashboard.note"],
         model: {
-            "due": "",
+            "due": null,
         },
         modelListeners: {
             "due": {
