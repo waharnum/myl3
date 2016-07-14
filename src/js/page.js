@@ -225,11 +225,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.pouchEntries.addEntry = function (entry, that) {
-        var db = new PouchDB(page.options.dbOptions.localName);
+        var db = new PouchDB(that.options.dbOptions.localName);
         db.get(entry.model._id).then(function (dbNote) {
             var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
             var entryContainer = floe.dashboard.pouchEntries.injectEntryContainer(that);
-            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
+            that.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
         });
     };
 
