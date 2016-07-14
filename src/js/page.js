@@ -189,12 +189,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         invokers: {
-            "getEntries": {
-                funcName: "floe.dashboard.page.getEntries",
-                args: "{that}"
-            },
+            // Derived grades must implement
+            // "getEntries": {
+            //
+            // },
             "addEntry": {
-                funcName: "floe.dashboard.page.addEntry",
+                funcName: "floe.dashboard.pouchEntries.addEntry",
                 args: ["{arguments}.0", "{that}"]
             }
         },
@@ -202,6 +202,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // localName: "notes"
         }
     });
+
+    floe.dashboard.pouchEntries.addEntry = function (entry, page) {
+        var db = new PouchDB(page.options.dbOptions.localName);
+        db.get(entry.model._id).then(function (dbNote) {
+            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
+            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
+            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
+        });
+    };
+
+    floe.dashboard.pouchEntries.retrieveFromPouch = function (dbName, startkey, endkey, that, callbackFunc) {
+        var db = new PouchDB(dbName);
+        db.allDocs({
+            include_docs: true,
+            // start and end date filtering
+            startkey: startkey,
+            endkey: endkey
+        }).then(function (response) {
+            callbackFunc(that, response);
+        });
+    };
 
     // The page represents a particular "page"
     fluid.defaults("floe.dashboard.page", {
@@ -241,6 +262,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         invokers: {
+            "getEntries": {
+                funcName: "floe.dashboard.page.getEntries",
+                args: "{that}"
+            },
             "rollDate": {
                 funcName: "floe.dashboard.page.rollDate",
                 args: ["{that}", "{arguments}.0"]
@@ -257,31 +282,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.page.addEntry = function (entry, page) {
-        var db = new PouchDB(page.options.dbOptions.localName);
-        db.get(entry.model._id).then(function (dbNote) {
-            var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
-            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
-            page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
-        });
-    };
-
     floe.dashboard.page.rollDate = function (that, daysToRoll) {
         var currentDate = new Date(that.model.currentDate);
         currentDate.setDate(currentDate.getDate() + daysToRoll);
         that.applier.change("currentDate", currentDate);
-    };
-
-    floe.dashboard.page.retrieveFromPouch = function (dbName, startkey, endkey, that, callbackFunc) {
-        var db = new PouchDB(dbName);
-        db.allDocs({
-            include_docs: true,
-            // start and end date filtering
-            startkey: startkey,
-            endkey: endkey
-        }).then(function (response) {
-            callbackFunc(that, response);
-        });
     };
 
     floe.dashboard.page.createEntriesFromPouchResponse = function (that, pouchResponse) {
@@ -301,7 +305,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             endkey = pageUTCDate + that.options.constants.endOfDayUTC,
             dbName = that.options.dbOptions.localName;
 
-        floe.dashboard.page.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.page.createEntriesFromPouchResponse);
+        floe.dashboard.pouchEntries.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.page.createEntriesFromPouchResponse);
     };
 
     floe.dashboard.page.injectEntryContainer = function (that) {

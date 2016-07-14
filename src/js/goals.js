@@ -47,7 +47,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             endkey = null,
             dbName = that.options.dbOptions.localName;
 
-        floe.dashboard.page.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.goals.createEntriesFromPouchResponse);
+        floe.dashboard.pouchEntries.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.goals.createEntriesFromPouchResponse);
     };
 
     floe.dashboard.goals.createEntriesFromPouchResponse = function (that, pouchResponse) {
