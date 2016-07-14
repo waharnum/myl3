@@ -30,27 +30,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     //     }
     // });
 
-    floe.dashboard.journal(".floec-notes", {
-        components: {
-            page: {
-                options: {
-                    dbOptions: {
-                        localName: "notes",
-                        remoteName: "http://localhost:5984/notes"
-                    }
-                }
-            }
-        }
-    });
-
-    floe.dashboard.goals(".floec-goals", {
-                    dbOptions: {
-                        localName: "notes",
-                        remoteName: "http://localhost:5984/notes"
-
-        }
-    });
-
     fluid.registerNamespace("floe.tests.dashboard");
 
     // Get a random positive integer
@@ -109,52 +88,114 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     //     console.log(response);
     // });
 
-    $(document).ready(function () {
-        fluid.uiOptions.prefsEditor(".flc-prefsEditor-separatedPanel", {
-            terms: {
-                "templatePrefix": "/src/lib/infusion/src/framework/preferences/html",
-                "messagePrefix": "/src/lib/infusion/src/framework/preferences/messages"
+    fluid.defaults("floe.dashboard.lab", {
+        gradeNames: ["fluid.viewComponent"],
+        events: {
+            "onTemplatesReady": null,
+            "onContainerReady": null
+        },
+        listeners: {
+            "onTemplatesReady.appendLabTemplate": {
+                "this": "{that}.container",
+                "method": "append",
+                args: ["{templateLoader}.resources.labTemplate.resourceText"]
             },
-            "tocTemplate": "/src/lib/infusion/src/components/tableOfContents/html/TableOfContents.html",
-            "ignoreForToC": {
-                "overviewPanel": ".flc-overviewPanel"
-            },
-            distributeOptions: {
-                target: "{that fluid.prefs.panel}.options",
-                record: {
+            "onTemplatesReady.onContainerReady": {
+                func: "{that}.events.onContainerReady.fire",
+                priority: "after:appendLabTemplate"
+            }
+        },
+        components: {
+            templateLoader: {
+                type: "fluid.prefs.resourceLoader",
+                options: {
+                    resources: {
+                        labTemplate: "/src/html/labTemplate.html"
+                    },
                     listeners: {
-                        "onCreate.registerSelf": {
-                            func: "floe.dashboard.page.addPreferenceMessage",
-                            args: ["{that}", "{floe.dashboard.journal}.page"]
+                        "onResourcesLoaded.escalate": "{floe.dashboard.lab}.events.onTemplatesReady"
+                    }
+                }
+            },
+            journal: {
+                type: "floe.dashboard.journal",
+                container: ".floec-notes",
+                createOnEvent: "onContainerReady",
+                options: {
+                    components: {
+                        page: {
+                            options: {
+                                dbOptions: {
+                                    localName: "notes",
+                                    remoteName: "http://localhost:5984/notes"
+                                }
+                            }
                         }
                     }
                 }
             },
-            components: {
-                prefsEditorLoader: {
-                    options: {
-                        components: {
-                            slidingPanel: {
-                                options: {
-                                    listeners: {
-                                        "onPanelHide.trackPreferenceChanges": {
-                                            func: "floe.dashboard.page.trackPreferenceChanges",
-                                            args: ["{prefsEditor}", "{floe.dashboard.journal}.page"]
-                                        },
-                                        "onPanelShow.trackPreferenceChanges": {
-                                            func: "floe.dashboard.page.trackPreferenceChanges",
-                                            args: ["{prefsEditor}", "{floe.dashboard.journal}.page"]
-                                        },
-                                    }
+            goals: {
+                type: "floe.dashboard.goals",
+                container: ".floec-goals",
+                createOnEvent: "onContainerReady",
+                options: {
+                    dbOptions: {
+                        localName: "notes",
+                        remoteName: "http://localhost:5984/notes"
+                    }
+                }
+            },
+            prefs: {
+                type: "fluid.uiOptions.prefsEditor",
+                container: ".flc-prefsEditor-separatedPanel",
+                createOnEvent: "onContainerReady",
+                options: {
+                    terms: {
+                        "templatePrefix": "/src/lib/infusion/src/framework/preferences/html",
+                        "messagePrefix": "/src/lib/infusion/src/framework/preferences/messages"
+                    },
+                    "tocTemplate": "/src/lib/infusion/src/components/tableOfContents/html/TableOfContents.html",
+                    "ignoreForToC": {
+                        "overviewPanel": ".flc-overviewPanel"
+                    },
+                    distributeOptions: {
+                        target: "{that fluid.prefs.panel}.options",
+                        record: {
+                            listeners: {
+                                "onCreate.registerSelf": {
+                                    func: "floe.dashboard.page.addPreferenceMessage",
+                                    args: ["{that}", "{journal}.page"]
                                 }
-                            },
-                            prefsEditor: {
-                                options: {
-                                    listeners: {
-                                        "onReady.relayInitialPreferences": {
-                                            func: "floe.dashboard.page.relayInitialPreferences",
-                                            args: ["{that}", "{floe.dashboard.journal}.page"],
-                                            priority: "last"
+                            }
+                        }
+                    },
+                    components: {
+                        prefsEditorLoader: {
+                            options: {
+                                components: {
+                                    slidingPanel: {
+                                        options: {
+                                            listeners: {
+                                                "onPanelHide.trackPreferenceChanges": {
+                                                    func: "floe.dashboard.page.trackPreferenceChanges",
+                                                    args: ["{prefsEditor}", "{journal}.page"]
+                                                },
+                                                "onPanelShow.trackPreferenceChanges": {
+                                                    func: "floe.dashboard.page.trackPreferenceChanges",
+                                                    args: ["{prefsEditor}", "{journal}.page"]
+                                                },
+                                            }
+                                        }
+                                    },
+                                    prefsEditor: {
+                                        options: {
+                                            listeners: {
+                                                "onReady.relayInitialPreferences": {
+                                                    func: "floe.dashboard.page.relayInitialPreferences",
+                                                    args: ["{that}", "{journal}.page"],
+                                                    priority: "last"
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -163,7 +204,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     }
                 }
             }
-        });
+        }
     });
+
+    floe.dashboard.lab(".floec-labContainer");
 
 })(jQuery, fluid);

@@ -1,4 +1,4 @@
-.floe-labContainer {
+.floe-panelsContainer {
     float: left;
     clear: both;
     width: 100%;
@@ -61,7 +61,7 @@ overflow:hidden;}
 .floe-entryList li {
     margin-top: 1em;
     list-style: none;
-    margin-left: -1em;    
+    margin-left: -1em;
 }
 
 .floe-entry-icon {
