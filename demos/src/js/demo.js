@@ -92,7 +92,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["fluid.viewComponent"],
         events: {
             "onTemplatesReady": null,
-            "onContainerReady": null
+            "onContainerMarkupReady": null
         },
         listeners: {
             "onTemplatesReady.appendLabTemplate": {
@@ -100,8 +100,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "method": "append",
                 args: ["{templateLoader}.resources.labTemplate.resourceText"]
             },
-            "onTemplatesReady.onContainerReady": {
-                func: "{that}.events.onContainerReady.fire",
+            "onTemplatesReady.fireOnContainerMarkupReady": {
+                func: "{that}.events.onContainerMarkupReady.fire",
                 priority: "after:appendLabTemplate"
             }
         },
@@ -120,7 +120,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             journal: {
                 type: "floe.dashboard.journal",
                 container: ".floec-notes",
-                createOnEvent: "onContainerReady",
+                createOnEvent: "onContainerMarkupReady",
                 options: {
                     components: {
                         page: {
@@ -137,7 +137,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             goals: {
                 type: "floe.dashboard.goals",
                 container: ".floec-goals",
-                createOnEvent: "onContainerReady",
+                createOnEvent: "onContainerMarkupReady",
                 options: {
                     dbOptions: {
                         localName: "notes",
@@ -148,7 +148,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             prefs: {
                 type: "fluid.uiOptions.prefsEditor",
                 container: ".flc-prefsEditor-separatedPanel",
-                createOnEvent: "onContainerReady",
+                createOnEvent: "onContainerMarkupReady",
                 options: {
                     terms: {
                         "templatePrefix": "/src/lib/infusion/src/framework/preferences/html",
