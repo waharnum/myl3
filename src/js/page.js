@@ -29,11 +29,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             page: {
                 type: "floe.dashboard.page",
                 container: "{journal}.dom.page",
-                createOnEvent: "onJournalMarkupReady"
+                createOnEvent: "onJournalMarkupReady",
+                options: {
+                    listeners: {
+                        "{journal}.events.onGoalAdded": {
+                            "namespace": "addToPage",
+                            func: "{page}.addEntry",
+                            args: ["{arguments}.0"]
+                        },
+                        "{journal}.events.onMoodAdded": {
+                            "namespace": "addToPage",
+                            func: "{page}.addEntry",
+                            args: ["{arguments}.0"]
+                        }
+                    }
+                }
             }
         },
         events: {
-            onJournalMarkupReady: null
+            onJournalMarkupReady: null,
+            onGoalAdded: null,
+            onMoodAdded: null
         },
         listeners: {
             "onCreate.createJournalMarkup": {
@@ -48,11 +64,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             "onCreate.bindMoodSubmitClick": {
                 func: "floe.dashboard.journal.bindMoodSubmitClick",
-                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "I felt..."]
+                args: ["{page}", "#floec-prompt-feel", "#floec-submitEntry-feel", "#floec-newEntry-feel", "I felt...", "{that}"]
             },
             "onCreate.bindAchieveSubmitEntryClick": {
                 func: "floe.dashboard.journal.bindGoalSubmitClick",
-                args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "#floec-newEntry-achieve-date", "I set a goal to..."]
+                args: ["{page}", "#floec-prompt-achieve",  "#floec-submitEntry-achieve", "#floec-newEntry-achieve", "#floec-newEntry-achieve-date", "I set a goal to...", "{that}"]
             },
             "onCreate.bindBackOneMonthLink": {
                 func: "floe.dashboard.journal.bindJournalNavLink",
@@ -89,7 +105,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.journal.bindMoodSubmitClick = function (page, promptId, buttonId, textAreaId, prompt) {
+    floe.dashboard.journal.bindMoodSubmitClick = function (page, promptId, buttonId, textAreaId, prompt, that) {
         $(buttonId).click(function (e) {
             var entryText = $(textAreaId).val();
             floe.dashboard.mood.persisted({
@@ -98,8 +114,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     "prompt": prompt
                 },
                 listeners: {
-                    "onMoodStored.addMoodEntry": {
-                        func: page.addEntry,
+                    "onMoodStored.fireJournalEvent": {
+                        func: that.events.onMoodAdded.fire,
                         args: ["{that}"]
                     }
                 },
@@ -112,7 +128,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    floe.dashboard.journal.bindGoalSubmitClick = function (page, promptId, buttonId, textAreaId, entryDueId, prompt) {
+    floe.dashboard.journal.bindGoalSubmitClick = function (page, promptId, buttonId, textAreaId, entryDueId, prompt, that) {
         $(buttonId).click(function (e) {
             var entryText = $(textAreaId).val();
             var entryDue = $(entryDueId).val();
@@ -123,8 +139,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     "due": entryDue
                 },
                 listeners: {
-                    "onGoalStored.addGoalEntry": {
-                        func: page.addEntry,
+                    "onGoalStored.fireJournalEvent": {
+                        func: that.events.onGoalAdded.fire,
                         args: ["{that}"]
                     }
                 },

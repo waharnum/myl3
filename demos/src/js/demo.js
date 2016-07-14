@@ -142,6 +142,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     dbOptions: {
                         localName: "notes",
                         remoteName: "http://localhost:5984/notes"
+                    },
+                    listeners: {
+                        "{journal}.events.onGoalAdded": {
+                            "namespace": "addToGoalsList",
+                            func: "{goals}.addEntry",
+                            args: ["{arguments}.0"]
+                        }
                     }
                 }
             },
