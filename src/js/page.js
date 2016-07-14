@@ -265,27 +265,36 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.applier.change("currentDate", currentDate);
     };
 
-    floe.dashboard.page.getEntries = function (that) {
-        console.log("floe.dashboard.page.getEntries");
-
-        var pageDate = new Date(that.model.currentDate);
-        console.log(pageDate);
-        var pageUTCFull = pageDate.toJSON();
-        var pageUTCDate = pageUTCFull.slice(0,pageUTCFull.indexOf("T"));
-
-        var db = new PouchDB(that.options.dbOptions.localName);
+    floe.dashboard.page.retrieveFromPouch = function (dbName, startkey, endkey, that, callbackFunc) {
+        var db = new PouchDB(dbName);
         db.allDocs({
             include_docs: true,
             // start and end date filtering
-            startkey: pageUTCDate + that.options.constants.startOfDayUTC,
-            endkey: pageUTCDate + that.options.constants.endOfDayUTC
+            startkey: startkey,
+            endkey: endkey
         }).then(function (response) {
-            fluid.each(response.rows, function (row) {
-                var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
-                var entryContainer = floe.dashboard.page.injectEntryContainer(that);
-                that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
-            });
+            callbackFunc(that, response);
         });
+    };
+
+    floe.dashboard.page.createEntriesFromPouchResponse = function (that, pouchResponse) {
+        fluid.each(pouchResponse.rows, function (row) {
+            var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
+            var entryContainer = floe.dashboard.page.injectEntryContainer(that);
+            that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
+        });
+    };
+
+    floe.dashboard.page.getEntries = function (that) {
+        var pageDate = new Date(that.model.currentDate);
+        var pageUTCFull = pageDate.toJSON();
+        var pageUTCDate = pageUTCFull.slice(0,pageUTCFull.indexOf("T"));
+
+        var startkey = pageUTCDate + that.options.constants.startOfDayUTC,
+            endkey = pageUTCDate + that.options.constants.endOfDayUTC,
+            dbName = that.options.dbOptions.localName;
+
+        floe.dashboard.page.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.page.createEntriesFromPouchResponse);
     };
 
     floe.dashboard.page.injectEntryContainer = function (that) {
