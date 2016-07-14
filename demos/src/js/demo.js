@@ -31,9 +31,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // });
 
     floe.dashboard.journal(".floec-notes", {
-        model: {
-            journalName: "Alan's Journal"
-        },
         components: {
             page: {
                 options: {
@@ -43,6 +40,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     }
                 }
             }
+        }
+    });
+
+    floe.dashboard.goals(".floec-goals", {
+                    dbOptions: {
+                        localName: "notes",
+                        remoteName: "http://localhost:5984/notes"
+                
         }
     });
 

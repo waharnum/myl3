@@ -17,8 +17,53 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Handles retrieving and displaying goals
     fluid.defaults("floe.dashboard.goals", {
-        gradeNames: ["fluid.viewComponent"]
+        gradeNames: ["floe.dashboard.page"],
+        invokers: {
+            "getEntries": {
+                funcName: "floe.dashboard.goals.getEntries",
+                args: "{that}"
+            }
+        },
+        dynamicComponents: {
+            entry: {
+                options: {
+                    resources: {
+                        stringTemplate: "<span class=\"floec-goal-icon\">&#10026;</span> <span class=\"floec-note-text\"></span><br><span   class=\"floec-goal-due\"></span>"
+                    }
+                }
+            }
+        }
     });
 
+    floe.dashboard.goals.getEntries = function (that) {
+        var pageDate = new Date(that.model.currentDate);
+        var pageUTCFull = pageDate.toJSON();
+        var pageUTCDate = pageUTCFull.slice(0,pageUTCFull.indexOf("T"));
+
+        var startkey = null,
+            endkey = null,
+            dbName = that.options.dbOptions.localName;
+
+        floe.dashboard.page.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.goals.createEntriesFromPouchResponse);
+    };
+
+    floe.dashboard.goals.createEntriesFromPouchResponse = function (that, pouchResponse) {
+        var goals = fluid.remove_if(pouchResponse.rows, function (row) {
+            var componentType = row.doc.persistenceInformation.typeName;
+            return componentType.indexOf("floe.dashboard.goal") === -1;
+        });
+
+        // Sort by date
+        fluid.stableSort(goals, function (a, b) {
+            return new Date(a.doc.due) - new Date(b.doc.due);
+        });
+
+        fluid.each(goals, function (row) {
+            console.log(row);
+            var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
+            var entryContainer = floe.dashboard.page.injectEntryContainer(that);
+            that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
+        });
+    };
 
 })(jQuery, fluid);

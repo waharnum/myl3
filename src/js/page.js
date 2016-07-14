@@ -141,7 +141,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.journal.bindJournalNavLink = function (page, selector, roll) {
         $(selector).click(function (e) {
-            console.log("journalNavLink", selector, roll);
             page.rollDate(roll);
             e.preventDefault();
         });
@@ -149,17 +148,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.journal.bindJournalNavLinkToday = function (page, selector) {
         $(selector).click(function (e) {
-            console.log("journalNavLinkToday", selector);
             var today = new Date().toJSON();
-            console.log(today);
             page.applier.change("currentDate", today);
             e.preventDefault();
         });
     };
 
     floe.dashboard.journal.addEntry = function (note, page) {
-        console.log("floe.dashboard.journal.addEntry");
-        // console.log(that);
         var db = new PouchDB(page.options.dbOptions.localName);
         db.get(note.model._id).then(function (dbNote) {
             var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
@@ -205,8 +200,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         listeners: {
             "onCreate.getEntries": {
-                func: "floe.dashboard.page.getEntries",
-                args: "{that}"
+                func: "{that}.getEntries"
             },
             "onCreate.createPageMarkup": {
                 func: "floe.dashboard.page.createPageMarkup",
@@ -243,6 +237,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "rollDate": {
                 funcName: "floe.dashboard.page.rollDate",
                 args: ["{that}", "{arguments}.0"]
+            },
+            "getEntries": {
+                funcName: "floe.dashboard.page.getEntries",
+                args: "{that}"
             }
         },
         dbOptions: {
@@ -360,7 +358,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         }
                     });
 
-                    console.log(prefKey, prefsModelMessages);
                     messages[prefKey] = prefsModelMessages;
         });
         return messages;
@@ -369,7 +366,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Relay initial preferences
     floe.dashboard.page.addPreferenceMessage = function (prefPanel, page) {
         // Panel itself
-        console.log(prefPanel);
 
         var modelOptionsBlock = fluid.copy(prefPanel.options.model[0]);
 
@@ -392,8 +388,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             page.preferencesMessagesSinglePanel[key] = message;
         });
 
-        console.log(page.preferencesMessagesSinglePanel);
-
         var compositePanelMessages = floe.dashboard.page.extractPreferenceMessages(compositePanelOptions, compositePanelFilterString, messageBaseOptionsBlock);
 
         page.preferencesMessagesCompositePanel = page.preferencesMessagesCompositePanel || {};
@@ -402,32 +396,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(compositePanelMessages, function (message, key) {
             page.preferencesMessagesCompositePanel[key] = message;
         });
-
-        console.log(page.preferencesMessagesCompositePanel);
-
     };
 
     // Relay initial preferences
     floe.dashboard.page.relayInitialPreferences = function (prefsEditor, page) {
-        console.log("floe.dashboard.page.relayInitialPreferences");
         page.applier.change("preferences", prefsEditor.model.preferences);
-        console.log(page);
     };
 
     floe.dashboard.page.lookupPreferenceMessage = function(preferenceType, preferenceValue, page) {
-        console.log(preferenceType);
-        console.log(preferenceValue);
-        console.log(page);
         // Try composite panel messages first (assume more specific)
         var compositeMessages = page.preferencesMessagesCompositePanel;
         // Try single panel next
         var singleMessages = page.preferencesMessagesSinglePanel;
         // Fall back to raw
         var messageToUse = compositeMessages[preferenceType] ? compositeMessages[preferenceType] : singleMessages[preferenceType] ? singleMessages[preferenceType] : preferenceType;
-
-        console.log(messageToUse);
-
-
                 var typeLabelToUse = messageToUse.label ? messageToUse.label : preferenceType;
 
         var valueLabelToUse;
@@ -435,8 +417,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             valueLabelToUse = messageToUse.values[preferenceValue] ? messageToUse.values[preferenceValue] : preferenceValue;
         } else valueLabelToUse = preferenceValue;
 
-        console.log(typeLabelToUse);
-        console.log(valueLabelToUse);
         return {
             typeLabelToUse: typeLabelToUse,
             valueLabelToUse: valueLabelToUse
@@ -446,7 +426,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Compares the current preferences
     floe.dashboard.page.compareCurrentPreferences = function (prefsEditor, page) {
-        console.log("floe.dashboard.page.comparePreferences");
         var prefsEditorPreferences = fluid.get(prefsEditor, "model.preferences");
         var pagePreferences = fluid.get(page, "model.preferences");
         var stats = {changes: 0, unchanged: 0, changeMap: {}};
