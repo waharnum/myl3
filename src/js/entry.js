@@ -101,6 +101,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.events.onBindDelete.fire();
     };
 
+
+    // A base grade with a text field; used by various entry grades
     fluid.defaults("floe.dashboard.note", {
         gradeNames: ["floe.dashboard.pouchPersisted"],
         model: {
@@ -268,8 +270,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.dashboard.preferenceChange.displayed", {
-        gradeNames: ["floe.dashboard.preferenceChange.persisted", "floe.dashboard.entry.displayed"],
-        // A key/value of selectorName: model.path
+        gradeNames: ["floe.dashboard.preferenceChange.persisted", "floe.dashboard.entry.displayed"],        
         selectors: {
             created: ".floec-note-created",
             lastModified: ".floec-note-lastModified",

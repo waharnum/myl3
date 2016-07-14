@@ -152,21 +152,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
     };
 
-    // The page represents a particular "page"
-    fluid.defaults("floe.dashboard.page", {
-        gradeNames: ["floe.dashboard.eventInTimeAware", "fluid.viewComponent"],
-        selectors: {
-            entryList: ".floec-entryList"
-        },
+    // Some base functionality for view components that retrieve entries
+    // from PouchDB
+    fluid.defaults("floe.dashboard.pouchEntries", {
+        gradeNames: ["fluid.viewComponent"],
         events: {
-            onEntryRetrieved: null,
-            onPreferenceChangeRetrieved: null
-        },
-        model: {
-            // The date of the page to display
-            currentDate: new Date().toJSON(),
-            // Formatted date for display
-            formattedCurrentDate: null
+            onEntryRetrieved: null
         },
         dynamicComponents: {
             entry: {
@@ -181,8 +172,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     onEntryRetrievedArgs: "{arguments}.0",
                     "model": "{that}.options.onEntryRetrievedArgs",
                     dbOptions: {
-                        localName: "{page}.options.dbOptions.localName",
-                        remoteName: "{page}.options.dbOptions.remoteName"
+                        localName: "{pouchEntries}.options.dbOptions.localName",
+                        remoteName: "{pouchEntries}.options.dbOptions.remoteName"
                     }
                 }
             }
@@ -196,6 +187,33 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: "{that}",
                 priority: "before:getEntries"
             }
+        },
+        invokers: {
+            "getEntries": {
+                funcName: "floe.dashboard.page.getEntries",
+                args: "{that}"
+            },
+            "addEntry": {
+                funcName: "floe.dashboard.page.addEntry",
+                args: ["{arguments}.0", "{that}"]
+            }
+        },
+        dbOptions: {
+            // localName: "notes"
+        }
+    });
+
+    // The page represents a particular "page"
+    fluid.defaults("floe.dashboard.page", {
+        gradeNames: ["floe.dashboard.eventInTimeAware", "floe.dashboard.pouchEntries"],
+        selectors: {
+            entryList: ".floec-entryList"
+        },
+        model: {
+            // The date of the page to display
+            currentDate: new Date().toJSON(),
+            // Formatted date for display
+            formattedCurrentDate: null
         },
         modelRelay: {
             target: "{that}.model.formattedCurrentDate",
@@ -226,18 +244,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "rollDate": {
                 funcName: "floe.dashboard.page.rollDate",
                 args: ["{that}", "{arguments}.0"]
-            },
-            "getEntries": {
-                funcName: "floe.dashboard.page.getEntries",
-                args: "{that}"
-            },
-            "addEntry": {
-                funcName: "floe.dashboard.page.addEntry",
-                args: ["{arguments}.0", "{that}"]
             }
-        },
-        dbOptions: {
-            // localName: "notes"
         },
         // Some key constants
         constants: {
