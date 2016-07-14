@@ -159,6 +159,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         events: {
             onEntryRetrieved: null
         },
+        selectors: {
+            entryList: ".floec-entryList"
+        },
         dynamicComponents: {
             entry: {
                 createOnEvent: "onEntryRetrieved",
@@ -200,14 +203,29 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         dbOptions: {
             // localName: "notes"
+        },
+        resources: {
+            stringTemplate: "<ol class=\"floec-entryList floe-entryList\">",
+            entryContainerTemplate: "<li id=\"%noteId\"></li>"
         }
     });
+    
+    floe.dashboard.pouchEntries.injectEntryContainer = function (that) {
+        var entryList = that.locate("entryList");
+        var noteId = "note-" + fluid.allocateGuid();
+        var templateValues = {
+            noteId: noteId
+        };
+        entryList.append(fluid.stringTemplate(that.options.resources.entryContainerTemplate, templateValues));
+        var entryContainer = $("#" + noteId);
+        return entryContainer;
+    };
 
-    floe.dashboard.pouchEntries.addEntry = function (entry, page) {
+    floe.dashboard.pouchEntries.addEntry = function (entry, that) {
         var db = new PouchDB(page.options.dbOptions.localName);
         db.get(entry.model._id).then(function (dbNote) {
             var displayComponentType = dbNote.persistenceInformation.typeName.replace(".persisted", ".displayed");
-            var entryContainer = floe.dashboard.page.injectEntryContainer(page);
+            var entryContainer = floe.dashboard.pouchEntries.injectEntryContainer(that);
             page.events.onEntryRetrieved.fire(dbNote, displayComponentType, entryContainer);
         });
     };
@@ -227,9 +245,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // The page represents a particular "page"
     fluid.defaults("floe.dashboard.page", {
         gradeNames: ["floe.dashboard.eventInTimeAware", "floe.dashboard.pouchEntries"],
-        selectors: {
-            entryList: ".floec-entryList"
-        },
         model: {
             // The date of the page to display
             currentDate: new Date().toJSON(),
@@ -247,14 +262,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         // Reload entries if date changes, such as on navigation
         modelListeners: {
-            "createPageMarkup": {
+            "refreshPageMarkup": {
                 path: "currentDate",
                 func: "floe.dashboard.page.createPageMarkup",
                 args: "{that}",
                 priority: "before:getEntries",
                 excludeSource: "init"
             },
-            "getEntries": {
+            "refreshPageEntries": {
                 path: "currentDate",
                 func: "floe.dashboard.page.getEntries",
                 args: "{that}",
@@ -278,7 +293,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         resources: {
             stringTemplate: "<h2>%formattedCurrentDate</h2><ol class=\"floec-entryList floe-entryList\">",
-            entryContainerTemplate: "<li id=\"%noteId\"></li>"
+            templateValues: {
+                formattedCurrentDate: "{that}.model.formattedCurrentDate"
+            }
         }
     });
 
@@ -291,7 +308,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.page.createEntriesFromPouchResponse = function (that, pouchResponse) {
         fluid.each(pouchResponse.rows, function (row) {
             var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
-            var entryContainer = floe.dashboard.page.injectEntryContainer(that);
+            var entryContainer = floe.dashboard.pouchEntries.injectEntryContainer(that);
             that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
         });
     };
@@ -308,23 +325,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         floe.dashboard.pouchEntries.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.page.createEntriesFromPouchResponse);
     };
 
-    floe.dashboard.page.injectEntryContainer = function (that) {
-        var entryList = that.locate("entryList");
-        var noteId = "note-" + fluid.allocateGuid();
-        var templateValues = {
-            noteId: noteId
-        };
-        entryList.append(fluid.stringTemplate(that.options.resources.entryContainerTemplate, templateValues));
-        var entryContainer = $("#" + noteId);
-        return entryContainer;
-    };
-
     floe.dashboard.page.createPageMarkup = function (that) {
         that.container.empty();
-        var templateValues = {
-            formattedCurrentDate: that.model.formattedCurrentDate
-        };
-        that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, templateValues));
+        that.container.append(fluid.stringTemplate(that.options.resources.stringTemplate, that.options.resources.templateValues));
     };
 
     floe.dashboard.page.filterModelOptions = function(prefPanel, filterString) {

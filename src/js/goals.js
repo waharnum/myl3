@@ -17,15 +17,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Handles retrieving and displaying goals
     fluid.defaults("floe.dashboard.goals", {
-        gradeNames: ["floe.dashboard.page"],
+        gradeNames: ["floe.dashboard.pouchEntries"],
         invokers: {
             "getEntries": {
                 funcName: "floe.dashboard.goals.getEntries",
                 args: "{that}"
             }
-        },
-        resources: {
-            stringTemplate: "<ol class=\"floec-entryList floe-entryList\">"
         },
         dynamicComponents: {
             entry: {
@@ -39,9 +36,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.dashboard.goals.getEntries = function (that) {
-        var pageDate = new Date(that.model.currentDate);
-        var pageUTCFull = pageDate.toJSON();
-        var pageUTCDate = pageUTCFull.slice(0,pageUTCFull.indexOf("T"));
 
         var startkey = null,
             endkey = null,
@@ -64,7 +58,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(goals, function (row) {
             console.log(row);
             var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
-            var entryContainer = floe.dashboard.page.injectEntryContainer(that);
+            var entryContainer = floe.dashboard.pouchEntries.injectEntryContainer(that);
             that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);
         });
     };
