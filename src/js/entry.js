@@ -69,8 +69,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         invokers: {
             getEntryTemplate: {
-                func: fluid.stringTemplate,
+                funcName: "fluid.stringTemplate",
                 args: ["{that}.options.resources.stringTemplate", "{that}.options.resources.templateValues"]
+            },
+            removeEntryMarkup: {
+                funcName: "floe.dashboard.entry.displayed.removeEntryMarkup",
+                args: ["{that}"]
             }
         }
         // Must be set by implementing grade

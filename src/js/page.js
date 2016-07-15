@@ -340,7 +340,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.page.createEntriesFromPouchResponse = function (that, pouchResponse) {
-        fluid.each(pouchResponse.rows, function (row) {
+        // Reverse to get them in newest-first order
+        fluid.each(pouchResponse.rows.reverse(), function (row) {
             var displayComponentType = row.doc.persistenceInformation.typeName.replace(".persisted", ".displayed");
             var entryContainer = floe.dashboard.pouchEntries.injectEntryContainer(that);
             that.events.onEntryRetrieved.fire(row.doc, displayComponentType, entryContainer);

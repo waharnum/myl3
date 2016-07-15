@@ -92,7 +92,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["fluid.viewComponent"],
         events: {
             "onTemplatesReady": null,
-            "onContainerMarkupReady": null
+            "onContainerMarkupReady": null,
+            "onEntryRemoved": null
         },
         listeners: {
             "onTemplatesReady.appendLabTemplate": {
@@ -128,6 +129,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                                 dbOptions: {
                                     localName: "notes",
                                     remoteName: "http://localhost:5984/notes"
+                                },
+                                dynamicComponents: {
+                                    entry: {
+                                        options: {
+                                            listeners: {
+                                                "onEntryRemoved.fireLabEvent": {
+                                                    "func": "{lab}.events.onEntryRemoved.fire",
+                                                    "args": ["{that}"]
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -142,6 +155,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     dbOptions: {
                         localName: "notes",
                         remoteName: "http://localhost:5984/notes"
+                    },
+                    dynamicComponents: {
+                        entry: {
+                            options: {
+                                listeners: {
+                                    "{lab}.events.onEntryRemoved": {
+                                        func: "floe.dashboard.lab.removeEntryIfSamePouchId",
+                                        "args": ["{arguments}.0", "{that}"]
+                                    }
+                                }
+                            }
+                        }
                     },
                     listeners: {
                         "{journal}.events.onGoalAdded": {
@@ -213,6 +238,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         }
     });
+
+    floe.dashboard.lab.removeEntryIfSamePouchId = function(removedEntry, entryToTest) {
+        console.log(entryToTest);
+        var removedEntryPouchId = fluid.get(removedEntry.model, "_id");
+        var entryToTestPouchId = fluid.get(entryToTest.model, "_id");
+        if(removedEntryPouchId === entryToTestPouchId) {
+            entryToTest.removeEntryMarkup();
+        }
+    };
 
     floe.dashboard.lab(".floec-labContainer");
 
