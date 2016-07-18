@@ -46,7 +46,26 @@
     width: calc(100% - 3em);
 }
 
+.floe-headingContainer {
+    display: flex;
+}
+
+
+.floe-labPanel-hideContainer {
+    background-color: rgb(41,57,63);
+    width: 2.4em;
+    text-align: center;
+    float: left;
+}
+
+.floe-labPanel-hideControl {
+    font-size: 2.4em;    
+    text-decoration: none;
+    color: rgb(34,127,131);
+}
+
 .floe-heading {
+    flex-grow: 1;
     margin: 0;
     padding: 0.5em 0 0.5em 0;
     background-color: rgb(34, 127, 131);

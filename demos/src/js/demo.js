@@ -104,6 +104,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "onTemplatesReady.fireOnContainerMarkupReady": {
                 func: "{that}.events.onContainerMarkupReady.fire",
                 priority: "after:appendLabTemplate"
+            },
+            "onTemplatesReady.bindHidePanelControls": {
+                func: "floe.dashboard.lab.bindHidePanelControls",
+                priority: "after:fireOnContainerMarkupReady"
             }
         },
         components: {
@@ -246,6 +250,24 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         if(removedEntryPouchId === entryToTestPouchId) {
             entryToTest.removeEntryMarkup();
         }
+    };
+
+    floe.dashboard.lab.bindHidePanelControls = function() {
+        var controlSelector = ".floec-labPanel-hideControl";
+        var toHideSelector = ".floec-labPanel-content";
+        var controls = $(controlSelector);
+        controls.click(function (e) {
+            var control = $(this);
+            var controlIcon = $(this).children(".floec-labPanel-hideControl-icon");
+            var toHide = $(this).closest(".floec-labPanel").children(toHideSelector);
+            toHide.slideToggle("slow");
+            if(controlIcon.text() === "-") {
+                controlIcon.text("+");
+            } else {
+                controlIcon.text("-");
+            }
+            e.preventDefault();
+        });
     };
 
     floe.dashboard.lab(".floec-labContainer");
