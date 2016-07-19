@@ -59,7 +59,7 @@
 }
 
 .floe-labPanel-hideControl {
-    font-size: 2.4em;    
+    font-size: 2.4em;
     text-decoration: none;
     color: rgb(34,127,131);
 }
@@ -130,4 +130,12 @@ overflow:hidden;}
     background-color: rgb(240,240,240);
     padding: 0.4em 1em;
     margin: 0 0.4em;
+}
+
+.floe-mood-icon:before {
+    content:url('/src/img/icon-note.png');
+}
+
+.floe-goal-icon:before {
+    content:url('/src/img/icon-goal.png');
 }

@@ -176,7 +176,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             comment: "comment"
         },
         resources: {
-            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br> <span class=\"floe-mood-icon floe-entry-icon\">&#128528; </span><span class=\"floec-note-prompt\"></span> \"<span class=\"floec-note-text\"></span>\"<br><form><label for=\"%commentId\" class=\"floec-mood-commentAreaLabel\">Comment:</label> <textarea type=\"text\" class=\"floec-mood-commentArea floe-mood-commentArea\" id=\"%commentId\"></textarea></form>",
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br> <span class=\"floe-mood-icon floe-entry-icon\"></span><span class=\"floec-note-prompt\"></span> \"<span class=\"floec-note-text\"></span>\"<br><form><label for=\"%commentId\" class=\"floec-mood-commentAreaLabel\">Comment:</label> <textarea type=\"text\" class=\"floec-mood-commentArea floe-mood-commentArea\" id=\"%commentId\"></textarea></form>",
             templateValues: {
                 commentId: {
                     expander: {
@@ -216,7 +216,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             due: "due"
         },
         resources: {
-            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floe-goal-icon floe-entry-icon\">&#10026;</span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input type=\"date\"  class=\"floec-goal-due\"></input>"
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floe-goal-icon floe-entry-icon\"></span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input type=\"date\"  class=\"floec-goal-due\"></input>"
         }
     });
 
