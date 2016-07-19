@@ -7,7 +7,9 @@
   "homepage": "http://www.fluidproject.org/",
   "dependencies": {
       "pouchdb":"5.4.3",
-      "chance":"1.0.3"
+      "chance":"1.0.3",
+      "chartAuthoring":"https://github.com/waharnum/chartAuthoring#GPII-1584",
+      "d3":"4.1.1"
   },
   "license": "(BSD-3-Clause OR ECL-2.0)",
   "keywords": [

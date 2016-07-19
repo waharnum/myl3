@@ -30,7 +30,11 @@ module.exports = function (grunt) {
                     // PouchDB
                     {expand: true, cwd: "./node_modules/pouchdb/", src: "**", dest: "./src/lib/pouchdb/"},
                     // Chance
-                    {expand: true, cwd: "./node_modules/chance/", src: "**", dest: "./src/lib/chance/"}
+                    {expand: true, cwd: "./node_modules/chance/", src: "**", dest: "./src/lib/chance/"},
+                    // chartAuthoring
+                    {expand: true, cwd: "./node_modules/chartAuthoring/", src: "**", dest: "./src/lib/chartAuthoring/"},
+                    // d3
+                    {expand: true, cwd: "./node_modules/d3/", src: "**", dest: "./src/lib/d3/"}
                 ]
             }
         }
