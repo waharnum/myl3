@@ -165,7 +165,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                                     localName: {
                                         expander: {
                                             funcName: "floe.dashboard.lab.getDBName",
-                                            args: ["{lab}"]
+                                            args: ["{lab}.model.userName"]
                                         }
                                     },
                                     remoteName: "http://localhost:5984/notes"
@@ -192,11 +192,25 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 container: ".floec-goals",
                 createOnEvent: "onContainerMarkupReady",
                 options: {
+                    modelListeners: {
+                        "refreshPageMarkupOnUserChange": {
+                            path: "{lab}.model.userName",
+                            func: "{that}.createPageMarkup",
+                            priority: "before:refreshPageEntriesOnOnUserChange",
+                            excludeSource: "init"
+                        },
+                        "refreshPageEntriesOnOnUserChange": {
+                            path: "{lab}.model.userName",
+                            func: "{that}.getEntries",
+                            args: "{that}",
+                            excludeSource: "init"
+                        }
+                    },
                     dbOptions: {
                         localName: {
                             expander: {
                                 funcName: "floe.dashboard.lab.getDBName",
-                                args: ["{lab}"]
+                                args: ["{lab}.model.userName"]
                             }
                         },
                         remoteName: "http://localhost:5984/notes"
@@ -284,11 +298,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.lab.getDBName = function (lab) {
+    floe.dashboard.lab.getDBName = function (userName) {
         // var badDb = new PouchDB("notes");
         // var goodDB = new PouchDB("my3l/Alan/entries");
-        // badDb.replicate.to(goodDB);        
-        return "my3l/" + lab.model.userName + "/entries";
+        // badDb.replicate.to(goodDB);
+        return "my3l/" + userName + "/entries";
     };
 
     floe.dashboard.lab.appendLabTemplate = function (that) {
@@ -327,6 +341,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.lab.bindChangeUser = function (that) {
         $(".floec-labHeader-userChange").change(function (e) {
             var userChangeTo = $(this).val();
+            that.journal.page.options.dbOptions.localName = floe.dashboard.lab.getDBName(userChangeTo);
+            that.goals.options.dbOptions.localName = floe.dashboard.lab.getDBName(userChangeTo);
             that.applier.change("userName", userChangeTo);
         });
     };
