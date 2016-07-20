@@ -286,16 +286,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         // Reload entries if date changes, such as on navigation
         modelListeners: {
-            "refreshPageMarkup": {
+            "refreshPageMarkupOnCurrentDateChange": {
                 path: "currentDate",
-                func: "floe.dashboard.page.createPageMarkup",
-                args: "{that}",
-                priority: "before:getEntries",
+                func: "{that}.createPageMarkup",
+                priority: "before:refreshPageEntriesOnCurrentDateChange",
                 excludeSource: "init"
             },
-            "refreshPageEntries": {
+            "refreshPageEntriesOnCurrentDateChange": {
                 path: "currentDate",
-                func: "floe.dashboard.page.getEntries",
+                func: "{that}.getEntries",
                 args: "{that}",
                 excludeSource: "init"
             }

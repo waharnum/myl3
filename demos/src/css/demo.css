@@ -5,10 +5,33 @@
     padding: 1em;
 }
 
-.floe-labHeader h1 {
+.floe-labHeader-title {
+    position: absolute;
+    left: 1em;
+}
+
+.floe-labHeader-title h1 {
     margin: 0;
     padding-top: 2em;
     font-size: 1em;
+}
+
+
+.floe-labHeader-accountInfo {
+    position: absolute;
+    right: 1em;
+}
+
+.floe-labHeader-accountInfo h2 {
+    margin: 0;
+    padding-top: 3em;
+    font-size: 1em;
+}
+
+.floe-labHeader-userChange {
+    background-color: inherit;
+    border-width: 0;
+    width: 5em;
 }
 
 .floe-labHeader h1:before {
