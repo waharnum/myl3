@@ -53,15 +53,36 @@
     margin: 0.5em;
     padding: 0;
     box-sizing: border-box;
-    background-color: rgb(236, 236, 236);
 }
 
 .floe-notesPanel {
     width: calc(70% - 2em);
+    background-color: rgb(228, 235, 234);
 }
 
 .floe-goalsPanel {
     width: calc(30% - 2em);
+    background-color: rgb(229, 231, 218);
+}
+
+.floe-goalsPanel li {
+    font-size: 0.8em;
+    background-color: rgb(255, 255, 255);
+    padding: 0.25em;
+    margin: 0;
+    border-radius: 0.5em;
+}
+
+.floe-goalsPanel li:nth-child(odd) {
+    float: left;
+    width: 47%;
+    clear: left;
+}
+
+.floe-goalsPanel li:nth-child(even) {
+    float: right;
+    width: 47%;
+    clear: right;
 }
 
 .floe-timelinePanel {
@@ -91,7 +112,6 @@
     flex-grow: 1;
     margin: 0;
     padding: 0.5em 0 0.5em 0;
-    background-color: rgb(34, 127, 131);
     text-align: center;
     text-transform: uppercase;
     color: white;
@@ -99,8 +119,24 @@
     font-weight: normal;
 }
 
-.floe-notes, .floe-goals {
+.floe-notesPanel .floe-heading {
+    background-color: rgb(34, 143, 148);
+}
+
+.floe-goalsPanel .floe-heading {
+    background-color: rgb(34, 131, 109);
+}
+
+.floe-timelinePanel .floe-heading {
+    background-color: rgb(34, 106, 131);
+}
+
+.floe-notes {
     padding: 0 1em 1em 1em;
+}
+
+.floe-goals {
+    padding: 0 1em 0 0;
 }
 
 .floe-notes h2, .floe-goals h2 {
@@ -110,7 +146,7 @@
 
 .floe-journalEntriesContainer {
     background-color: rgb(255, 255, 255);
-    border-radius: 1em;
+    border-radius: 0.5em;
     padding: 0.5em;
     margin: 1em 0 1em 0;
 }
@@ -128,7 +164,7 @@ height:1px;
 overflow:hidden;}
 
 .floe-entryList li {
-    margin-top: 1em;
+    margin-bottom: 1em;
     list-style: none;
     margin-left: -1em;
 }
@@ -149,7 +185,7 @@ overflow:hidden;}
 .floe-page-today {
     display: inline-block;
     border: 1px solid rgb(107, 170, 172);
-    border-radius: 1em;
+    border-radius: 0.5em;
     background-color: rgb(240,240,240);
     padding: 0.4em 1em;
     margin: 0 0.4em;
