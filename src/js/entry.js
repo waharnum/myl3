@@ -339,7 +339,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             onCheckboxesSetFromModel: null
         },
         listeners: {
-            "onEntryTemplateRendered.setHepsWithCheckboxVisibility": {
+            "onEntryTemplateRendered.setHelpsWithCheckboxVisibility": {
                 func: "floe.dashboard.preferenceChange.displayed.showIfModelValueTrue",
                 args: ["preferenceChange.helpful.yes", "helpsWithCheckboxes", "{that}"],
                 priority: "before:setHelpfulRadioButtonFromModel"
