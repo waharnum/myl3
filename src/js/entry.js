@@ -398,8 +398,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.preferenceChange.displayed.setCheckableValuesFromModel = function (that, checkableSelector, modelPath, completionEvent) {
-        var helpfulcheckables = that.locate(checkableSelector);
-        fluid.each(helpfulcheckables, function (checkable) {
+        var checkables = that.locate(checkableSelector);
+        fluid.each(checkables, function (checkable) {
             var modelValue = fluid.get(that.model, modelPath + "." + checkable.value);
             if(modelValue !== undefined) {
                 $(checkable).prop("checked", modelValue);
