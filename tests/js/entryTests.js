@@ -278,7 +278,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertEquals("Length of " + dynamicButtonConfigBlockPath + " config block and rendered # of buttons found by selector " + dynamicButtonSelector + " are equal", fluid.hashToArray(dynamicButtonItems, "key").length, renderedButtons.length);
 
         fluid.each(dynamicButtonItems, function (buttonValue, buttonKey) {
-            var correspondingRenderedButton = renderedButtons.filter(function (idx, elem){
+            var correspondingRenderedButton = renderedButtons.filter(function (idx, elem) {
                 return (elem.value === buttonKey);
             });
             jqUnit.assertEquals("Button option item with key " + buttonKey + " has a corresponding button", buttonKey, correspondingRenderedButton.val());
@@ -291,7 +291,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         // Each model item with the value 'true' should be checked;
         // otherwise it should be false
         fluid.each(modelValues, function (modelValue, modelKey) {
-            var correspondingRenderedButton = renderedButtons.filter(function (idx, elem){
+            var correspondingRenderedButton = renderedButtons.filter(function (idx, elem) {
                 return (elem.value === modelKey);
             });
             jqUnit.assertEquals("Model value item with key " + modelKey + " has a corresponding button", modelValue, correspondingRenderedButton.prop("checked"));

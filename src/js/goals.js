@@ -9,7 +9,7 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, floe, PouchDB */
+/* global fluid, floe */
 
 (function ($, fluid) {
 
@@ -56,9 +56,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 return 1;
             } else if(!b.doc.due) {
                 return -1;
-            } else return new Date(a.doc.due) - new Date(b.doc.due);
-
-
+            } else {
+                return new Date(a.doc.due) - new Date(b.doc.due);
+            }
         });
 
         fluid.each(goals, function (row) {

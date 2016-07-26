@@ -9,10 +9,10 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, jqUnit, floe */
+/* global PouchDB, fluid, floe */
 
 (function ($, fluid) {
-        "use strict";
+    "use strict";
 
     // Mixin to make sure everything shares the same test DB
     fluid.defaults("floe.tests.dashboard.testDBOptions", {

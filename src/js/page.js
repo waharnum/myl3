@@ -359,7 +359,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         floe.dashboard.pouchEntries.retrieveFromPouch(dbName, startkey, endkey, that, floe.dashboard.page.createEntriesFromPouchResponse);
     };
 
-    floe.dashboard.page.filterModelOptions = function(prefPanel, filterString) {
+    floe.dashboard.page.filterModelOptions = function (prefPanel, filterString) {
         var copiedModelOptions = fluid.copy(prefPanel.options.model[0]);
         var filtered = fluid.remove_if(copiedModelOptions, function (modelItem) {
             return !(modelItem.indexOf(filterString) > -1);
@@ -367,43 +367,42 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return filtered;
     };
 
-    floe.dashboard.page.extractPreferenceMessages = function(prefPanelOptions, filterString, messageBaseOptionsBlock) {
+    floe.dashboard.page.extractPreferenceMessages = function (prefPanelOptions, filterString, messageBaseOptionsBlock) {
         var messages = {};
         fluid.each(prefPanelOptions, function (modelItem) {
-                var prefKey = modelItem.replace(filterString + ".", "");
+            var prefKey = modelItem.replace(filterString + ".", "");
                 // console.log(prefKey);
 
-                    var prefsModelMessages = {
+            var prefsModelMessages = {
                         // label,
                         // description,
                         // multiplier
                         // various values...
-                        values: {
-                        }
-                    };
+                values: {}
+            };
 
-                    fluid.each(messageBaseOptionsBlock, function (message, key) {
-                        if(key.indexOf("Label") > -1) {
-                            // console.log("Label case");
-                            // console.log(key, message);
-                            prefsModelMessages.label = message;
-                        } else if (key.indexOf("Descr") > -1) {
-                            // console.log("Descr case");
-                            // console.log(key, message);
-                            prefsModelMessages.description = message;
-                        } else if (key.indexOf("-") > -1) {
-                            // console.log("Value case");
-                            // console.log(key, message);
-                            var valueKey = key.split("-")[1];
-                            prefsModelMessages.values[valueKey] = message;
-                        } else {
-                            // console.log("other case");
-                            // console.log(key, message);
-                            prefsModelMessages[key] = message;
-                        }
-                    });
+            fluid.each(messageBaseOptionsBlock, function (message, key) {
+                if(key.indexOf("Label") > -1) {
+                    // console.log("Label case");
+                    // console.log(key, message);
+                    prefsModelMessages.label = message;
+                } else if (key.indexOf("Descr") > -1) {
+                    // console.log("Descr case");
+                    // console.log(key, message);
+                    prefsModelMessages.description = message;
+                } else if (key.indexOf("-") > -1) {
+                    // console.log("Value case");
+                    // console.log(key, message);
+                    var valueKey = key.split("-")[1];
+                    prefsModelMessages.values[valueKey] = message;
+                } else {
+                    // console.log("other case");
+                    // console.log(key, message);
+                    prefsModelMessages[key] = message;
+                }
+            });
 
-                    messages[prefKey] = prefsModelMessages;
+            messages[prefKey] = prefsModelMessages;
         });
         return messages;
     };
@@ -411,8 +410,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Relay initial preferences
     floe.dashboard.page.addPreferenceMessage = function (prefPanel, page) {
         // Panel itself
-
-        var modelOptionsBlock = fluid.copy(prefPanel.options.model[0]);
 
         var messageBaseOptionsBlock = fluid.copy(prefPanel.options.messageBase);
 
@@ -448,19 +445,21 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         page.applier.change("preferences", prefsEditor.model.preferences);
     };
 
-    floe.dashboard.page.lookupPreferenceMessage = function(preferenceType, preferenceValue, page) {
+    floe.dashboard.page.lookupPreferenceMessage = function (preferenceType, preferenceValue, page) {
         // Try composite panel messages first (assume more specific)
         var compositeMessages = page.preferencesMessagesCompositePanel;
         // Try single panel next
         var singleMessages = page.preferencesMessagesSinglePanel;
         // Fall back to raw
         var messageToUse = compositeMessages[preferenceType] ? compositeMessages[preferenceType] : singleMessages[preferenceType] ? singleMessages[preferenceType] : preferenceType;
-                var typeLabelToUse = messageToUse.label ? messageToUse.label : preferenceType;
+        var typeLabelToUse = messageToUse.label ? messageToUse.label : preferenceType;
 
         var valueLabelToUse;
         if(messageToUse.values) {
             valueLabelToUse = messageToUse.values[preferenceValue] ? messageToUse.values[preferenceValue] : preferenceValue;
-        } else valueLabelToUse = preferenceValue;
+        } else {
+            valueLabelToUse = preferenceValue;
+        }
 
         return {
             typeLabelToUse: typeLabelToUse,

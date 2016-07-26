@@ -311,7 +311,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.container.append(fluid.stringTemplate(template, templateValues));
     };
 
-    floe.dashboard.lab.removeEntryIfSamePouchId = function(removedEntry, entryToTest) {
+    floe.dashboard.lab.removeEntryIfSamePouchId = function (removedEntry, entryToTest) {
         console.log(entryToTest);
         var removedEntryPouchId = fluid.get(removedEntry.model, "_id");
         var entryToTestPouchId = fluid.get(entryToTest.model, "_id");
@@ -320,12 +320,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     };
 
-    floe.dashboard.lab.bindHidePanelControls = function() {
+    floe.dashboard.lab.bindHidePanelControls = function () {
         var controlSelector = ".floec-labPanel-hideControl";
         var toHideSelector = ".floec-labPanel-content";
         var controls = $(controlSelector);
         controls.click(function (e) {
-            var control = $(this);
             var controlIcon = $(this).children(".floec-labPanel-hideControl-icon");
             var toHide = $(this).closest(".floec-labPanel").children(toHideSelector);
             toHide.slideToggle("slow");
@@ -339,7 +338,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.lab.bindChangeUser = function (that) {
-        $(".floec-labHeader-userChange").change(function (e) {
+        $(".floec-labHeader-userChange").change(function () {
             var userChangeTo = $(this).val();
             that.journal.page.options.dbOptions.localName = floe.dashboard.lab.getDBName(userChangeTo);
             that.goals.options.dbOptions.localName = floe.dashboard.lab.getDBName(userChangeTo);
