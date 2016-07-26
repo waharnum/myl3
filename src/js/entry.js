@@ -216,7 +216,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             due: "due"
         },
         resources: {
-            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floe-goal-icon floe-entry-icon\"></span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input type=\"date\"  class=\"floec-goal-due\"></input>"
+            stringTemplate: "<span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floe-goal-icon floe-entry-icon\"></span><span class=\"floec-note-prompt\"></span><span class=\"floec-note-text\"></span><br><input class=\"floec-goal-due\" type=\"date\">"
         }
     });
 
@@ -306,7 +306,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             navigation: "Navigation",
             typing: "Typing"
         },
-        radioButtonTemplate: "<label for=\"%checkableId\">%checkableLabelText</label> <input class=\"floec-preferenceChange-helpful-radio floec-preferenceChange-helpful-%checkableValue\" id=\"%checkableId\" name=\"%checkableName\" value=\"%checkableValue\" type=\"radio\"> ",
+        radioButtonTemplate: "<label for=\"%checkableId\">%checkableLabelText</label> <input type=\"radio\" value=\"%checkableValue\" class=\"floec-preferenceChange-helpful-radio floec-preferenceChange-helpful-%checkableValue\" id=\"%checkableId\" name=\"%checkableName\"> ",
         radioButtonItems: {
             yes: "Yes",
             no: "No"

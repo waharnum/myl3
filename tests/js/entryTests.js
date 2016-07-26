@@ -18,17 +18,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.registerNamespace("floe.tests.dashboard");
 
     fluid.defaults("floe.tests.dashboard.entry.note", {
-        gradeNames: ["floe.dashboard.note.displayed"],
-        dbOptions: {
-            localName: "test"
-        }
+        gradeNames: ["floe.tests.dashboard.testDBOptions", "floe.dashboard.note.displayed"]
     });
 
     fluid.defaults("floe.tests.dashboard.entry.preferenceChange", {
-        gradeNames: ["floe.dashboard.preferenceChange.displayed"],
-        dbOptions: {
-            localName: "test"
-        }
+        gradeNames: ["floe.tests.dashboard.testDBOptions", "floe.dashboard.preferenceChange.displayed"]
+    });
+
+    fluid.defaults("floe.tests.dashboard.entry.goal", {
+        gradeNames: ["floe.tests.dashboard.testDBOptions", "floe.dashboard.goal.displayed"]
     });
 
     fluid.defaults("floe.tests.dashboard.entry.noteTestEnvironmentCommon", {
@@ -66,6 +64,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         }
     });
+    fluid.defaults("floe.tests.dashboard.entry.goalTestEnvironmentCommon", {
+        gradeNames: ["fluid.test.testEnvironment"],
+        components: {
+            entry: {
+                type: "floe.tests.dashboard.entry.goal",
+                container: ".floec-entry-goal-common",
+                options: {
+                    model: {
+                    }
+                },
+                createOnEvent: "{entryTester}.events.onTestCaseStart"
+            },
+            entryTester: {
+                type: "floe.tests.dashboard.entry.entryTester.goalCommon",
+            }
+        }
+    });
 
     fluid.defaults("floe.tests.dashboard.entry.entryTester.noteCommon", {
         gradeNames: ["floe.tests.dashboard.entry.entryTester"],
@@ -87,9 +102,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
+    fluid.defaults("floe.tests.dashboard.entry.entryTester.goalCommon", {
+        gradeNames: ["floe.tests.dashboard.entry.entryTester"],
+        modules: [ {
+            name: "Goal displayed entry component tests",
+            tests: [{
+                name: "Common displayed entry tests (goal)"
+            }]
+        }]
+    });
+
     // Common tests
     fluid.defaults("floe.tests.dashboard.entry.entryTester", {
-        gradeNames: ["fluid.test.testCaseHolder"],
+        gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
         modules: [ {
             name: "Common displayed entry component tests",
             tests: [{
@@ -183,7 +208,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     fluid.defaults("floe.tests.dashboard.entry.preferencesChangeTester", {
-        gradeNames: ["fluid.test.testCaseHolder"],
+        gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
         modules: [ {
             name: "preferenceChanges entry component tests",
             tests: [{
@@ -290,6 +315,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     $(document).ready(function () {
         floe.tests.dashboard.entry.noteTestEnvironmentCommon();
+        floe.tests.dashboard.entry.goalTestEnvironmentCommon();
         floe.tests.dashboard.entry.preferenceChangeTestEnvironmentCommon();
         floe.tests.dashboard.entry.preferenceChangeTestEnvironment();
     });

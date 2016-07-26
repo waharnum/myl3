@@ -18,10 +18,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.registerNamespace("floe.tests.dashboard");
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedComponent", {
-        gradeNames: ["floe.dashboard.pouchPersisted"],
-        dbOptions: {
-            localName: "test"
-        },
+        gradeNames: ["floe.tests.dashboard.testDBOptions", "floe.dashboard.pouchPersisted"],
         model: {
             "persistedValues": {
                 "boolean": true,
@@ -52,7 +49,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
         components: {
             pouchPersistedComponentTester: {
-                type: "floe.tests.dashboard.pouchPersistedComponentTester.storage"
+                type: "floe.tests.dashboard.pouchPersistedTestCaseHolder.storage"
             }
         }
     });
@@ -61,42 +58,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
         components: {
             pouchPersistedComponentTester: {
-                type: "floe.tests.dashboard.pouchPersistedComponentTester.deleteTest"
+                type: "floe.tests.dashboard.pouchPersistedTestCaseHolder.deleteTest"
             }
         }
     });
 
-    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.base", {
-        gradeNames: ["fluid.test.testCaseHolder"],
-        dbOptions: {
-            localName: "test"
-        },
-        listeners: {
-            "onCreate.setupPouchTestDB": {
-                funcName: "floe.tests.dashboard.pouchPersistedComponentTester.setupPouchTestDB",
-                args: ["{that}.options.dbOptions.localName", "{that}.options.dbOptions.remoteName"]
-            },
-            "onDestroy.tearDownPouchTestDB": {
-                funcName: "floe.tests.dashboard.pouchPersistedComponentTester.tearDownPouchTestDB",
-                args: ["{that}.options.dbOptions.localName"]
-            }
-        }
-    });
-
-    // Any necessary setup
-    floe.tests.dashboard.pouchPersistedComponentTester.setupPouchTestDB = function (localName) {
-        console.log(".setupPouchTestDB");
-        console.log(localName);
-    };
-
-    // Any necessary teardown
-    floe.tests.dashboard.pouchPersistedComponentTester.tearDownPouchTestDB = function (localName) {
-        console.log(".tearDownPouchTestDB");
-        new PouchDB(localName).destroy();
-    };
-
-    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.storage", {
-        gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTester.base"],
+    fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.storage", {
+        gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
         modules: [ {
             name: "PouchDB persisted component - storage test cases",
             tests: [{
@@ -127,8 +95,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertDeepEq("Component model and retrieved document are identical, except for _rev", that.model, retrievedDocMinusRev);
     };
 
-    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTester.deleteTest", {
-        gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTester.base"],
+    fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.deleteTest", {
+        gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
         modules: [ {
             name: "PouchDB persisted component - delete test cases",
             tests: [{
