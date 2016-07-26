@@ -161,7 +161,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     model: {
                         preferenceChange: {
                             preferenceType: "fluid_prefs_textFont",
+                            preferenceTypeLabel: "Text style",
                             preferenceValue: "arial",
+                            preferenceValueLabel: "Arial",
                             helpful: {
                                 yes: true
                             },

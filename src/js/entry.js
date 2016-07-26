@@ -312,7 +312,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             no: "No"
         },
         resources: {
-            stringTemplate: "<p><span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br/><span class=\"floe-preferenceChange-icon floe-entry-icon\">&#128187;</span> <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
+            stringTemplate: "<p><span class=\"floec-note-created\"></span> <a href=\"#\" class=\"floec-entry-delete\">Delete</a><br><span class=\"floe-preferenceChange-icon floe-entry-icon\"></span> <span class=\"floec-preferenceChange-type\"></span> changed to <span class=\"floec-preferenceChange-value\"></span></p><form>Does this preference change help me? <span class=\"floec-preferenceChange-helpful-radioButtons\">%radioButtons</span><div class=\"floec-preferenceChange-helpsWith-checkboxes\">This preference change <span class=\"floec-preferenceChange-helpsWith-value\"></span> my:<br>%checkboxes</div></form>",
             templateValues: {
                 radioButtons: {
                     expander: {
