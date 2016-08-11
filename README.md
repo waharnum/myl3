@@ -1,4 +1,4 @@
-##What is the Learning Dashboard?
+##What is My Lifelong Learning Lab?
 
 A part of the [FLOE Preference Exploration and Self-Assessment](https://wiki.fluidproject.org/display/fluid/%28Floe%29+Preference+Exploration+and+Self-Assessment) work
 
