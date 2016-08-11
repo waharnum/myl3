@@ -26,7 +26,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     jqUnit.test("Test eventInTimeAware grade", function () {
-        jqUnit.expect(6);
+        jqUnit.expect(8);
         var that = floe.dashboard.eventInTimeAware();
 
         jqUnit.assertTrue("If created without a timestamp, gets a timestamp", that.model.timeEvents.created);
@@ -37,22 +37,32 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         jqUnit.assertTrue("LastModified time event is parseable", floe.tests.dashboard.isParseableTime(that.model.timeEvents.created));
 
-        var userSuppliedTime = "May, 2016";
-        // Expected result of cnverting new Date(userSuppliedTime) via
-        // Date.toJSON();
-        var convertedUserSuppliedTime = "2016-05-01T04:00:00.000Z";
+        var existingCreatedTime = "2016-05-01T04:00:00.000Z";
+        var existingModifiedTime = "2016-05-01T07:30:00.000Z";
 
         that = floe.dashboard.eventInTimeAware({
             model: {
                 timeEvents: {
-                    created: userSuppliedTime
+                    created: existingCreatedTime,
+                    lastModified: existingModifiedTime
                 }
             },
         });
 
-        jqUnit.assertEquals("User-supplied timestamp is respected", convertedUserSuppliedTime, that.model.timeEvents.created);
+        jqUnit.assertEquals("An existing created timestamp is respected", existingCreatedTime, that.model.timeEvents.created);
 
-        jqUnit.assertTrue("A lastModified time event is generated", that.model.timeEvents.lastModified);
+        jqUnit.assertEquals("An existing last modified timestamp is respected at creation", existingModifiedTime, that.model.timeEvents.lastModified);
+
+        // These are different between every browser, so we can't test on a
+        // fixed string; what's really being tested here is that the model
+        // listeners work to relay
+        var expectedFormattedDate = new Date(existingCreatedTime).toLocaleDateString();
+        var expectedFormattedTime = new Date(existingCreatedTime).toLocaleTimeString();
+
+        jqUnit.assertEquals("Expected formatted date is created from creation date", expectedFormattedDate, that.model.formattedDates.created);
+
+
+        jqUnit.assertEquals("Expected formatted time is created from creation date", expectedFormattedTime, that.model.formattedTimes.created);
 
     });
 

@@ -80,7 +80,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         // We update "timeEvents.lastModified" whenever the model is updated
         // except on initialization, or from the setModifiedTimeStamp
-        // function itself
+        // function itself to prevent the potential for infinite looping.
         modelListeners: {
             "": {
                 funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
@@ -90,25 +90,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    // Set the created timestamp to the current time if the model's current one
+    // cannot be parsed
     floe.dashboard.eventInTimeAware.setCreatedTimeStamp = function (that) {
-        // Only set the timestamp to current time if the model's current one is falsey
         var timestamp = that.model.timeEvents.created ? new Date(that.model.timeEvents.created) : new Date();
         that.applier.change("timeEvents.created", timestamp.toJSON());
     };
 
+    // Sets the modified time stamp to the current time
+    // has a custom source for the change so that model listeners can
+    // filter it out
     floe.dashboard.eventInTimeAware.setModifiedTimeStamp = function (that) {
         var modifiedTimestamp = new Date();
         that.applier.change("timeEvents.lastModified", modifiedTimestamp.toJSON(), "ADD", "setModifiedTimeStamp");
     };
 
     floe.dashboard.eventInTimeAware.getFormattedDate = function (timestamp) {
-        var formatted = new Date(timestamp);
-        return formatted.toLocaleDateString();
+        return new Date(timestamp).toLocaleDateString();
     };
 
     floe.dashboard.eventInTimeAware.getFormattedTime = function (timestamp) {
-        var formatted = new Date(timestamp);
-        return formatted.toLocaleTimeString();
+        return new Date(timestamp).toLocaleTimeString();
     };
 
 })(jQuery, fluid);
