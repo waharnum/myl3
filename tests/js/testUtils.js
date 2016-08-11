@@ -38,13 +38,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Any necessary setup
     floe.tests.dashboard.pouchPersistedTestCaseHolder.setupPouchTestDB = function (localName) {
-        console.log(".setupPouchTestDB");
-        console.log(localName);
+
     };
 
     // Any necessary teardown
     floe.tests.dashboard.pouchPersistedTestCaseHolder.tearDownPouchTestDB = function (localName) {
-        console.log(".tearDownPouchTestDB");
         new PouchDB(localName).destroy();
     };
 })(jQuery, fluid);
