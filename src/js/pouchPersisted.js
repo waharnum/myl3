@@ -30,11 +30,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         events: {
             "onSetPouchId": null,
-            // Event signatures of these 3 events should include the retrieved
-            // document
-            "onPouchDocRetrieved": null,
             "onPouchDocStored": null,
-            "onPouchDocDeleted": null
+            "onPouchDocDeleted": null,
+            // Event signatures of this event should include the retrieved
+            // document
+            "onPouchDocRetrieved": null
         },
         listeners: {
             "onCreate.setPouchId": {
