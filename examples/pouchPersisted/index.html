@@ -30,7 +30,8 @@
             listeners: {
                 // Try and retrieve the component on creation
                 "onCreate.retrievePersisted": {
-                    funcName: "{that}.retrievePersisted"
+                    funcName: "{that}.retrievePersisted",
+                    priority: "after:setPouchId"
                 },
                 "onPouchDocRetrieved.setModelFromRetrieved": {
                     funcName: "floe.dashboard.pouchPersistedInlineEdit.setModelFromRetrieved",
@@ -45,7 +46,7 @@
 
         floe.dashboard.pouchPersistedInlineEdit.setModelFromRetrieved = function(that, retrieved) {
             if(retrieved) {
-                that.applier.change("", retrieved);                
+                that.applier.change("", retrieved);
                 that.refreshView();
             }
         };

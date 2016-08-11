@@ -39,8 +39,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         listeners: {
             "onCreate.setPouchId": {
                 funcName: "{that}.setPouchId",
-                args: "{that}",
-                priority: "first"
+                args: "{that}"
             }
         },
         dbOptions: {
@@ -104,7 +103,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Creates or updates the persisted model
-    floe.dashboard.pouchPersisted.storePersisted = function (that) {        
+    floe.dashboard.pouchPersisted.storePersisted = function (that) {
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
