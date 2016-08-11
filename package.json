@@ -6,19 +6,16 @@
   "bugs": "https://issues.fluidproject.org/issues/?jql=project+%3D+FLOE+AND+component+%3D+%22Learning+Dashboard%22",
   "homepage": "http://www.fluidproject.org/",
   "dependencies": {
-      "pouchdb":"5.4.3",
-      "chance":"1.0.3",
-      "chartAuthoring":"https://github.com/waharnum/chartAuthoring#GPII-1584",
-      "d3":"4.1.1"
+      "pouchdb":"5.4.3"
   },
   "license": "(BSD-3-Clause OR ECL-2.0)",
   "keywords": [
-    "dashboard",
+    "myl3",
     "floe",
     "fluid",
     "infusion"
   ],
-  "repository": "https://github.com/fluid-project/learningDashboard.git",
+  "repository": "https://github.com/fluid-project/myl3.git",
   "main": "",
   "engines": {
     "node": ">=0.10.0"
