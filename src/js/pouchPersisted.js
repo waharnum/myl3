@@ -16,17 +16,22 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     "use strict";
 
     // Base grade for persistence of model components to Pouch
+    // Implementing grades should ensure that what's integral to
+    // reconstructing the particular instance is stored in the
+    // model
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         model: {
-            // Allows for reconstruction of a component with same model
+            // Stores the typename to assist in reconstruction
+            // of stored model components in another context
             "persistenceInformation": {
                 "typeName": "{that}.typeName"
             }
         },
         events: {
-            // Event signature should include retrieved doc
             "onSetPouchId": null,
+            // Event signatures of these 3 events should include the retrieved
+            // document
             "onPouchDocRetrieved": null,
             "onPouchDocStored": null,
             "onPouchDocDeleted": null
@@ -40,6 +45,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         dbOptions: {
             // localName: "test",
         },
+        // Implementing grades can use these invokers in combinations with
+        // events and listeners to store, retrieve and delete as
+        // appropriate
         invokers: {
             "retrievePersisted": {
                 funcName: "floe.dashboard.pouchPersisted.retrievePersisted",
@@ -56,28 +64,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    // A pouchPersisted grade that can sync to a CouchDB DB
-    fluid.defaults("floe.dashboard.couchSyncing", {
-        gradeNames: ["floe.dashboard.pouchPersisted"],
-        dbOptions: {
-            // remoteName: "http://localhost:5984/test"
-        },
-        invokers: {
-            "remoteSync": {
-                funcName: "floe.dashboard.couchSyncing.remoteSync",
-                args: "{that}"
-            }
-        },
-        listeners: {
-            "onPouchDocStored.remoteSync": {
-                funcName: "{that}.remoteSync"
-            },
-            "onPouchDocDeleted.remoteSync": {
-                funcName: "{that}.remoteSync"
-            }
-        }
-    });
-
+    // We set the ID to the timestamp to make filtering by time easier
     floe.dashboard.pouchPersisted.setPouchId = function (that) {
         that.model._id = that.model.timeEvents.created;
         that.events.onSetPouchId.fire();
@@ -85,6 +72,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Tries to get the stored version of the document
     // Fires the document as argument to the retrieved event when retrieved
+    // Fires an undefined if a matching document is not found
 
     floe.dashboard.pouchPersisted.retrievePersisted = function (that) {
         var docId = that.model._id;
@@ -136,6 +124,28 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             });
         });
     };
+
+    // A pouchPersisted grade that can sync to a CouchDB DB
+    fluid.defaults("floe.dashboard.couchSyncing", {
+        gradeNames: ["floe.dashboard.pouchPersisted"],
+        dbOptions: {
+            // remoteName: "http://localhost:5984/test"
+        },
+        invokers: {
+            "remoteSync": {
+                funcName: "floe.dashboard.couchSyncing.remoteSync",
+                args: "{that}"
+            }
+        },
+        listeners: {
+            "onPouchDocStored.remoteSync": {
+                funcName: "{that}.remoteSync"
+            },
+            "onPouchDocDeleted.remoteSync": {
+                funcName: "{that}.remoteSync"
+            }
+        }
+    });
 
     // Syncs to the remote
     floe.dashboard.couchSyncing.remoteSync = function (that) {
