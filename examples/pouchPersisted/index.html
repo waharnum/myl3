@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="../../src/lib/infusion/infusion-all.js"></script>
+        <script src="../../src/lib/pouchdb/dist/pouchdb.js"></script>
+        <script src="../../src/js/pouchPersisted.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/components/inlineEdit/css/InlineEdit.css" />
+        <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/framework/core/css/fluid.css" />
+    </head>
+
+    <body>
+        <h1>pouchPersisted Grade Example?</h1>
+        <div class="floec-persistedInlineEdit">
+            <div class="flc-inlineEdit-text">
+
+            </div>
+        </div>
+    <script>
+        fluid.defaults("floe.dashboard.pouchPersistedInlineEdit", {
+            gradeNames: ["floe.dashboard.pouchPersisted", "fluid.inlineEdit"],
+            invokers: {
+                "setPouchId": {
+                    funcName: "floe.dashboard.pouchPersisted.setPouchIdToString",
+                    args: ["{that}", "myFixedId"]
+                }
+            },
+            dbOptions: {
+                localName: "examples",
+            },
+            listeners: {
+                // Try and retrieve the component on creation
+                "onCreate.retrievePersisted": {
+                    funcName: "{that}.retrievePersisted"
+                },
+                "onPouchDocRetrieved.setModelFromRetrieved": {
+                    funcName: "floe.dashboard.pouchPersistedInlineEdit.setModelFromRetrieved",
+                    args: ["{that}", "{arguments}.0"]
+                },
+                // Persists the component when changes are made
+                "modelChanged.persist": {
+                    funcName: "{that}.storePersisted"
+                }
+            }
+        });
+
+        floe.dashboard.pouchPersistedInlineEdit.setModelFromRetrieved = function(that, retrieved) {
+            if(retrieved) {
+                that.applier.change("", retrieved);                
+                that.refreshView();
+            }
+        };
+
+        floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");
+
+
+
+    </script>
+
+    </body>
+</html>

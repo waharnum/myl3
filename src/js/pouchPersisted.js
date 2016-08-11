@@ -38,8 +38,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         listeners: {
             "onCreate.setPouchId": {
-                funcName: "floe.dashboard.pouchPersisted.setPouchId",
-                args: "{that}"
+                funcName: "{that}.setPouchId",
+                args: "{that}",
+                priority: "first"
             }
         },
         dbOptions: {
@@ -49,6 +50,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         // events and listeners to store, retrieve and delete as
         // appropriate
         invokers: {
+            // Implementing grades or instances that want a different ID
+            // strategy should override this invoker
+            "setPouchId": {
+                funcName: "floe.dashboard.pouchPersisted.setPouchIdToCurrentTime",
+                args: "{that}"
+            },
             "retrievePersisted": {
                 funcName: "floe.dashboard.pouchPersisted.retrievePersisted",
                 args: "{that}"
@@ -64,9 +71,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    // We set the ID to the timestamp to make filtering by time easier
-    floe.dashboard.pouchPersisted.setPouchId = function (that) {
+    // Set the ID to the timestamp to make filtering by time easier
+    floe.dashboard.pouchPersisted.setPouchIdToCurrentTime = function (that) {
         that.model._id = that.model.timeEvents.created;
+        that.events.onSetPouchId.fire();
+    };
+
+    // Sets the ID to a string
+    floe.dashboard.pouchPersisted.setPouchIdToString = function (that, idString) {
+        that.model._id = idString;
         that.events.onSetPouchId.fire();
     };
 
@@ -91,7 +104,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Creates or updates the persisted model
-    floe.dashboard.pouchPersisted.storePersisted = function (that) {
+    floe.dashboard.pouchPersisted.storePersisted = function (that) {        
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
