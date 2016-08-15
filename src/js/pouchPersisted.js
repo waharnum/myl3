@@ -57,7 +57,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             "retrievePersisted": {
                 funcName: "floe.dashboard.pouchPersisted.retrievePersisted",
-                args: "{that}"
+                args: ["{that}", "{arguments}.0"]
             },
             "storePersisted": {
                 funcName: "floe.dashboard.pouchPersisted.storePersisted",
@@ -85,12 +85,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Tries to get the stored version of the document
     // Fires the document as argument to the retrieved event when retrieved
     // Fires an undefined if a matching document is not found
+    //
+    // retrievalOptions allows passing in the options documented at
+    // https://pouchdb.com/api.html#fetch_document
 
-    floe.dashboard.pouchPersisted.retrievePersisted = function (that) {
+    floe.dashboard.pouchPersisted.retrievePersisted = function (that, retrievalOptions) {
+        retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
 
-        db.get(docId).then(
+        db.get(docId, retrievalOptions).then(
             function (retrievedDoc) {
                 that.events.onPouchDocRetrieved.fire(retrievedDoc);
         // Return undefined on a 404

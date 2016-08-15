@@ -55,7 +55,8 @@
                 // Try and retrieve the component on creation
                 "onCreate.retrievePersisted": {
                     funcName: "{that}.retrievePersisted",
-                    priority: "after:setPouchId"
+                    priority: "after:setPouchId",
+                    args: [{"revs": true}]
                 },
                 // Update the log from retrieval
                 "onPouchDocRetrieved.updateLogFromRetrieved": {
