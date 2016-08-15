@@ -22,6 +22,9 @@
                 <li>
                     Reload the page; you'll see your text has persisted.
                 </li>
+                <li>
+                    The log will also update.
+                </li>
             </ul>
         </p>
         <h2>Edit Here</h2>
@@ -56,7 +59,7 @@
                 "onCreate.retrievePersisted": {
                     funcName: "{that}.retrievePersisted",
                     priority: "after:setPouchId",
-                    args: [{"revs": true}]
+                    args: [{"revs_info": true}]
                 },
                 // Update the log from retrieval
                 "onPouchDocRetrieved.updateLogFromRetrieved": {
@@ -86,15 +89,15 @@
             }
         };
 
-        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved) {
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved, message) {
             console.log(retrieved);
             var logArea = that.locate("storageLog");
-            logArea.html("Component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre>";
+            logArea.html("Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre>";
         };
 
         floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored = function (that) {
             var logArea = that.locate("storageLog");
-            logArea.html("Component stored");
+            logArea.html("Persisted component stored");
         };
 
         floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");
