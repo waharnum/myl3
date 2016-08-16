@@ -42,7 +42,9 @@
             gradeNames: ["floe.dashboard.pouchPersisted", "fluid.inlineEdit"],
             invokers: {
                 // Override the standard timestamp-based approach to a
-                // fixed ID, for the sake of this example
+                // fixed ID, for sake of this example; this allows us to
+                // retrieve the relevant persisted grade without needing
+                // functionality for search or filtering
                 "setPouchId": {
                     funcName: "floe.dashboard.pouchPersisted.setPouchIdToString",
                     args: ["{that}", "myFixedId"]
