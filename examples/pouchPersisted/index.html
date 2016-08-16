@@ -58,8 +58,8 @@
             },
             listeners: {
                 // Try and retrieve the component on creation
-                "onCreate.retrievePersisted": {
-                    funcName: "{that}.retrievePersisted",
+                "onCreate.get": {
+                    funcName: "{that}.get",
                     priority: "after:setPouchId",
                     args: [{"revs_info": true}]
                 },

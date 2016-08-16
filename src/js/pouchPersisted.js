@@ -55,8 +55,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.pouchPersisted.setPouchIdToCurrentTime",
                 args: "{that}"
             },
-            "retrievePersisted": {
-                funcName: "floe.dashboard.pouchPersisted.retrievePersisted",
+            "get": {
+                funcName: "floe.dashboard.pouchPersisted.get",
                 args: ["{that}", "{arguments}.0"]
             },
             "storePersisted": {
@@ -89,7 +89,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // retrievalOptions allows passing in the options documented at
     // https://pouchdb.com/api.html#fetch_document
 
-    floe.dashboard.pouchPersisted.retrievePersisted = function (that, retrievalOptions) {
+    floe.dashboard.pouchPersisted.get = function (that, retrievalOptions) {
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
