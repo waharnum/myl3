@@ -59,12 +59,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.pouchPersisted.get",
                 args: ["{that}", "{arguments}.0"]
             },
-            "storePersisted": {
-                funcName: "floe.dashboard.pouchPersisted.storePersisted",
+            "set": {
+                funcName: "floe.dashboard.pouchPersisted.set",
                 args: "{that}"
             },
-            "deletePersisted": {
-                funcName: "floe.dashboard.pouchPersisted.deletePersisted",
+            "delete": {
+                funcName: "floe.dashboard.pouchPersisted.delete",
                 args: "{that}"
             }
         }
@@ -107,7 +107,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Creates or updates the persisted model
-    floe.dashboard.pouchPersisted.storePersisted = function (that) {
+    floe.dashboard.pouchPersisted.set = function (that) {
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
@@ -131,7 +131,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Delete the persisted document
-    floe.dashboard.pouchPersisted.deletePersisted = function (that) {
+    floe.dashboard.pouchPersisted.delete = function (that) {
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {

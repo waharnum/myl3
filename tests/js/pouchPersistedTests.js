@@ -29,7 +29,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         modelListeners: {
             "persistedValues": {
-                func: "{that}.storePersisted",
+                func: "{that}.set",
                 excludeSource: "init"
             }
         }
@@ -72,7 +72,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 name: "Test basic storage",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.storePersisted"
+                        func: "{pouchPersistedComponent}.set"
                     },
                     {
                         listener: "{pouchPersistedComponent}.get",
@@ -104,10 +104,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 name: "Test basic delete",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.storePersisted"
+                        func: "{pouchPersistedComponent}.set"
                     },
                     {
-                        listener: "{pouchPersistedComponent}.deletePersisted",
+                        listener: "{pouchPersistedComponent}.delete",
                         event: "{pouchPersistedComponent}.events.onPouchDocStored"
                     },
                     {
