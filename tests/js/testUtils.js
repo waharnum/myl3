@@ -37,7 +37,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     // Any necessary setup
-    floe.tests.dashboard.pouchPersistedTestCaseHolder.setupPouchTestDB = function (localName) {
+    floe.tests.dashboard.pouchPersistedTestCaseHolder.setupPouchTestDB = function () {
 
     };
 

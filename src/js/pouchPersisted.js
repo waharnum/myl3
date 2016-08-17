@@ -57,7 +57,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: "{that}"
             },
             "delete": {
-                funcName: "floe.dashboard.pouchPersisted.delete",
+                funcName: "floe.dashboard.pouchPersisted.del",
                 args: "{that}"
             }
         }
@@ -65,13 +65,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Set the ID to the timestamp to make filtering by time easier
     floe.dashboard.pouchPersisted.setPouchIdToCurrentTime = function (that) {
-        that.model._id = that.model.timeEvents.created;
+        that.applier.change("_id", that.model.timeEvents.created);
         that.events.onSetPouchId.fire();
     };
 
     // Sets the ID to a string
     floe.dashboard.pouchPersisted.setPouchIdToString = function (that, idString) {
-        that.model._id = idString;
+        that.applier.change("_id", idString);
         that.events.onSetPouchId.fire();
     };
 
@@ -124,7 +124,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Delete the persisted document
-    floe.dashboard.pouchPersisted.delete = function (that) {
+    floe.dashboard.pouchPersisted.del = function (that) {
         var docId = that.model._id;
         var db = new PouchDB(that.options.dbOptions.localName);
         db.get(docId).then(function (doc) {
