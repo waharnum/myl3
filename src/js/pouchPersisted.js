@@ -21,13 +21,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // model
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
-        model: {
-            // Stores the typename to assist in reconstruction
-            // of stored model components in another context
-            "persistenceInformation": {
-                "typeName": "{that}.typeName"
-            }
-        },
         events: {
             "onSetPouchId": null,
             "onPouchDocStored": null,
