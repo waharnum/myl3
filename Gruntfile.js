@@ -21,14 +21,16 @@ module.exports = function (grunt) {
             all: ["src/**/*.js", "tests/**/*.js", "demos/**/*.js", "examples/**/*.js"]
         },
         jsonlint: {
-            all: ["package.json", ".jshintrc", "src/**/*.json", "tests/**/*.json", "demos/**/*.json"]
+            all: ["package.json", ".jshintrc", "src/**/*.json", "tests/**/*.json", "demos/**/*.json", "!src/**/node_modules/**"]
         },
         copy: {
             // Copy external front end dependencies into appropriate directories
             frontEndDependencies: {
                 files: [
                     // PouchDB
-                    {expand: true, cwd: "./node_modules/pouchdb/", src: "**", dest: "./src/lib/pouchdb/"}                    
+                    {expand: true, cwd: "./node_modules/pouchdb/", src: "**", dest: "./src/lib/pouchdb/"},
+                    // gpii-pouchdb
+                    {expand: true, cwd: "./node_modules/gpii-pouchdb/", src: "**", dest: "./src/lib/gpii-pouchdb/"},
                 ]
             }
         }
