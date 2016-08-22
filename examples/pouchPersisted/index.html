@@ -3,6 +3,7 @@
     <head>
         <script src="../../src/lib/infusion/infusion-all.js"></script>
         <script src="../../src/lib/pouchdb/dist/pouchdb.js"></script>
+        <script src="../../src/lib/gpii-pouchdb/src/js/pouchdb-common.js"></script>
         <script src="../../src/js/pouchPersisted.js"></script>
         <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/components/inlineEdit/css/InlineEdit.css" />
         <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/framework/core/css/fluid.css" />
@@ -54,7 +55,7 @@
                 storageLog: ".floec-persistedInlineEdit-loggingArea"
             },
             dbOptions: {
-                localName: "examples",
+                name: "examples",
             },
             listeners: {
                 // Try and retrieve the component on creation
@@ -91,8 +92,7 @@
             }
         };
 
-        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved, message) {
-            console.log(retrieved);
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved, message) {            
             var logArea = that.locate("storageLog");
             logArea.html("Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre>";
         };

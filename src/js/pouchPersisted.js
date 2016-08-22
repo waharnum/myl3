@@ -21,13 +21,21 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // model
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
+        components: {
+            dataSource: {
+                type: "gpii.pouch",
+                options: {
+                    dbOptions: "{pouchPersisted}.options.dbOptions"
+                }
+            }
+        },
         events: {
             "onSetPouchId": null,
-            "onPouchDocStored": null,
-            "onPouchDocDeleted": null,
+            "onPouchDocStored": "{dataSource}.events.onPutComplete",
+            "onPouchDocDeleted": "{dataSource}.events.onRemoveComplete",
             // Event signatures of this event should include the retrieved
             // document
-            "onPouchDocRetrieved": null
+            "onPouchDocRetrieved": "{dataSource}.events.onGetComplete"
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -36,7 +44,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         dbOptions: {
-            // localName: "test",
+            // name: "test",
         },
         // Implementing grades can use these invokers in combinations with
         // events and listeners to store, retrieve and delete as
@@ -85,38 +93,42 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.pouchPersisted.get = function (that, retrievalOptions) {
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
-        var db = new PouchDB(that.options.dbOptions.localName);
+        console.log(that.dataSource);
 
-        db.get(docId, retrievalOptions).then(
-            function (retrievedDoc) {
-                that.events.onPouchDocRetrieved.fire(retrievedDoc);
-        // Return undefined on a 404
-            },
-            function (err) {
-                if (err.status === 404) {
-                    that.events.onPouchDocRetrieved.fire(undefined);
-                }
-            });
+        that.dataSource.get(docId, retrievalOptions).then(function () {
+            console.log("onResolved");
+        }, function (e) {
+            console.log("onReject", e);
+        });
+
+        // that.dataSource.get(docId, retrievalOptions).then(
+        //     function (retrievedDoc) {
+        //         that.events.onPouchDocRetrieved.fire(retrievedDoc);
+        // // Return undefined on a 404
+        //     },
+        //     function (err) {
+        //         if (err.status === 404) {
+        //             that.events.onPouchDocRetrieved.fire(undefined);
+        //         }
+        //     });
     };
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.set = function (that) {
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
-        var db = new PouchDB(that.options.dbOptions.localName);
-        db.get(docId).then(
+
+        that.dataSource.get(docId).then(
             function (retrievedDoc) {
                 // Update the doc if it exists
                 doc._rev = retrievedDoc._rev;
-                db.put(doc).then(function () {
-                    that.events.onPouchDocStored.fire();
+                that.dataSource.put(doc).then(function () {
                 });
                 // Create the doc on a 404 (doesn't exist yet)
             },
             function (err) {
                 if (err.status === 404) {
-                    db.put(doc).then(function () {
-                        that.events.onPouchDocStored.fire();
+                    that.dataSource.put(doc).then(function () {
                     });
                 }
             });
@@ -126,10 +138,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Delete the persisted document
     floe.dashboard.pouchPersisted.del = function (that) {
         var docId = that.model._id;
-        var db = new PouchDB(that.options.dbOptions.localName);
-        db.get(docId).then(function (doc) {
-            db.remove(doc).then(function () {
-                that.events.onPouchDocDeleted.fire();
+        that.dataSource.get(docId).then(function (doc) {
+            that.dataSource.remove(doc).then(function () {
             });
         });
     };
@@ -159,7 +169,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Syncs to the remote
     floe.dashboard.couchSyncing.remoteSync = function (that) {
         // console.log("floe.dashboard.note.pouchPersisted.remoteSync");
-        var localDB = new PouchDB(that.options.dbOptions.localName);
+        var localDB = new PouchDB(that.options.dbOptions.name);
         var remoteDB = new PouchDB(that.options.dbOptions.remoteName);
         localDB.sync(remoteDB);
     };
