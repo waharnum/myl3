@@ -27,11 +27,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         listeners: {
             "onCreate.setupPouchTestDB": {
                 funcName: "floe.tests.dashboard.pouchPersistedTestCaseHolder.setupPouchTestDB",
-                args: ["{that}.options.dbOptions.localName", "{that}.options.dbOptions.remoteName"]
+                args: ["{that}.options.dbOptions.name", "{that}.options.dbOptions.remoteName"]
             },
             "onDestroy.tearDownPouchTestDB": {
                 funcName: "floe.tests.dashboard.pouchPersistedTestCaseHolder.tearDownPouchTestDB",
-                args: ["{that}.options.dbOptions.localName"]
+                args: ["{that}.options.dbOptions.name"]
             }
         }
     });
@@ -42,7 +42,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Any necessary teardown
-    floe.tests.dashboard.pouchPersistedTestCaseHolder.tearDownPouchTestDB = function (localName) {
-        new PouchDB(localName).destroy();
+    floe.tests.dashboard.pouchPersistedTestCaseHolder.tearDownPouchTestDB = function (name) {
+        new PouchDB(name).destroy();
     };
 })(jQuery, fluid);
