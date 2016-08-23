@@ -272,7 +272,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.dataSource.del = function (that, directModel, options) {
         options = fluid.dataSource.defaultiseOptions(that.options, options, directModel);
         var initPayload = that.delImpl(options, directModel);
-        var promise = fluid.promise.fireTransformEvent(that.events.onRead, initPayload, options);
+        var promise = fluid.promise.fireTransformEvent(that.events.onDel, initPayload, options);
         fluid.dataSource.registerStandardPromiseHandlers(that, promise, options);
         return promise;
     };
