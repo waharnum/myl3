@@ -19,9 +19,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     "use strict";
 
-    var kettle = fluid.registerNamespace("kettle");
-
-
     /** Some common content encodings - suitable to appear as the "encoding" subcomponent of a dataSource **/
 
     fluid.defaults("fluid.dataSource.encoding.JSON", {
