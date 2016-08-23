@@ -9,11 +9,66 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, floe, PouchDB */
+/* global fluid, floe */
 
 (function ($, fluid) {
 
     "use strict";
+
+    // A datasource grade using pouchDB via gpii-pouch
+    fluid.defaults("floe.dashboard.dataSource.pouchDB", {
+        gradeNames: ["kettle.dataSource"],
+        components: {
+            pouch: {
+                type: "gpii.pouch",
+                options: {
+                    dbOptions: {
+                        name: "{pouchDB}.options.dbOptions.name"
+                    }
+                }
+            },
+            // gpii-pouchdb returns POJOs, not JSON
+            encoding: {
+                type: "kettle.dataSource.encoding.none"
+            }
+        },
+        invokers: {
+            "getImpl": {
+                funcName: "floe.dashboard.dataSource.pouchDB.getImpl",
+                // options, directModel
+                args: ["{that}", "{arguments}.0", "{arguments}.1"]
+            }
+        },
+        dbOptions: {
+            // name: DB name
+        },
+        readOnlyGrade: "floe.dashboard.dataSource.pouchDB"
+    });
+
+    // that, options, directModel
+    floe.dashboard.dataSource.pouchDB.getImpl = function (that, options, _id) {
+        console.log(arguments);
+        options = options || {};
+        return that.pouch.get(_id, options);
+    };
+
+    fluid.defaults("floe.dashboard.dataSource.pouchDB.writable", {
+        gradeNames: ["kettle.dataSource.writable", "floe.dashboard.dataSource.pouchDB"],
+        invokers: {
+            "setImpl": {
+                funcName: "floe.dashboard.dataSource.pouchDB.setImpl",
+                // options, directModel
+                args: ["{that}", "{arguments}.0", "{arguments}.1"]
+            }
+        },
+        readOnlyGrade: "floe.dashboard.dataSource.pouchDB",
+        writable: true
+    });
+
+    floe.dashboard.dataSource.pouchDB.setImpl = function (that, options, _id) {
+        options = options || {};
+        return that.pouch.put(_id, options);
+    };
 
     // Base grade for persistence of model components to Pouch
     // Implementing grades should ensure that what's integral to
@@ -23,7 +78,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         components: {
             dataSource: {
-                type: "gpii.pouch",
+                type: "floe.dashboard.dataSource.pouchDB.writable",
                 options: {
                     dbOptions: "{pouchPersisted}.options.dbOptions"
                 }
@@ -31,11 +86,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         events: {
             "onSetPouchId": null,
-            "onPouchDocStored": "{dataSource}.events.onPutComplete",
-            "onPouchDocDeleted": "{dataSource}.events.onRemoveComplete",
+            "onPouchDocStored": "{dataSource}.pouch.events.onPutComplete",
+            "onPouchDocDeleted": "{dataSource}.pouch.events.onRemoveComplete",
             // Event signatures of this event should include the retrieved
             // document
-            "onPouchDocRetrieved": "{dataSource}.events.onGetComplete"
+            "onPouchDocRetrieved": "{dataSource}.pouch.events.onGetComplete"
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -93,12 +148,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.pouchPersisted.get = function (that, retrievalOptions) {
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
-        console.log(that.dataSource);
 
         that.dataSource.get(docId, retrievalOptions).then(function () {
-            console.log("onResolved");
-        }, function (e) {
-            console.log("onReject", e);
+
+        }, function () {
+
         });
 
         // that.dataSource.get(docId, retrievalOptions).then(
@@ -115,20 +169,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.set = function (that) {
+        console.log(that);
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
 
         that.dataSource.get(docId).then(
             function (retrievedDoc) {
+                console.log("#1");
                 // Update the doc if it exists
                 doc._rev = retrievedDoc._rev;
-                that.dataSource.put(doc).then(function () {
+                that.dataSource.set(doc).then(function () {
+                    console.log("#2");
                 });
                 // Create the doc on a 404 (doesn't exist yet)
             },
             function (err) {
+                console.log("#3", err);
                 if (err.status === 404) {
-                    that.dataSource.put(doc).then(function () {
+                    that.dataSource.set(doc).then(function () {
+                        console.log("#4");
+                    }, function (err) {
+                        console.log("#5", err);
                     });
                 }
             });
@@ -142,36 +203,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             that.dataSource.remove(doc).then(function () {
             });
         });
-    };
-
-    // A pouchPersisted grade that can sync to a CouchDB DB
-    fluid.defaults("floe.dashboard.couchSyncing", {
-        gradeNames: ["floe.dashboard.pouchPersisted"],
-        dbOptions: {
-            // remoteName: "http://localhost:5984/test"
-        },
-        invokers: {
-            "remoteSync": {
-                funcName: "floe.dashboard.couchSyncing.remoteSync",
-                args: "{that}"
-            }
-        },
-        listeners: {
-            "onPouchDocStored.remoteSync": {
-                funcName: "{that}.remoteSync"
-            },
-            "onPouchDocDeleted.remoteSync": {
-                funcName: "{that}.remoteSync"
-            }
-        }
-    });
-
-    // Syncs to the remote
-    floe.dashboard.couchSyncing.remoteSync = function (that) {
-        // console.log("floe.dashboard.note.pouchPersisted.remoteSync");
-        var localDB = new PouchDB(that.options.dbOptions.name);
-        var remoteDB = new PouchDB(that.options.dbOptions.remoteName);
-        localDB.sync(remoteDB);
     };
 
 })(jQuery, fluid);

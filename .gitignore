@@ -1,4 +1,5 @@
 browser-sync.sh
 node_modules/
 src/lib/pouchdb
+src/lib/jsonlint
 src/lib/gpii-pouchdb

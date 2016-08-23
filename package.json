@@ -7,6 +7,7 @@
   "homepage": "http://www.fluidproject.org/",
   "dependencies": {
       "pouchdb":"5.4.3",
+      "jsonlint":"1.6.0",
       "gpii-pouchdb": "https://github.com/the-t-in-rtf/gpii-pouchdb#GPII-1897"
   },
   "license": "(BSD-3-Clause OR ECL-2.0)",
