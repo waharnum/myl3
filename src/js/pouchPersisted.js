@@ -75,6 +75,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return that.pouch.put(_id, options);
     };
 
+    // required for doc
+    // {_id:"", _rev:""}
     floe.dashboard.dataSource.pouchDB.delImpl = function (that, options, doc) {
         options = options || {};
         return that.pouch.remove(doc, options);
@@ -164,17 +166,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }, function () {
 
         });
-
-        // that.dataSource.get(docId, retrievalOptions).then(
-        //     function (retrievedDoc) {
-        //         that.events.onPouchDocRetrieved.fire(retrievedDoc);
-        // // Return undefined on a 404
-        //     },
-        //     function (err) {
-        //         if (err.status === 404) {
-        //             that.events.onPouchDocRetrieved.fire(undefined);
-        //         }
-        //     });
     };
 
     // Creates or updates the persisted model
@@ -185,21 +176,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         that.dataSource.get(docId).then(
             function (retrievedDoc) {
-                console.log("#1");
                 // Update the doc if it exists
                 doc._rev = retrievedDoc._rev;
                 that.dataSource.set(doc).then(function () {
-                    console.log("#2");
                 });
                 // Create the doc on a 404 (doesn't exist yet)
             },
             function (err) {
-                console.log("#3", err);
                 if (err.status === 404) {
                     that.dataSource.set(doc).then(function () {
-                        console.log("#4");
-                    }, function (err) {
-                        console.log("#5", err);
+                    }, function () {
                     });
                 }
             });

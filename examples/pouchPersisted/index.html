@@ -4,6 +4,10 @@
         <script src="../../src/lib/infusion/infusion-all.js"></script>
         <script src="../../src/lib/pouchdb/dist/pouchdb.js"></script>
         <script src="../../src/lib/gpii-pouchdb/src/js/pouchdb-common.js"></script>
+        <script src="../../src/lib/jsonlint/web/jsonlint.js"></script>
+
+        <script src="../../src/js/eventInTimeAware.js"></script>
+        <script src="../../src/js/dataSource.js"></script>
         <script src="../../src/js/pouchPersisted.js"></script>
         <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/components/inlineEdit/css/InlineEdit.css" />
         <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/framework/core/css/fluid.css" />
@@ -92,7 +96,7 @@
             }
         };
 
-        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved, message) {            
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved, message) {
             var logArea = that.locate("storageLog");
             logArea.html("Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre>";
         };
