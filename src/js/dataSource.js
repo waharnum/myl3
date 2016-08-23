@@ -11,7 +11,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
 /* global jsonlint, fluid */
 
-// Some code forked from
+// Some code adapted from
 // https://github.com/fluid-project/kettle/blob/master/lib/dataSource-core.js
 // in anticipation of https://issues.fluidproject.org/browse/FLUID-5900
 
