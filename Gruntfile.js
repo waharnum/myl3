@@ -15,12 +15,16 @@ module.exports = function (grunt) {
 
     // Reads local .eslintIgnore; creates an array that be concatenated
     // to the eslint config to add all .eslintIgnore globs as exclusions
-    var eslintIgnore = grunt.file.read(".eslintIgnore");
-    var ignores = eslintIgnore.trim().split("\n");
     var ignoreArray = [];
-    ignores.forEach(function (ignore) {
-        ignoreArray.push("!" + ignore);
-    });
+    try {
+        var eslintIgnore = grunt.file.read(".eslintIgnore");
+        var ignores = eslintIgnore.trim().split("\n");        
+        ignores.forEach(function (ignore) {
+            ignoreArray.push("!" + ignore);
+        });
+    } catch(e) {
+        grunt.log.writeln(e);
+    }
 
     // Project configuration.
     grunt.initConfig({
