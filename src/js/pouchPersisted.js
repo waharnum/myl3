@@ -27,7 +27,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     }
                 }
             },
-            // gpii-pouchdb returns POJOs, not JSON
+            // gpii-pouchdb returns POJOs
             encoding: {
                 type: "kettle.dataSource.encoding.none"
             }
@@ -59,6 +59,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.dataSource.pouchDB.setImpl",
                 // options, directModel
                 args: ["{that}", "{arguments}.0", "{arguments}.1"]
+            },
+            "delImpl": {
+                funcName: "floe.dashboard.dataSource.pouchDB.delImpl",
+                // options, directModel
+                args: ["{that}", "{arguments}.0", "{arguments}.1"]
             }
         },
         readOnlyGrade: "floe.dashboard.dataSource.pouchDB",
@@ -68,6 +73,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.dataSource.pouchDB.setImpl = function (that, options, _id) {
         options = options || {};
         return that.pouch.put(_id, options);
+    };
+
+    floe.dashboard.dataSource.pouchDB.delImpl = function (that, options, doc) {
+        options = options || {};
+        return that.pouch.remove(doc, options);
     };
 
     // Base grade for persistence of model components to Pouch
@@ -200,7 +210,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.pouchPersisted.del = function (that) {
         var docId = that.model._id;
         that.dataSource.get(docId).then(function (doc) {
-            that.dataSource.remove(doc).then(function () {
+            that.dataSource.del(doc).then(function () {
             });
         });
     };

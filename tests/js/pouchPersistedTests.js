@@ -129,7 +129,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     $(document).ready(function () {
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest();
-        // floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
+        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
     });
 
 })(jQuery, fluid);

@@ -120,11 +120,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             setResponseTransforms: "replace"
         },
         events: {
-            // events "onRead" and "onWrite" are operated in a custom workflow by fluid.fireTransformEvent to
-            // process dataSource payloads during the get and set process. Each listener
-            // receives the data returned by the last.
+            // events "onRead", "onDel" and "onWrite" are operated in a custom workflow by fluid.fireTransformEvent to
+            // process dataSource payloads during the get, delete
+            // and set process. Each listener receives the data returned by the
+            // last.
             onRead: null,
             onWrite: null,
+            onDel: null,
             onError: null
         },
         components: {
@@ -134,6 +136,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         listeners: {
             onRead: {
+                func: "{encoding}.parse",
+                namespace: "encoding"
+            },
+            onDel: {
                 func: "{encoding}.parse",
                 namespace: "encoding"
             },
@@ -178,8 +184,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             set: {
                 funcName: "kettle.dataSource.set",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // directModel, model, options/callback
+            },
+            del: {
+                funcName: "kettle.dataSource.del",
+                args: ["{that}", "{arguments}.0", "{arguments}.1"] // directModel, options/callback
             }
         // setImpl: must be implemented by a concrete subgrade
+        // delImpl: must be implemented by a concrete subgrade
         }
     });
 
@@ -251,6 +262,22 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
         kettle.dataSource.registerStandardPromiseHandlers(that, togo, options);
         return togo;
+    };
+
+    /** Operate the core "transforming promise workflow" of a dataSource's `del` method. Gets the "initial payload" from the dataSource's `delImpl` method
+     * and then pushes it through the transform chain to arrive at the final payload.
+     * @param that {Component} The dataSource itself
+     * @param directModel {Object} The direct model expressing the "coordinates" of the model to be deleted
+     * @param options {Object} A structure of options configuring the action of this delete request - many of these will be specific to the particular concrete DataSource
+     * @return {Promise} A promise for the final resolved payload
+     */
+
+    kettle.dataSource.del = function (that, directModel, options) {
+        options = kettle.dataSource.defaultiseOptions(that.options, options, directModel);
+        var initPayload = that.delImpl(options, directModel);
+        var promise = fluid.promise.fireTransformEvent(that.events.onRead, initPayload, options);
+        kettle.dataSource.registerStandardPromiseHandlers(that, promise, options);
+        return promise;
     };
 
 })(jQuery, fluid);
