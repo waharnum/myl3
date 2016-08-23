@@ -24,16 +24,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     /** Some common content encodings - suitable to appear as the "encoding" subcomponent of a dataSource **/
 
-    fluid.defaults("kettle.dataSource.encoding.JSON", {
+    fluid.defaults("fluid.dataSource.encoding.JSON", {
         gradeNames: "fluid.component",
         invokers: {
-            parse: "kettle.dataSource.parseJSON",
-            render: "kettle.dataSource.stringifyJSON"
+            parse: "fluid.dataSource.parseJSON",
+            render: "fluid.dataSource.stringifyJSON"
         },
         contentType: "application/json"
     });
 
-    fluid.defaults("kettle.dataSource.encoding.formenc", {
+    fluid.defaults("fluid.dataSource.encoding.formenc", {
         gradeNames: "fluid.component",
         invokers: {
             parse:  "node.querystring.parse({arguments}.0)",
@@ -42,7 +42,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         contentType: "application/x-www-form-urlencoded"
     });
 
-    fluid.defaults("kettle.dataSource.encoding.none", {
+    fluid.defaults("fluid.dataSource.encoding.none", {
         gradeNames: "fluid.component",
         invokers: {
             parse: "fluid.identity",
@@ -54,16 +54,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     /** Definitions for parsing JSON using jsonlint to render errors **/
 
-    kettle.dataSource.JSONParseErrors = [];
+    fluid.dataSource.JSONParseErrors = [];
 
-    kettle.dataSource.accumulateJSONError = function (str, hash) {
+    fluid.dataSource.accumulateJSONError = function (str, hash) {
         var error = "JSON parse error at line " + hash.loc.first_line + ", col " + hash.loc.last_column + ", found: \'" + hash.token + "\' - expected: " + hash.expected.join(", ");
-        kettle.dataSource.JSONParseErrors.push(error);
+        fluid.dataSource.JSONParseErrors.push(error);
     };
 
     // Adapt to shitty integration model of JISON-based parsers - beware that any other user of this module will find it permanently corrupted
     // TODO: Unfortunately the parser has no error recovery states - this can only ever accumulate a single error
-    jsonlint.parser.parseError = jsonlint.parser.lexer.parseError = kettle.dataSource.accumulateJSONError;
+    jsonlint.parser.parseError = jsonlint.parser.lexer.parseError = fluid.dataSource.accumulateJSONError;
 
     /** Given a String to be parsed as JSON, which has already failed to parse by JSON.parse, reject the supplied promise with
      * a readable diagnostic. If jsonlint was not loaded, simply return the original diagnostic.
@@ -71,24 +71,24 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
      * @param err {Error} The exception provided by JSON.parse on the string
      * @param promise {Promise} The promise to be rejected with a readable diagnostic
      */
-    kettle.dataSource.renderJSONDiagnostic = function (string, err, promise) {
+    fluid.dataSource.renderJSONDiagnostic = function (string, err, promise) {
         if (!jsonlint) { // TODO: More principled context detection
             return err.toString();
         }
-        kettle.dataSource.JSONParseErrors = [];
+        fluid.dataSource.JSONParseErrors = [];
         var errors = [];
         try {
             jsonlint.parse(string);
         } catch (e) {
             errors.push(e);
         } // Cannot override the core exception throwing code within the shitty parser - at jsonlint.js line 157
-        errors = errors.concat(kettle.dataSource.JSONParseErrors);
+        errors = errors.concat(fluid.dataSource.JSONParseErrors);
         promise.reject({
             message: errors.join("\n")
         });
     };
 
-    kettle.dataSource.parseJSON = function (string) {
+    fluid.dataSource.parseJSON = function (string) {
         var togo = fluid.promise();
         if (!string) {
             togo.resolve(undefined);
@@ -96,13 +96,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             try {
                 togo.resolve(JSON.parse(string));
             } catch (err) {
-                kettle.dataSource.renderJSONDiagnostic(string, err, togo);
+                fluid.dataSource.renderJSONDiagnostic(string, err, togo);
             }
         }
         return togo;
     };
 
-    kettle.dataSource.stringifyJSON = function (obj) {
+    fluid.dataSource.stringifyJSON = function (obj) {
         return obj === undefined ? "" : JSON.stringify(obj, null, 4);
     };
 
@@ -114,7 +114,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
      *     get(directModel[, callback|options] -        to get the data from data resource
      *     set(directModel, model[, callback|options] - to set the data (only if writable option is set to `true`)
      */
-    fluid.defaults("kettle.dataSource", {
+    fluid.defaults("fluid.dataSource", {
         gradeNames: ["fluid.component", "{that}.getWritableGrade"],
         mergePolicy: {
             setResponseTransforms: "replace"
@@ -131,7 +131,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         components: {
             encoding: {
-                type: "kettle.dataSource.encoding.JSON"
+                type: "fluid.dataSource.encoding.JSON"
             }
         },
         listeners: {
@@ -150,12 +150,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         invokers: {
             get: {
-                funcName: "kettle.dataSource.get",
+                funcName: "fluid.dataSource.get",
                 args: ["{that}", "{arguments}.0", "{arguments}.1"] // directModel, options/callback
             },
             // getImpl: must be implemented by a concrete subgrade
             getWritableGrade: {
-                funcName: "kettle.dataSource.getWritableGrade",
+                funcName: "fluid.dataSource.getWritableGrade",
                 args: ["{that}", "{that}.options.writable", "{that}.options.readOnlyGrade"]
             }
         },
@@ -169,7 +169,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     /** Use the peculiar `readOnlyGrade` member defined on every concrete DataSource to compute the name of the grade that should be
      * used to operate its writable variant if the `writable: true` options is set
      */
-    kettle.dataSource.getWritableGrade = function (that, writable, readOnlyGrade) {
+    fluid.dataSource.getWritableGrade = function (that, writable, readOnlyGrade) {
         if (!readOnlyGrade) {
             fluid.fail("Cannot evaluate writable grade without readOnlyGrade option");
         }
@@ -178,15 +178,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     };
 
-    fluid.defaults("kettle.dataSource.writable", {
+    fluid.defaults("fluid.dataSource.writable", {
         gradeNames: ["fluid.component"],
         invokers: {
             set: {
-                funcName: "kettle.dataSource.set",
+                funcName: "fluid.dataSource.set",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // directModel, model, options/callback
             },
             del: {
-                funcName: "kettle.dataSource.del",
+                funcName: "fluid.dataSource.del",
                 args: ["{that}", "{arguments}.0", "{arguments}.1"] // directModel, options/callback
             }
         // setImpl: must be implemented by a concrete subgrade
@@ -199,12 +199,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // ii) if the user has supplied an onError handler in method <code>options</code>, this is registered - otherwise
     // we register the firer of the dataSource's own onError method.
 
-    kettle.dataSource.registerStandardPromiseHandlers = function (that, promise, options) {
+    fluid.dataSource.registerStandardPromiseHandlers = function (that, promise, options) {
         promise.then(typeof(options) === "function" ? options : null,
             options.onError ? options.onError : that.events.onError.fire);
     };
 
-    kettle.dataSource.defaultiseOptions = function (componentOptions, options, directModel, isSet) {
+    fluid.dataSource.defaultiseOptions = function (componentOptions, options, directModel, isSet) {
         options = options || {};
         options.directModel = directModel;
         options.operation = isSet ? "set" : "get";
@@ -226,11 +226,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
      * @return {Promise} A promise for the final resolved payload
      */
 
-    kettle.dataSource.get = function (that, directModel, options) {
-        options = kettle.dataSource.defaultiseOptions(that.options, options, directModel);
+    fluid.dataSource.get = function (that, directModel, options) {
+        options = fluid.dataSource.defaultiseOptions(that.options, options, directModel);
         var initPayload = that.getImpl(options, directModel);
         var promise = fluid.promise.fireTransformEvent(that.events.onRead, initPayload, options);
-        kettle.dataSource.registerStandardPromiseHandlers(that, promise, options);
+        fluid.dataSource.registerStandardPromiseHandlers(that, promise, options);
         return promise;
     };
 
@@ -245,14 +245,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
      * @return {Promise} A promise for the final resolved payload (not all DataSources will provide any for a `set` method)
      */
 
-    kettle.dataSource.set = function (that, directModel, model, options) {
-        options = kettle.dataSource.defaultiseOptions(that.options, options, directModel, true); // shared and writeable between all participants
+    fluid.dataSource.set = function (that, directModel, model, options) {
+        options = fluid.dataSource.defaultiseOptions(that.options, options, directModel, true); // shared and writeable between all participants
         var transformPromise = fluid.promise.fireTransformEvent(that.events.onWrite, model, options);
         var togo = fluid.promise();
         transformPromise.then(function (transformed) {
             var innerPromise = that.setImpl(options, directModel, transformed);
             innerPromise.then(function (setResponse) { // Apply limited transforms to a SET response payload
-                var options2 = kettle.dataSource.defaultiseOptions(that.options, fluid.copy(options), directModel);
+                var options2 = fluid.dataSource.defaultiseOptions(that.options, fluid.copy(options), directModel);
                 options2.filterNamespaces = that.options.setResponseTransforms;
                 var retransformed = fluid.promise.fireTransformEvent(that.events.onRead, setResponse, options2);
                 fluid.promise.follow(retransformed, togo);
@@ -260,7 +260,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 togo.reject(error);
             });
         });
-        kettle.dataSource.registerStandardPromiseHandlers(that, togo, options);
+        fluid.dataSource.registerStandardPromiseHandlers(that, togo, options);
         return togo;
     };
 
@@ -272,11 +272,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
      * @return {Promise} A promise for the final resolved payload
      */
 
-    kettle.dataSource.del = function (that, directModel, options) {
-        options = kettle.dataSource.defaultiseOptions(that.options, options, directModel);
+    fluid.dataSource.del = function (that, directModel, options) {
+        options = fluid.dataSource.defaultiseOptions(that.options, options, directModel);
         var initPayload = that.delImpl(options, directModel);
         var promise = fluid.promise.fireTransformEvent(that.events.onRead, initPayload, options);
-        kettle.dataSource.registerStandardPromiseHandlers(that, promise, options);
+        fluid.dataSource.registerStandardPromiseHandlers(that, promise, options);
         return promise;
     };
 

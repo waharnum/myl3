@@ -18,10 +18,10 @@ module.exports = function (grunt) {
         // Project package file destination.
         pkg: grunt.file.readJSON("package.json"),
         eslint: {
-            all: ["src/**/*.js", "tests/**/*.js", "demos/**/*.js", "examples/**/*.js"]
+            all: ["src/**/*.js", "tests/**/*.js", "demos/**/*.js", "examples/**/*.js", "!src/lib/**"]
         },
         jsonlint: {
-            all: ["package.json", ".jshintrc", "tests/**/*.json", "demos/**/*.json", "src/json/*.json"]
+            all: ["package.json", ".jshintrc", "tests/**/*.json", "demos/**/*.json", "src/**/*.json", "!src/lib/**"]
         },
         copy: {
             // Copy external front end dependencies into appropriate directories

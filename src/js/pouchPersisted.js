@@ -17,7 +17,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // A datasource grade using pouchDB via gpii-pouch
     fluid.defaults("floe.dashboard.dataSource.pouchDB", {
-        gradeNames: ["kettle.dataSource"],
+        gradeNames: ["fluid.dataSource"],
         components: {
             pouch: {
                 type: "gpii.pouch",
@@ -29,7 +29,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             // gpii-pouchdb returns POJOs
             encoding: {
-                type: "kettle.dataSource.encoding.none"
+                type: "fluid.dataSource.encoding.none"
             }
         },
         invokers: {
@@ -53,7 +53,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     fluid.defaults("floe.dashboard.dataSource.pouchDB.writable", {
-        gradeNames: ["kettle.dataSource.writable", "floe.dashboard.dataSource.pouchDB"],
+        gradeNames: ["fluid.dataSource.writable", "floe.dashboard.dataSource.pouchDB"],
         invokers: {
             "setImpl": {
                 funcName: "floe.dashboard.dataSource.pouchDB.setImpl",
