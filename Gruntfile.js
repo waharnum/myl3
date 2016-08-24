@@ -13,25 +13,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 module.exports = function (grunt) {
     "use strict";
 
-    // Reads local .eslintIgnore; creates an array that be concatenated
-    // to the eslint config to add all .eslintIgnore globs as exclusions
-    var ignoreArray = [];
-    try {
-        var eslintIgnore = grunt.file.read(".eslintIgnore");
-        var ignores = eslintIgnore.trim().split("\n");        
-        ignores.forEach(function (ignore) {
-            ignoreArray.push("!" + ignore);
-        });
-    } catch(e) {
-        grunt.log.writeln(e);
-    }
-
     // Project configuration.
     grunt.initConfig({
         // Project package file destination.
         pkg: grunt.file.readJSON("package.json"),
         eslint: {
-            all: ["src/**/*.js", "tests/**/*.js", "demos/**/*.js", "examples/**/*.js"].concat(ignoreArray)
+            all: ["src/**/*.js", "tests/**/*.js", "demos/**/*.js", "examples/**/*.js"]
         },
         jsonlint: {
             all: ["package.json", ".jshintrc", "tests/**/*.json", "demos/**/*.json", "src/**/*.json", "!src/lib/**"]
