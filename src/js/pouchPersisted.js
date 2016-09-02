@@ -27,7 +27,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     }
                 }
             },
-            // gpii-pouchdb returns POJOs
+            // gpii-pouchdb returns POJOs, not JSON
             encoding: {
                 type: "fluid.dataSource.encoding.none"
             }
