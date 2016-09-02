@@ -87,10 +87,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return that.pouch.remove(doc, options);
     };
 
-    // Base grade for persistence of model components to Pouch
-    // Implementing grades should ensure that what's integral to
-    // reconstructing the particular instance is stored in the
-    // model
+    // Base grade for model components that can persist their models to PouchDB
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         components: {
@@ -119,7 +116,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // name: "test",
         },
         // Implementing grades can use these invokers in combinations with
-        // events and listeners to store, retrieve and delete as
+        // events and listeners to store, retrieve and delete model as
         // appropriate
         invokers: {
             // Implementing grades or instances that want a different ID
@@ -143,7 +140,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    // Set the ID to the timestamp to make filtering by time easier
+    // Sets the ID to a UNIX-style "MS from epoch" timestamp to make filtering
+    // by time easier
     floe.dashboard.pouchPersisted.setPouchIdToCurrentTime = function (that) {
         that.applier.change("_id", that.model.timeEvents.created);
         that.events.onSetPouchId.fire();
@@ -184,8 +182,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 doc._rev = retrievedDoc._rev;
                 that.dataSource.set(doc).then(function () {
                 });
-                // Create the doc on a 404 (doesn't exist yet)
             },
+            // Create the doc on a 404 (doesn't exist yet)
             function (err) {
                 if (err.status === 404) {
                     that.dataSource.set(doc).then(function () {
