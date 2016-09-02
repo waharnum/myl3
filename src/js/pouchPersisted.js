@@ -140,7 +140,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    // Sets the ID to a UNIX-style "MS from epoch" timestamp to make filtering
+    // Sets the ID to to "created" timestamp to make filtering
     // by time easier
     floe.dashboard.pouchPersisted.setPouchIdToCurrentTime = function (that) {
         that.applier.change("_id", that.model.timeEvents.created);

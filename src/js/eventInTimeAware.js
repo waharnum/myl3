@@ -15,23 +15,40 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     "use strict";
 
-    // A grade that deals in time,
-    // and things related to time
+    // Time-aware grade
+    // Largely designed to assist in time-based persistence strategies
+    // by providing created & last modified timestamps in the model of
+    // implementating grades, it additionally provides basic formatted
+    // dates and times to the model
+    //
+    // Implementing grades should themselves implement model listeners
+    // calling the floe.dashboard.eventInTimeAware.setModifiedTimeStamp
+    // function to update the modified stamp on "consequential" changes to
+    // the component model
     fluid.defaults("floe.dashboard.eventInTimeAware", {
         gradeNames: "fluid.modelComponent",
         model: {
             // A series of key-timestamp pairs
+            // implementing grades with other timestamping needs should store
+            // any timestamps here
+            // Default timestamp approach used is Date.prototype.toJSON()
             timeEvents: {
                 // created: "",
-                // lastModified: ""
+                // modified: ""
             },
+            // Formatted human-friendly representation of the date portion
+            // of the timestamp
+            // Created automatically by model relay
             formattedDates: {
                 "created": null,
-                "lastModified": null
+                "modified": null
             },
+            // Formatted human-friendly representation of the time portion
+            // of the timestamp
+            // Created automatically by model relay
             formattedTimes: {
                 "created": null,
-                "lastModified": null
+                "modified": null
             }
         },
         modelRelay: [
@@ -54,55 +71,62 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 }
             },
             {
-                target: "{that}.model.formattedDates.lastModified",
+                target: "{that}.model.formattedDates.modified",
                 singleTransform: {
-                    input: "{that}.model.timeEvents.lastModified",
+                    input: "{that}.model.timeEvents.modified",
                     type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.lastModified"],
+                    args: ["{that}.model.timeEvents.modified"],
                     func: "floe.dashboard.eventInTimeAware.getFormattedDate"
                 }
             },
             {
-                target: "{that}.model.formattedTimes.lastModified",
+                target: "{that}.model.formattedTimes.modified",
                 singleTransform: {
-                    input: "{that}.model.timeEvents.lastModified",
+                    input: "{that}.model.timeEvents.modified",
                     type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.lastModified"],
+                    args: ["{that}.model.timeEvents.modified"],
                     func: "floe.dashboard.eventInTimeAware.getFormattedTime"
                 }
             },
         ],
         listeners: {
-            "onCreate.setCreatedTimeStamp": {
-                func: "floe.dashboard.eventInTimeAware.setCreatedTimeStamp",
+            "onCreate.setInitialTimeStamps": {
+                func: "floe.dashboard.eventInTimeAware.setInitialTimeStamps",
                 args: ["{that}"]
-            },
-        },
-        // We update "timeEvents.lastModified" whenever the model is updated
-        // except on initialization, or from the setModifiedTimeStamp
-        // function itself to prevent the potential for infinite looping.
-        modelListeners: {
-            "": {
-                funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
-                args: "{that}",
-                excludeSource: ["init", "setModifiedTimeStamp"]
             }
         }
+        // We update "timeEvents.modified" whenever the model is updated
+        // except on initialization, or from the setModifiedTimeStamp
+        // function itself to prevent the potential for infinite looping.
+        // modelListeners: {
+        //     "": {
+        //         funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
+        //         args: "{that}",
+        //         excludeSource: ["init", "setModifiedTimeStamp"]
+        //     }
+        // }
     });
 
-    // Set the created timestamp to the current time if the model's current one
-    // cannot be parsed
-    floe.dashboard.eventInTimeAware.setCreatedTimeStamp = function (that) {
-        var timestamp = that.model.timeEvents.created ? new Date(that.model.timeEvents.created) : new Date();
-        that.applier.change("timeEvents.created", timestamp.toJSON());
+    // Sets the initial created and modified timestamps to the current
+    // time, if they don't exist in the model
+    floe.dashboard.eventInTimeAware.setInitialTimeStamps = function (that) { 
+        var created = that.model.timeEvents.created ? new Date(that.model.timeEvents.created) : new Date();
+
+        var modified = that.model.timeEvents.modified ? new Date(that.model.timeEvents.modified) : created;
+
+        var changes = {
+            created: created.toJSON(),
+            modified: modified.toJSON()
+        };
+        that.applier.change("timeEvents", changes);
     };
 
     // Sets the modified time stamp to the current time
     // has a custom source for the change so that model listeners can
-    // filter it out
+    // filter it out if needed via the excludeSource option
     floe.dashboard.eventInTimeAware.setModifiedTimeStamp = function (that) {
         var modifiedTimestamp = new Date();
-        that.applier.change("timeEvents.lastModified", modifiedTimestamp.toJSON(), "ADD", "setModifiedTimeStamp");
+        that.applier.change("timeEvents.modified", modifiedTimestamp.toJSON(), "ADD", "setModifiedTimeStamp");
     };
 
     floe.dashboard.eventInTimeAware.getFormattedDate = function (timestamp) {
