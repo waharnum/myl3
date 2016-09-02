@@ -95,23 +95,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: ["{that}"]
             }
         }
-        // We update "timeEvents.modified" whenever the model is updated
-        // except on initialization, or from the setModifiedTimeStamp
-        // function itself to prevent the potential for infinite looping.
-        // modelListeners: {
-        //     "": {
-        //         funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
-        //         args: "{that}",
-        //         excludeSource: ["init", "setModifiedTimeStamp"]
-        //     }
-        // }
     });
 
     // Sets the initial created and modified timestamps to the current
     // time, if they don't exist in the model
-    floe.dashboard.eventInTimeAware.setInitialTimeStamps = function (that) { 
+    floe.dashboard.eventInTimeAware.setInitialTimeStamps = function (that) {
         var created = that.model.timeEvents.created ? new Date(that.model.timeEvents.created) : new Date();
 
+        // Respect the modified date if it exists & is parseable;
         var modified = that.model.timeEvents.modified ? new Date(that.model.timeEvents.modified) : created;
 
         var changes = {
@@ -122,8 +113,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Sets the modified time stamp to the current time
-    // has a custom source for the change so that model listeners can
-    // filter it out if needed via the excludeSource option
+    // has a custom source for the change so that aggressive model listeners
+    // (such as those that listen to the entire component model, including
+    // timeEvents.modified) can filter it out if needed via the excludeSource
+    // option and avoid infinite modified loops
     floe.dashboard.eventInTimeAware.setModifiedTimeStamp = function (that) {
         var modifiedTimestamp = new Date();
         that.applier.change("timeEvents.modified", modifiedTimestamp.toJSON(), "ADD", "setModifiedTimeStamp");
