@@ -112,7 +112,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
      *     set(directModel, model[, callback|options] - to set the data (only if writable option is set to `true`)
      */
     fluid.defaults("fluid.dataSource", {
-        gradeNames: ["fluid.component", "{that}.getWritableGrade"],
+        gradeNames: ["fluid.component", "{that}.getWritableGrade", "{that}.getDeletableGrade"],
         mergePolicy: {
             setResponseTransforms: "replace"
         },
@@ -154,24 +154,38 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             getWritableGrade: {
                 funcName: "fluid.dataSource.getWritableGrade",
                 args: ["{that}", "{that}.options.writable", "{that}.options.readOnlyGrade"]
+            },
+            getDeletableGrade: {
+                funcName: "fluid.dataSource.getDeletableGrade",
+                args: ["{that}", "{that}.options.deletable", "{that}.options.readOnlyGrade"]
             }
         },
         // In the case of parsing a response from a "set" request, only transforms of these namespaces will be applied
         setResponseTransforms: ["encoding"],
         charEncoding: "utf8", // choose one of node.js character encodings
-        writable: false
+        writable: false,
+        deletable: false
     });
+
+    fluid.dataSource.getWritableGrade = function (that, writable, readOnlyGrade) {
+        return fluid.dataSource.getVariantGrade(that, writable, "writable", readOnlyGrade);
+    };
+
+    fluid.dataSource.getDeletableGrade = function (that, deletable, readOnlyGrade) {
+        return fluid.dataSource.getVariantGrade(that, deletable, "deletable", readOnlyGrade);
+    };
 
     // TODO: Move this system over to "linkage" too
     /** Use the peculiar `readOnlyGrade` member defined on every concrete DataSource to compute the name of the grade that should be
-     * used to operate its writable variant if the `writable: true` options is set
+     used to operate its additional variants if the `<variant>: true` options is set
      */
-    fluid.dataSource.getWritableGrade = function (that, writable, readOnlyGrade) {
+
+    fluid.dataSource.getVariantGrade = function (that, variantOptionValue, variantGradeName, readOnlyGrade) {
         if (!readOnlyGrade) {
-            fluid.fail("Cannot evaluate writable grade without readOnlyGrade option");
+            fluid.fail("Cannot evaluate" + variantGradeName + "grade without readOnlyGrade option");
         }
-        if (writable) {
-            return fluid.model.composeSegments(readOnlyGrade, "writable");
+        if (variantOptionValue) {
+            return fluid.model.composeSegments(readOnlyGrade, variantGradeName);
         }
     };
 
@@ -181,12 +195,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             set: {
                 funcName: "fluid.dataSource.set",
                 args: ["{that}", "{arguments}.0", "{arguments}.1", "{arguments}.2"] // directModel, model, options/callback
-            },
+            }
+        // setImpl: must be implemented by a concrete subgrade
+        }
+    });
+
+    fluid.defaults("fluid.dataSource.deletable", {
+        gradeNames: ["fluid.component"],
+        invokers: {
             del: {
                 funcName: "fluid.dataSource.del",
                 args: ["{that}", "{arguments}.0", "{arguments}.1"] // directModel, options/callback
             }
-        // setImpl: must be implemented by a concrete subgrade
         // delImpl: must be implemented by a concrete subgrade
         }
     });

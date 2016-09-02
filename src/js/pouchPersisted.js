@@ -43,7 +43,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // name: DB name
         },
         readOnlyGrade: "floe.dashboard.dataSource.pouchDB",
-        writable: true
+        writable: true,
+        deletable: true
     });
 
     // that, options, directModel
@@ -60,11 +61,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.dataSource.pouchDB.setImpl",
                 // options, directModel
                 args: ["{that}", "{arguments}.0", "{arguments}.1"]
-            },
-            "delImpl": {
-                funcName: "floe.dashboard.dataSource.pouchDB.delImpl",
-                // options, directModel
-                args: ["{that}", "{arguments}.0", "{arguments}.1"]
             }
         }
     });
@@ -73,6 +69,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         options = options || {};
         return that.pouch.put(_id, options);
     };
+
+    fluid.defaults("floe.dashboard.dataSource.pouchDB.deletable", {
+        gradeNames: ["fluid.dataSource.deletable", "floe.dashboard.dataSource.pouchDB"],
+        invokers: {
+            "delImpl": {
+                funcName: "floe.dashboard.dataSource.pouchDB.delImpl",
+                // options, directModel
+                args: ["{that}", "{arguments}.0", "{arguments}.1"]
+            }
+        }
+    });
 
     // required for doc
     // {_id:"", _rev:""}
