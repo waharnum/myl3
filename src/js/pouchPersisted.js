@@ -42,7 +42,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         dbOptions: {
             // name: DB name
         },
-        readOnlyGrade: "floe.dashboard.dataSource.pouchDB"
+        readOnlyGrade: "floe.dashboard.dataSource.pouchDB",
+        writable: true
     });
 
     // that, options, directModel
@@ -65,9 +66,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 // options, directModel
                 args: ["{that}", "{arguments}.0", "{arguments}.1"]
             }
-        },
-        readOnlyGrade: "floe.dashboard.dataSource.pouchDB",
-        writable: true
+        }
     });
 
     floe.dashboard.dataSource.pouchDB.setImpl = function (that, options, _id) {
@@ -90,7 +89,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         components: {
             dataSource: {
-                type: "floe.dashboard.dataSource.pouchDB.writable",
+                type: "floe.dashboard.dataSource.pouchDB",
                 options: {
                     dbOptions: "{pouchPersisted}.options.dbOptions"
                 }
