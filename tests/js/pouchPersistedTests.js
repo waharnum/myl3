@@ -29,7 +29,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         modelListeners: {
             "persistedValues": {
-                func: "{that}.set",
+                func: "{that}.persist",
                 excludeSource: "init"
             }
         }
