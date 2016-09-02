@@ -92,7 +92,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.tests.dashboard.testPouchPersistedStorage = function (that, retrievedDoc) {
         // Remove the _rev on retrievedDoc
         var retrievedDocMinusRev = fluid.censorKeys(retrievedDoc, ["_rev"]);
-        console.log(retrievedDocMinusRev);
         jqUnit.assertDeepEq("Component model and retrieved document are identical, except for _rev", that.model, retrievedDocMinusRev);
     };
 

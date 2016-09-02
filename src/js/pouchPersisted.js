@@ -49,7 +49,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // that, options, directModel
     floe.dashboard.dataSource.pouchDB.getImpl = function (that, options, _id) {
-        console.log(arguments);
         options = options || {};
         return that.pouch.get(_id, options);
     };
@@ -176,7 +175,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.set = function (that) {
-        console.log(that);
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
 
