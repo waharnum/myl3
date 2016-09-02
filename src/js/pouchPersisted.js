@@ -136,6 +136,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "delete": {
                 funcName: "floe.dashboard.pouchPersisted.del",
                 args: "{that}"
+            },
+            "persist": {
+                funcName: "floe.dashboard.pouchPersisted.persist",
+                args: "{that}"
             }
         }
     });
@@ -151,6 +155,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.pouchPersisted.setPouchIdToString = function (that, idString) {
         that.applier.change("_id", idString);
         that.events.onSetPouchId.fire();
+    };
+
+    // Convenience function for listeners that runs both "set" (for datasource
+    // persistence) and floe.dashboard.eventInTimeAware.setModifiedTimeStamp
+    // (for updating the modified timestamp)
+    // This allows model listeners to be created to listen to "consequential"
+    // model changes, update the modification time, and persist the modified
+    // model to the datasource
+    floe.dashboard.pouchPersisted.persist = function (that) {
+        that.setModifiedTimeStamp();
+        that.set();
     };
 
     // Tries to get the stored version of the document

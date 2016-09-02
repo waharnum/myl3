@@ -94,6 +94,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 func: "floe.dashboard.eventInTimeAware.setInitialTimeStamps",
                 args: ["{that}"]
             }
+        },
+        invokers: {
+            setModifiedTimeStamp: {
+                funcName: "floe.dashboard.eventInTimeAware.setModifiedTimeStamp",
+                args: ["{that}"]
+            }
         }
     });
 
