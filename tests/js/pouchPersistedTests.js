@@ -69,10 +69,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             name: "PouchDB persisted component - storage test cases",
             tests: [{
                 expect: 1,
-                name: "Test basic storage",
+                name: "Test storage",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.set"
+                        func: "{pouchPersistedComponent}.persist"
                     },
                     {
                         listener: "{pouchPersistedComponent}.get",
@@ -101,10 +101,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             name: "PouchDB persisted component - delete test cases",
             tests: [{
                 expect: 1,
-                name: "Test basic delete",
+                name: "Test delete",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.set"
+                        func: "{pouchPersistedComponent}.persist"
                     },
                     {
                         listener: "{pouchPersistedComponent}.delete",
