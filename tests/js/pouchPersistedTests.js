@@ -68,11 +68,24 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "PouchDB persisted component - storage test cases",
             tests: [{
-                expect: 1,
+                expect: 2,
                 name: "Test storage",
                 sequence: [
                     {
                         func: "{pouchPersistedComponent}.persist"
+                    },
+                    {
+                        listener: "{pouchPersistedComponent}.get",
+                        event: "{pouchPersistedComponent}.events.onPouchDocStored"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedStorage",
+                        event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
+                        args: ["{pouchPersistedComponent}", "{arguments}.0"]
+                    },
+                    {
+                        func: "{pouchPersistedComponent}.applier.change",
+                        args: ["persistedValues.string", "Hello brave new world."]
                     },
                     {
                         listener: "{pouchPersistedComponent}.get",

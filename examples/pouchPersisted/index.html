@@ -38,9 +38,9 @@
 
             </div>
             <h3>Persistence Log</h3>
-            <div class="floec-persistedInlineEdit-loggingArea">
+            <ul class="floec-persistedInlineEdit-loggingArea">
 
-            </div>
+            </ul>
         </div>
     <script>
         fluid.defaults("floe.dashboard.pouchPersistedInlineEdit", {
@@ -84,7 +84,7 @@
                 },
                 // Persists the component when changes are made
                 "modelChanged.persist": {
-                    funcName: "{that}.set"
+                    funcName: "{that}.persist"
                 }
             }
         });
@@ -96,14 +96,14 @@
             }
         };
 
-        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved, message) {
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved) {
             var logArea = that.locate("storageLog");
-            logArea.html("Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre>";
+            logArea.prepend("<li>Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre></li>";
         };
 
         floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored = function (that) {
             var logArea = that.locate("storageLog");
-            logArea.html("Persisted component stored");
+            logArea.prepend("<li>Persisted component stored</li>");
         };
 
         floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");

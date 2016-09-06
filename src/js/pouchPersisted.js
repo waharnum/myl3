@@ -100,11 +100,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         events: {
             "onSetPouchId": null,
-            "onPouchDocStored": "{dataSource}.pouch.events.onPutComplete",
-            "onPouchDocDeleted": "{dataSource}.pouch.events.onRemoveComplete",
+            "onPouchDocStored": null,
+            "onPouchDocDeleted": null,
             // Event signatures of this event should include the retrieved
             // document
-            "onPouchDocRetrieved": "{dataSource}.pouch.events.onGetComplete"
+            "onPouchDocRetrieved": null
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -179,10 +179,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
 
-        that.dataSource.get(docId, retrievalOptions).then(function () {
-
-        }, function () {
-
+        that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
+            that.events.onPouchDocRetrieved.fire(retrievedDoc);
+        }, function (getErr) {
+            return "Get failed: " + getErr;
         });
     };
 
@@ -196,13 +196,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 // Update the doc if it exists
                 doc._rev = retrievedDoc._rev;
                 that.dataSource.set(doc).then(function () {
+                    that.events.onPouchDocStored.fire();
+                }, function (setErr) {
+                    return "Set after Get success (update if exists) failed: " + setErr;
                 });
             },
             // Create the doc on a 404 (doesn't exist yet)
-            function (err) {
-                if (err.status === 404) {
+            function (getErr) {
+                if (getErr.status === 404) {
                     that.dataSource.set(doc).then(function () {
-                    }, function () {
+                        that.events.onPouchDocStored.fire();
+                    }, function (setErr) {
+                        return "Set after Get 404 (create if does not exist) failed: " + setErr;
                     });
                 }
             });
@@ -214,7 +219,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var docId = that.model._id;
         that.dataSource.get(docId).then(function (doc) {
             that.dataSource.del(doc).then(function () {
+                that.events.onPouchDocDeleted.fire();
+            }, function (delErr) {
+                return "Delete after get failed: " + delErr;
             });
+        }, function (getErr) {
+            return "Get before delete failed: " + getErr;
         });
     };
 
