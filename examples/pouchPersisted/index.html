@@ -37,6 +37,9 @@
             <div class="flc-inlineEdit-text">
 
             </div>
+            <div>
+                <a href="#" class="floec-persistedInlineEdit-delete">Delete Persisted Model</a>
+            </div>
             <h3>Persistence Log</h3>
             <ul class="floec-persistedInlineEdit-loggingArea">
 
@@ -56,7 +59,8 @@
                 }
             },
             selectors: {
-                storageLog: ".floec-persistedInlineEdit-loggingArea"
+                storageLog: ".floec-persistedInlineEdit-loggingArea",
+                deleteControl: ".floec-persistedInlineEdit-delete"
             },
             dbOptions: {
                 "name": "examples"
@@ -67,6 +71,11 @@
                     funcName: "{that}.get",
                     priority: "after:setPouchId",
                     args: [{"revs_info": true}]
+                },
+                "onCreate.bindDeleteClick": {
+                    priority: "after:setPouchId",
+                    funcName: "floe.dashboard.pouchPersistedInlineEdit.bindDeleteClick",
+                    args: ["{that}"]
                 },
                 // Update the log from retrieval
                 "onPouchDocRetrieved.updateLogFromRetrieved": {
@@ -82,12 +91,25 @@
                     funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored",
                     args: ["{that}", "{arguments}.0"]
                 },
+                "onPouchDocDeleted.updateLogFromDeleted": {
+                    funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromDeleted",
+                    args: ["{that}", "{arguments}.0"]
+                },
                 // Persists the component when changes are made
                 "modelChanged.persist": {
                     funcName: "{that}.persist"
                 }
             }
         });
+
+        floe.dashboard.pouchPersistedInlineEdit.bindDeleteClick = function (that) {
+            console.log(that);
+                var deleteControl = that.locate("deleteControl");
+                deleteControl.click( function (e) {
+                    e.preventDefault();
+                    that.delete();
+                });
+        };
 
         floe.dashboard.pouchPersistedInlineEdit.setModelFromRetrieved = function(that, retrieved) {
             if(retrieved) {
@@ -104,6 +126,11 @@
         floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored = function (that, storeResponse) {
             var logArea = that.locate("storageLog");
             logArea.prepend("<li>Persisted component stored:<br /><pre><code>" + JSON.stringify(storeResponse, null, 2)+"</code></pre></li>");
+        };
+
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromDeleted = function (that, deleteResponse) {
+            var logArea = that.locate("storageLog");
+            logArea.prepend("<li>Persisted component deleted:<br /><pre><code>" + JSON.stringify(deleteResponse, null, 2)+"</code></pre></li>");
         };
 
         floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");
