@@ -16,7 +16,7 @@
     <body>
         <h1>pouchPersisted Grade Example</h1>
         <p>
-            This is a simple example of an inlineEdit component that persists its value to PouchDB.
+            A simple example of an inlineEdit component that persists its <code>model.value</code> to PouchDB.
         </p>
         <p>
             Instructions:
@@ -59,7 +59,7 @@
                 storageLog: ".floec-persistedInlineEdit-loggingArea"
             },
             dbOptions: {
-                name: "examples",
+                "name": "examples"
             },
             listeners: {
                 // Try and retrieve the component on creation
@@ -80,7 +80,7 @@
                 },
                 "onPouchDocStored.updateLogFromStored": {
                     funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored",
-                    args: ["{that}"]
+                    args: ["{that}", "{arguments}.0"]
                 },
                 // Persists the component when changes are made
                 "modelChanged.persist": {
@@ -98,16 +98,15 @@
 
         floe.dashboard.pouchPersistedInlineEdit.updateLogFromRetrieved = function (that, retrieved) {
             var logArea = that.locate("storageLog");
-            logArea.prepend("<li>Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2))+"</code></pre></li>";
+            logArea.prepend("<li>Persisted component retrieved:<br /><pre><code>" + JSON.stringify(retrieved, null, 2)+"</code></pre></li>");
         };
 
-        floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored = function (that) {
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromStored = function (that, storeResponse) {
             var logArea = that.locate("storageLog");
-            logArea.prepend("<li>Persisted component stored</li>");
+            logArea.prepend("<li>Persisted component stored:<br /><pre><code>" + JSON.stringify(storeResponse, null, 2)+"</code></pre></li>");
         };
 
         floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");
-
     </script>
 
     </body>

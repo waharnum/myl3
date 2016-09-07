@@ -100,11 +100,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         events: {
             "onSetPouchId": null,
+            // Event signature is the retrieved doc
+            "onPouchDocRetrieved": null,
+            // Event signature is the set request response
             "onPouchDocStored": null,
-            "onPouchDocDeleted": null,
-            // Event signatures of this event should include the retrieved
-            // document
-            "onPouchDocRetrieved": null
+            // Event signature is the delete request response
+            "onPouchDocDeleted": null
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -195,8 +196,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             function (retrievedDoc) {
                 // Update the doc if it exists
                 doc._rev = retrievedDoc._rev;
-                that.dataSource.set(doc).then(function () {
-                    that.events.onPouchDocStored.fire();
+                that.dataSource.set(doc).then(function (setResp) {
+                    that.events.onPouchDocStored.fire(setResp);
                 }, function (setErr) {
                     return "Set after Get success (update if exists) failed: " + setErr;
                 });
@@ -204,8 +205,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // Create the doc on a 404 (doesn't exist yet)
             function (getErr) {
                 if (getErr.status === 404) {
-                    that.dataSource.set(doc).then(function () {
-                        that.events.onPouchDocStored.fire();
+                    that.dataSource.set(doc).then(function (setResp) {
+                        that.events.onPouchDocStored.fire(setResp);
                     }, function (setErr) {
                         return "Set after Get 404 (create if does not exist) failed: " + setErr;
                     });
@@ -218,8 +219,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.pouchPersisted.del = function (that) {
         var docId = that.model._id;
         that.dataSource.get(docId).then(function (doc) {
-            that.dataSource.del(doc).then(function () {
-                that.events.onPouchDocDeleted.fire();
+            that.dataSource.del(doc).then(function (deleteResp) {
+                that.events.onPouchDocDeleted.fire(deleteResp);
             }, function (delErr) {
                 return "Delete after get failed: " + delErr;
             });
