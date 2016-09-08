@@ -181,6 +181,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             pouchError: floe.tests.dashboard.expectedPouchErrors.deleted404
         },
         "setAfterGetDocumentUpdateConflict": {
+            message: "SET after GET (update if exists) failed",
+            pouchError: floe.tests.dashboard.expectedPouchErrors.documentUpdateConflict409
+        },
+        "setAfterGet404DocumentUpdateConflict": {
             message: "SET after GET 404 response (create if does not exist) failed",
             pouchError: floe.tests.dashboard.expectedPouchErrors.documentUpdateConflict409
         },
@@ -199,7 +203,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "PouchDB persisted component - error test cases",
             tests: [{
-                expect: 5,
+                expect: 6,
                 name: "Test error events",
                 sequence: [
                     {
@@ -225,7 +229,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
                         event: "{pouchPersistedComponent}.events.onPouchSetError",
-                        args: ["{arguments}.0", "Expected SET error message received", "setAfterGetDocumentUpdateConflict"]
+                        args: ["{arguments}.0", "Expected SET error message received in a document update conflict when creating", "setAfterGet404DocumentUpdateConflict"]
+                    },
+                    {
+                        funcName: "floe.tests.dashboard.induceSetError",
+                        args: ["{pouchPersistedComponent}"]
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedError",
+                        event: "{pouchPersistedComponent}.events.onPouchSetError",
+                        args: ["{arguments}.0", "Expected SET error message received in a document update conflict when updating", "setAfterGetDocumentUpdateConflict"]
                     },
                     {
                         funcName: "{pouchPersistedComponent}.persist"
