@@ -21,7 +21,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // implementating grades, it additionally provides basic formatted
     // dates and times to the model
     //
-    // Implementing grades should themselves implement model listeners
+    // Implementing grades must implement model listeners
     // calling the floe.dashboard.eventInTimeAware.setModifiedTimeStamp
     // function to update the modified stamp on "consequential" changes to
     // the component model
@@ -106,9 +106,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Sets the initial created and modified timestamps to the current
     // time, if they don't exist in the model
     floe.dashboard.eventInTimeAware.setInitialTimeStamps = function (that) {
+        // Respect the created date if it exists
         var created = that.model.timeEvents.created ? new Date(that.model.timeEvents.created) : new Date();
 
-        // Respect the modified date if it exists & is parseable;
+        // Respect the modified date if it exists; otherwise set it to
+        // the created date
         var modified = that.model.timeEvents.modified ? new Date(that.model.timeEvents.modified) : created;
 
         var changes = {
