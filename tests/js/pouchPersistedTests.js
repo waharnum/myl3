@@ -148,20 +148,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertUndefined("No persisted entry retrieved", that.get());
     };
 
-    floe.tests.dashboard.expectedGetErrorMissing = {
-        message: "GET failed",
-        pouchError: {
+    floe.tests.dashboard.expectedPouchErrors = {
+        "missing404": {
             error: true,
             message: "missing",
             name: "not_found",
             reason:"missing",
             status: 404
-        }
-    };
-
-    floe.tests.dashboard.expectedGetErrorDeleted = {
-        message: "GET failed",
-        pouchError: {
+        },
+        "deleted404": {
             error: true,
             message: "missing",
             name: "not_found",
@@ -170,24 +165,51 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     };
 
+    floe.tests.dashboard.expectedErrors = {
+        "getMissing": {
+            message: "GET failed",
+            pouchError: floe.tests.dashboard.expectedPouchErrors.missing404
+        },
+        "getDeleted": {
+            message: "GET failed",
+            pouchError: floe.tests.dashboard.expectedPouchErrors.deleted404
+        },
+        "getBeforeDeleteMissing": {
+            message: "GET before DELETE failed",
+            pouchError: floe.tests.dashboard.expectedPouchErrors.missing404
+        },
+        "getBeforeDeleteDeleted": {
+            message: "GET before DELETE failed",
+            pouchError: floe.tests.dashboard.expectedPouchErrors.deleted404
+        }
+    };
+
     fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.error", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
         modules: [ {
             name: "PouchDB persisted component - error test cases",
             tests: [{
-                expect: 3,
+                expect: 5,
                 name: "Test error events",
                 sequence: [
                     {
-                        func: "{pouchPersistedComponent}.get"
+                        funcName: "{pouchPersistedComponent}.get"
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
                         event: "{pouchPersistedComponent}.events.onPouchGetError",
-                        args: ["{arguments}.0", "Expected GET error message received when a nonexistent _id is requested", floe.tests.dashboard.expectedGetErrorMissing]
+                        args: ["{arguments}.0", "Expected GET error message received when a nonexistent _id is requested", "getMissing"]
                     },
                     {
-                        func: "{pouchPersistedComponent}.persist"
+                        funcName: "{pouchPersistedComponent}.delete"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedError",
+                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        args: ["{arguments}.0", "Expected GET before DELETE error message received when a nonexistent _id has delete requested", "getBeforeDeleteMissing"]
+                    },
+                    {
+                        funcName: "{pouchPersistedComponent}.persist"
                     },
                     {
                         listener: "{pouchPersistedComponent}.delete",
@@ -201,7 +223,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
                         event: "{pouchPersistedComponent}.events.onPouchGetError",
-                        args: ["{arguments}.0", "Expected GET error message received when a deleted _id is requested", floe.tests.dashboard.expectedGetErrorDeleted]
+                        args: ["{arguments}.0", "Expected GET error message received when a deleted _id is requested", "getDeleted"]
+                    }, {
+                        funcName: "{pouchPersistedComponent}.delete"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedError",
+                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        args: ["{arguments}.0", "Expected GET before DELETE error message received when a deleted _id has delete requested again", "getBeforeDeleteDeleted"]
                     }
                 ]
             }
@@ -210,7 +239,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.testPouchPersistedError = function (getError, message, expected) {
-        jqUnit.assertDeepEq(message, expected, getError);
+        jqUnit.assertDeepEq(message, floe.tests.dashboard.expectedErrors[expected], getError);
     };
 
     $(document).ready(function () {
