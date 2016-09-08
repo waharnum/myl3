@@ -113,7 +113,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "onPouchDocStored": null,
             // Event signature is the delete request response
             "onPouchDocDeleted": null,
-            // Event signature should include the error structure
+            // Event signature for errors should include the error structure
+            // returned by floe.dashboard.pouchPersisted.makeErrorStructure
+            // (a basic message + the Pouch error structure)
             "onPouchGetError": null,
             "onPouchSetError": null,
             "onPouchDeleteError": null
@@ -198,7 +200,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
             that.events.onPouchDocRetrieved.fire(retrievedDoc);
         }, function (getErr) {
-            console.log(getErr);
             that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
         });
     };
@@ -215,18 +216,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 that.dataSource.set(doc).then(function (setResp) {
                     that.events.onPouchDocStored.fire(setResp);
                 }, function (setErr) {
-                    console.log(setErr);
                     that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
                 });
             },
             // Create the doc on a 404 (doesn't exist yet)
             function (getErr) {
-                console.log(getErr);
                 if (getErr.status === 404) {
                     that.dataSource.set(doc).then(function (setResp) {
                         that.events.onPouchDocStored.fire(setResp);
                     }, function (setErr) {
-                        console.log(setErr);
                         that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
                     });
                 } else {
@@ -243,12 +241,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             that.dataSource.del(doc).then(function (deleteResp) {
                 that.events.onPouchDocDeleted.fire(deleteResp);
             }, function (delErr) {
-                console.log(delErr);
                 that.events.onPouchDeleteError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("DEL after GET failed", delErr));
                 return "Delete after get failed: " + delErr;
             });
         }, function (getErr) {
-            console.log(getErr);
             that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before DELETE failed", getErr));
         });
     };
