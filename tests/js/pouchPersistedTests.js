@@ -58,7 +58,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
         components: {
             pouchPersistedComponentTester: {
-                type: "floe.tests.dashboard.pouchPersistedTestCaseHolder.deleteTest"
+                type: "floe.tests.dashboard.pouchPersistedTestCaseHolder.delete"
+            }
+        }
+    });
+
+    fluid.defaults("floe.tests.dashboard.pouchPersistedComponentTestEnvironment.errorTest", {
+        gradeNames: ["floe.tests.dashboard.pouchPersistedComponentTestEnvironment.base"],
+        components: {
+            pouchPersistedComponentTester: {
+                type: "floe.tests.dashboard.pouchPersistedTestCaseHolder.error"
             }
         }
     });
@@ -108,7 +117,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertDeepEq("Component model and retrieved document are identical, except for _rev", that.model, retrievedDocMinusRev);
     };
 
-    fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.deleteTest", {
+    fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.delete", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
         modules: [ {
             name: "PouchDB persisted component - delete test cases",
@@ -139,9 +148,77 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         jqUnit.assertUndefined("No persisted entry retrieved", that.get());
     };
 
+    floe.tests.dashboard.expectedGetErrorMissing = {
+        message: "GET failed",
+        pouchError: {
+            error: true,
+            message: "missing",
+            name: "not_found",
+            reason:"missing",
+            status: 404
+        }
+    };
+
+    floe.tests.dashboard.expectedGetErrorDeleted = {
+        message: "GET failed",
+        pouchError: {
+            error: true,
+            message: "missing",
+            name: "not_found",
+            reason:"deleted",
+            status: 404
+        }
+    };
+
+    fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.error", {
+        gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
+        modules: [ {
+            name: "PouchDB persisted component - error test cases",
+            tests: [{
+                expect: 3,
+                name: "Test error events",
+                sequence: [
+                    {
+                        func: "{pouchPersistedComponent}.get"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedError",
+                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        args: ["{arguments}.0", "Expected GET error message received when a nonexistent _id is requested", floe.tests.dashboard.expectedGetErrorMissing]
+                    },
+                    {
+                        func: "{pouchPersistedComponent}.persist"
+                    },
+                    {
+                        listener: "{pouchPersistedComponent}.delete",
+                        event: "{pouchPersistedComponent}.events.onPouchDocStored"
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedDelete",
+                        event: "{pouchPersistedComponent}.events.onPouchDocDeleted",
+                        args: ["{pouchPersistedComponent}"]
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedError",
+                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        args: ["{arguments}.0", "Expected GET error message received when a deleted _id is requested", floe.tests.dashboard.expectedGetErrorDeleted]
+                    }
+                ]
+            }
+            ]
+        }]
+    });
+
+    floe.tests.dashboard.testPouchPersistedError = function (getError, message, expected) {
+        jqUnit.assertDeepEq(message, expected, getError);
+    };
+
     $(document).ready(function () {
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest();
+
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
+
+        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.errorTest();
     });
 
 })(jQuery, fluid);
