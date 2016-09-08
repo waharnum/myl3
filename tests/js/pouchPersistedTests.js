@@ -189,7 +189,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "PouchDB persisted component - error test cases",
             tests: [{
-                expect: 5,
+                expect: 4,
                 name: "Test error events",
                 sequence: [
                     {
@@ -216,7 +216,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         event: "{pouchPersistedComponent}.events.onPouchDocStored"
                     },
                     {
-                        listener: "floe.tests.dashboard.testPouchPersistedDelete",
+                        listener: "{pouchPersistedComponent}.get",
                         event: "{pouchPersistedComponent}.events.onPouchDocDeleted",
                         args: ["{pouchPersistedComponent}"]
                     },
