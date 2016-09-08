@@ -95,6 +95,10 @@
                     funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromDeleted",
                     args: ["{that}", "{arguments}.0"]
                 },
+                "onPouchGetError.updateLogFromGetError": {
+                    funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromGetError",
+                    args: ["{that}", "{arguments}.0"]
+                },
                 // Persists the component when changes are made
                 "modelChanged.persist": {
                     funcName: "{that}.persist"
@@ -130,6 +134,11 @@
         floe.dashboard.pouchPersistedInlineEdit.updateLogFromDeleted = function (that, deleteResponse) {
             var logArea = that.locate("storageLog");
             logArea.prepend("<li>Persisted component deleted:<br /><pre><code>" + JSON.stringify(deleteResponse, null, 2)+"</code></pre></li>");
+        };
+
+        floe.dashboard.pouchPersistedInlineEdit.updateLogFromGetError = function (that, errorResponse) {
+            var logArea = that.locate("storageLog");
+            logArea.prepend("<li>Get error - probably no stored model available<br /><pre><code>" + JSON.stringify(errorResponse, null, 2)+"</code></pre></li>");
         };
 
         floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");

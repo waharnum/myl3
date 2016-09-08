@@ -105,7 +105,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // Event signature is the set request response
             "onPouchDocStored": null,
             // Event signature is the delete request response
-            "onPouchDocDeleted": null
+            "onPouchDocDeleted": null,
+            // Event signature should include the error structure
+            "onPouchGetError": null
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -183,7 +185,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
             that.events.onPouchDocRetrieved.fire(retrievedDoc);
         }, function (getErr) {
-            return "Get failed: " + getErr;
+            that.events.onPouchGetError.fire({message: "Get failed", pouchError: getErr});
         });
     };
 
