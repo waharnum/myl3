@@ -90,7 +90,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedStorage",
                         event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
-                        args: ["{pouchPersistedComponent}", "{arguments}.0"]
+                        args: ["{pouchPersistedComponent}", "{arguments}.0", "Component model and retrieved document are identical, except for _rev"]
                     },
                     {
                         func: "{pouchPersistedComponent}.applier.change",
@@ -103,7 +103,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedStorage",
                         event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
-                        args: ["{pouchPersistedComponent}", "{arguments}.0"]
+                        args: ["{pouchPersistedComponent}", "{arguments}.0", "Following an applier.change-based update, model and retrieved document are identical, except for _rev"]
                     }
                 ]
             }
@@ -111,10 +111,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
-    floe.tests.dashboard.testPouchPersistedStorage = function (that, retrievedDoc) {
+    floe.tests.dashboard.testPouchPersistedStorage = function (that, retrievedDoc, message) {
         // Remove the _rev on retrievedDoc
         var retrievedDocMinusRev = fluid.censorKeys(retrievedDoc, ["_rev"]);
-        jqUnit.assertDeepEq("Component model and retrieved document are identical, except for _rev", that.model, retrievedDocMinusRev);
+        jqUnit.assertDeepEq(message, that.model, retrievedDocMinusRev);
     };
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.delete", {
