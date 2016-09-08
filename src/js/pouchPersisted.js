@@ -87,7 +87,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return that.pouch.remove(doc, options);
     };
 
-    // Base grade for model components that can persist their models to PouchDB
+    // Base grade for model components that can persist and retrieve their
+    // models to PouchDB
+    //
+    // This is a higher-level grade than the PouchDB datasource that makes
+    // some further assumptions about desired behaviour, including:
+    // - a create/update pattern when doing set operations
+    // - a "get before set/delete" pattern that automatically handles revisions
+    // - the automatic generation of timestamp-based IDs for persisted models
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         components: {
@@ -107,7 +114,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // Event signature is the delete request response
             "onPouchDocDeleted": null,
             // Event signature should include the error structure
-            "onPouchGetError": null
+            "onPouchGetError": null,
+            "onPouchSetError": null,
+            "onPouchDeleteError": null
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -163,12 +172,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Convenience function for listeners that runs both "set" (for datasource
     // persistence) and floe.dashboard.eventInTimeAware.setModifiedTimeStamp
     // (for updating the modified timestamp)
-    // This allows model listeners to be created to listen to "consequential"
+    // This allows model listeners to be created to listen to consequential
     // model changes, update the modification time, and persist the modified
-    // model to the datasource
+    // model to the datasource simply by invoking this function
     floe.dashboard.pouchPersisted.persist = function (that) {
         that.setModifiedTimeStamp();
         that.set();
+    };
+
+    floe.dashboard.pouchPersisted.makeErrorStructure = function (message, pouchError) {
+        return {message: message, pouchError: pouchError};
     };
 
     // Tries to get the stored version of the document
@@ -185,7 +198,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
             that.events.onPouchDocRetrieved.fire(retrievedDoc);
         }, function (getErr) {
-            that.events.onPouchGetError.fire({message: "Get failed", pouchError: getErr});
+            that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
         });
     };
 
@@ -201,7 +214,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 that.dataSource.set(doc).then(function (setResp) {
                     that.events.onPouchDocStored.fire(setResp);
                 }, function (setErr) {
-                    return "Set after Get success (update if exists) failed: " + setErr;
+                    that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
                 });
             },
             // Create the doc on a 404 (doesn't exist yet)
@@ -210,8 +223,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     that.dataSource.set(doc).then(function (setResp) {
                         that.events.onPouchDocStored.fire(setResp);
                     }, function (setErr) {
-                        return "Set after Get 404 (create if does not exist) failed: " + setErr;
+                        that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
                     });
+                } else {
+                    that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before SET failed", getErr));
                 }
             });
 
@@ -224,10 +239,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             that.dataSource.del(doc).then(function (deleteResp) {
                 that.events.onPouchDocDeleted.fire(deleteResp);
             }, function (delErr) {
+                that.events.onPouchDeleteError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("DEL after GET failed", delErr));
                 return "Delete after get failed: " + delErr;
             });
         }, function (getErr) {
-            return "Get before delete failed: " + getErr;
+            that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before DELETE failed", getErr));
         });
     };
 
