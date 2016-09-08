@@ -162,6 +162,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             name: "not_found",
             reason:"deleted",
             status: 404
+        },
+        "documentUpdateConflict409": {
+            "error": true,
+            "message": "Document update conflict",
+            "name": "conflict",
+            "status": 409
         }
     };
 
@@ -173,6 +179,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         "getDeleted": {
             message: "GET failed",
             pouchError: floe.tests.dashboard.expectedPouchErrors.deleted404
+        },
+        "setAfterGetDocumentUpdateConflict": {
+            message: "SET after GET 404 response (create if does not exist) failed",
+            pouchError: floe.tests.dashboard.expectedPouchErrors.documentUpdateConflict409
         },
         "getBeforeDeleteMissing": {
             message: "GET before DELETE failed",
@@ -189,7 +199,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [ {
             name: "PouchDB persisted component - error test cases",
             tests: [{
-                expect: 4,
+                expect: 5,
                 name: "Test error events",
                 sequence: [
                     {
@@ -207,6 +217,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         listener: "floe.tests.dashboard.testPouchPersistedError",
                         event: "{pouchPersistedComponent}.events.onPouchGetError",
                         args: ["{arguments}.0", "Expected GET before DELETE error message received when a nonexistent _id has delete requested", "getBeforeDeleteMissing"]
+                    },
+                    {
+                        funcName: "floe.tests.dashboard.induceSetError",
+                        args: ["{pouchPersistedComponent}"]
+                    },
+                    {
+                        listener: "floe.tests.dashboard.testPouchPersistedError",
+                        event: "{pouchPersistedComponent}.events.onPouchSetError",
+                        args: ["{arguments}.0", "Expected SET error message received", "setAfterGetDocumentUpdateConflict"]
                     },
                     {
                         funcName: "{pouchPersistedComponent}.persist"
@@ -240,6 +259,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.tests.dashboard.testPouchPersistedError = function (getError, message, expected) {
         jqUnit.assertDeepEq(message, floe.tests.dashboard.expectedErrors[expected], getError);
+    };
+
+    // Incudes a set error by calling the applier back to back before
+    // the promises complete
+    floe.tests.dashboard.induceSetError = function (that) {
+        that.applier.change("persistedValues.string", "Hello 1");
+        that.applier.change("persistedValues.string", "Hello 2");
     };
 
     $(document).ready(function () {

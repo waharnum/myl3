@@ -210,8 +210,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var docId = that.model._id;
 
         that.dataSource.get(docId).then(
+            // Update the doc if it exists
             function (retrievedDoc) {
-                // Update the doc if it exists
+                // Set the _rev to the revision of the retrieved doc
                 doc._rev = retrievedDoc._rev;
                 that.dataSource.set(doc).then(function (setResp) {
                     that.events.onPouchDocStored.fire(setResp);
