@@ -9,7 +9,9 @@
       "pouchdb":"5.4.3",
       "jsonlint":"1.6.0",
       "infusion": "2.0.0-dev.20160902T155354Z.b963420",
-      "gpii-pouchdb": "https://github.com/the-t-in-rtf/gpii-pouchdb#GPII-1897"
+      "gpii-pouchdb": "https://github.com/the-t-in-rtf/gpii-pouchdb#GPII-1897",
+      "gpii-binder": "https://github.com/GPII/gpii-binder#a27c95881d2d6b3db5e79f26e1749030746d0e4a",
+      "gpii-handlebars": "https://github.com/GPII/gpii-handlebars#1301018f8d7394154f81b113d5fbdcda4134e017"
   },
   "license": "(BSD-3-Clause OR ECL-2.0)",
   "keywords": [

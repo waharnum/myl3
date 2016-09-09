@@ -33,6 +33,10 @@ module.exports = function (grunt) {
                     {expand: true, cwd: "./node_modules/jsonlint/", src: "**", dest: "./src/lib/jsonlint/"},
                     // gpii-pouchdb
                     {expand: true, cwd: "./node_modules/gpii-pouchdb/", src: "**", dest: "./src/lib/gpii-pouchdb/"},
+                    // gpii-binder
+                    {expand: true, cwd: "./node_modules/gpii-binder/", src: "**", dest: "./src/lib/gpii-binder/"},
+                    // gpii-handlebars
+                    {expand: true, cwd: "./node_modules/gpii-handlebars/", src: "**", dest: "./src/lib/gpii-handlebars/"},
                     // Infusion
                     {expand: true, cwd: "./node_modules/infusion/build", src: "**", dest: "./src/lib/infusion"},
                     // Infusion testing framework

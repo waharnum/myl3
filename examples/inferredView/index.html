@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="../../src/lib/infusion/infusion-all.js"></script>
+        <script src="../../src/lib/gpii-binder/src/js/binder.js"></script>
+        <script src="../../src/js/inferredView.js"></script>
+    </head>
+
+    <body>
+        <h1>inferredView Grade Example</h1>
+        <div class="floec-inferredView1">
+
+        </div>
+
+        <div class="floec-inferredView2">
+
+        </div>
+
+        <script>
+
+        floe.dashboard.inferredView(".floec-inferredView1", {
+            modelListeners: {
+                "*": {
+                       "this": "console",
+                       "method": "log",
+                       "args": ["modelChange", "{change}.path", "{change}.value"]
+                   }
+            },
+            model: {
+                inferredViews: {
+                    name: {
+                        label: "What are you called?",
+                        value: "William",
+                        type: "free"
+                    },
+                    age: {
+                        label: "How old are you?",
+                        value: "36",
+                        type: "free"
+                    },
+                    province: {
+                        label: "Which province do you live in?",
+                        value: "Ontario",
+                        type: "select",
+                        options: [
+                            "Alberta",
+                            "Ontario",
+                            "Quebec"
+                        ]
+                    },
+                    hats: {
+                        label: "Do you wear hats?",
+                        value: "No",
+                        type: "radio",
+                        options: [
+                            "Yes",
+                            "No",
+                            "Sometimes"
+                        ]
+                    }
+                }
+            }
+        });
+
+        floe.dashboard.inferredView(".floec-inferredView2", {
+            modelListeners: {
+                "*": {
+                       "this": "console",
+                       "method": "log",
+                       "args": ["modelChange", "{change}.path", "{change}.value"]
+                   }
+            },
+            model: {
+                inferredViews: {
+                    name: {
+                        label: "What are you called?",
+                        value: "Giselle",
+                        type: "free"
+                    },
+                    age: {
+                        label: "How old are you?",
+                        value: "32",
+                        type: "free"
+                    },
+                    province: {
+                        label: "Which province do you live in?",
+                        value: "Ontario",
+                        type: "select",
+                        options: [
+                            "Alberta",
+                            "Ontario",
+                            "Quebec"
+                        ]
+                    },
+                    hats: {
+                        label: "Do you wear hats?",
+                        value: "Sometimes",
+                        type: "radio",
+                        options: [
+                            "Yes",
+                            "No",
+                            "Sometimes"
+                        ]
+                    }
+                }
+            }
+        });
+
+        </script>
+
+    </body>
+</html>
