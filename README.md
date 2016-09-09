@@ -9,7 +9,10 @@ Requirements:
 
 Steps:
 * `npm install`
-    * postinstall should run the `grunt copy:frontEndDependencies` task after installation completes
+    * postinstall should run the `grunt installFrontEnd` task after installation completes; this task:
+        * runs `npm install` in `node_modules/infusion` to install Infusion's build dependencies
+        * builds Infusion from the install in `node_modules/infusion` with `grunt build`
+        * copies Infusion and other front-end dependencies from `node_modules`
 
 Result:
 * The root directory can now serve up the demos and tests as a static site

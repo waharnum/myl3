@@ -8,6 +8,7 @@
   "dependencies": {
       "pouchdb":"5.4.3",
       "jsonlint":"1.6.0",
+      "infusion": "2.0.0-dev.20160902T155354Z.b963420",
       "gpii-pouchdb": "https://github.com/the-t-in-rtf/gpii-pouchdb#GPII-1897"
   },
   "license": "(BSD-3-Clause OR ECL-2.0)",
@@ -24,12 +25,13 @@
   },
   "scripts":
     {
-        "postinstall": "grunt copy:frontEndDependencies"
+        "postinstall": "grunt installFrontEnd"
     },
   "devDependencies": {
     "grunt": "1.0.1",
     "fluid-grunt-eslint": "18.1.2",
     "grunt-jsonlint": "1.0.4",
-    "grunt-contrib-copy": "1.0.0"
+    "grunt-contrib-copy": "1.0.0",
+    "grunt-exec": "1.0.0"
   }
 }

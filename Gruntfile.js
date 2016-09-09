@@ -33,8 +33,21 @@ module.exports = function (grunt) {
                     {expand: true, cwd: "./node_modules/jsonlint/", src: "**", dest: "./src/lib/jsonlint/"},
                     // gpii-pouchdb
                     {expand: true, cwd: "./node_modules/gpii-pouchdb/", src: "**", dest: "./src/lib/gpii-pouchdb/"},
-
+                    // Infusion
+                    {expand: true, cwd: "./node_modules/infusion/build", src: "**", dest: "./src/lib/infusion"},
+                    // Infusion testing framework
+                    {expand: true, cwd: "./node_modules/infusion/build/tests", src: "**", dest: "./tests/lib/infusion"}
                 ]
+            }
+        },
+        exec: {
+            infusionInstall: {
+                command: "npm install",
+                cwd: "./node_modules/infusion"
+            },
+            infusionBuild: {
+                command: "grunt build",
+                cwd: "./node_modules/infusion"
             }
         }
     });
@@ -43,9 +56,11 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("fluid-grunt-eslint");
     grunt.loadNpmTasks("grunt-jsonlint");
     grunt.loadNpmTasks("grunt-contrib-copy");
+    grunt.loadNpmTasks("grunt-exec");
 
     // Custom tasks:
 
     grunt.registerTask("default", ["lint"]);
     grunt.registerTask("lint", "Apply eslint and jsonlint", ["eslint", "jsonlint"]);
+    grunt.registerTask("installFrontEnd", "Install front-end dependencies from the node_modules directory after 'npm install'", ["exec:infusionInstall", "exec:infusionBuild", "copy:frontEndDependencies"]);
 };
