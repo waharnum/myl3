@@ -56,36 +56,28 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 target: "{that}.model.formattedDates.created",
                 singleTransform: {
                     input: "{that}.model.timeEvents.created",
-                    type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.created"],
-                    func: "floe.dashboard.eventInTimeAware.getFormattedDate"
+                    type: "floe.dashboard.eventInTimeAware.timestampToFormattedDate"
                 }
             },
             {
                 target: "{that}.model.formattedTimes.created",
                 singleTransform: {
                     input: "{that}.model.timeEvents.created",
-                    type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.created"],
-                    func: "floe.dashboard.eventInTimeAware.getFormattedTime"
+                    type: "floe.dashboard.eventInTimeAware.timestampToFormattedTime"
                 }
             },
             {
                 target: "{that}.model.formattedDates.modified",
                 singleTransform: {
                     input: "{that}.model.timeEvents.modified",
-                    type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.modified"],
-                    func: "floe.dashboard.eventInTimeAware.getFormattedDate"
+                    type: "floe.dashboard.eventInTimeAware.timestampToFormattedDate"
                 }
             },
             {
                 target: "{that}.model.formattedTimes.modified",
                 singleTransform: {
                     input: "{that}.model.timeEvents.modified",
-                    type: "fluid.transforms.free",
-                    args: ["{that}.model.timeEvents.modified"],
-                    func: "floe.dashboard.eventInTimeAware.getFormattedTime"
+                    type: "floe.dashboard.eventInTimeAware.timestampToFormattedTime"
                 }
             },
         ],
@@ -130,11 +122,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.applier.change("timeEvents.modified", modifiedTimestamp.toJSON(), "ADD", "setModifiedTimeStamp");
     };
 
-    floe.dashboard.eventInTimeAware.getFormattedDate = function (timestamp) {
+    fluid.defaults("floe.dashboard.eventInTimeAware.timestampToFormattedDate", {
+        gradeNames: ["fluid.standardInputTransformFunction"]
+    });
+
+    floe.dashboard.eventInTimeAware.timestampToFormattedDate = function (timestamp) {
         return new Date(timestamp).toLocaleDateString();
     };
 
-    floe.dashboard.eventInTimeAware.getFormattedTime = function (timestamp) {
+    fluid.defaults("floe.dashboard.eventInTimeAware.timestampToFormattedTime", {
+        gradeNames: ["fluid.standardInputTransformFunction"]
+    });
+
+    floe.dashboard.eventInTimeAware.timestampToFormattedTime = function (timestamp) {
         return new Date(timestamp).toLocaleTimeString();
     };
 
