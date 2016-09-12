@@ -79,7 +79,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var deleteControl = that.locate("deleteControl");
         deleteControl.click( function (e) {
             e.preventDefault();
-            that.delete();
+            that.del();
         });
     };
 

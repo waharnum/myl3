@@ -75,7 +75,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.pouchPersisted.set",
                 args: "{that}"
             },
-            "delete": {
+            "del": {
                 funcName: "floe.dashboard.pouchPersisted.del",
                 args: "{that}"
             },
