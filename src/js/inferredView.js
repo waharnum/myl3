@@ -55,37 +55,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
-        return floe.dashboard.inferredView.generateInferredMarkup[inferredViewValue.type](that, inferredViewValue, inferredViewKey );
-    };
+        var extraTemplateValues = {};
+        if(inferredViewValue.choices) {
 
-    floe.dashboard.inferredView.generateInferredMarkup.text = function (that, inferredViewValue, inferredViewKey ) {
+            var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that,  inferredViewValue.type, inferredViewValue, inferredViewKey);
 
-        var template = that.options.wrapperTemplates["text"];
-
-        return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey);
-    };
-
-    floe.dashboard.inferredView.generateInferredMarkup.select = function (that, inferredViewValue, inferredViewKey) {
-        var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that,  "select", inferredViewValue, inferredViewKey);
-
-        var template = that.options.wrapperTemplates["select"];
-
-        var extraTemplateValues = {renderedChoices: renderedChoices};
+            extraTemplateValues = {renderedChoices: renderedChoices};
+        }
+        var template = that.options.wrapperTemplates[inferredViewValue.type];
 
         return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey, extraTemplateValues);
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup.radio = function (that, inferredViewValue, inferredViewKey) {
-        var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that, "radio", inferredViewValue, inferredViewKey);
-
-        var template = that.options.wrapperTemplates["radio"]
-
-        var extraTemplateValues = {renderedChoices: renderedChoices};
-
-        return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey, extraTemplateValues);
-    };
-
-    floe.dashboard.inferredView.getChoicesBlock = function(that, type, inferredViewValue, inferredViewKey) {
+    floe.dashboard.inferredView.getChoicesBlock = function (that, type, inferredViewValue, inferredViewKey) {
         var choiceTemplate = that.options.choiceTemplates[type + "-choice"];
         var renderedChoices = "";
         var name = type + "-" + fluid.allocateGuid();
