@@ -35,62 +35,81 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.inferredView.generateBindingGrade",
                 args: ["{that}.options.model"]
             }
+        },
+        choiceTemplates: {
+            "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
+            "radio-choice": "<label>%choiceValue</label><input class='floec-inferred-%inferredViewKey-value' name='%name' value='%choiceValue' type='radio' />"
+        },
+        wrapperTemplates: {
+            "text": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <input class='floec-inferred-%inferredViewKey-value' type='text' value='%value' /><br/>",
+            "select": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <select class='floec-inferred-%inferredViewKey-value'>%renderedChoices</select><br/>",
+            "radio": "<fieldset><legend>%label</legend>%renderedChoices</fieldset> <br/>"
         }
     });
 
     floe.dashboard.inferredView.appendTemplate = function (that) {
         fluid.each(that.model.inferredViews, function (inferredViewValue, inferredViewKey) {
-            var markup = floe.dashboard.inferredView.generateInferredMarkup(inferredViewValue, inferredViewKey);
+            var markup = floe.dashboard.inferredView.generateInferredMarkup(that, inferredViewValue, inferredViewKey);
             that.container.append(markup);
         });
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup = function (inferredViewValue, inferredViewkey) {
-        // console.log(inferredViewValue, inferredViewkey);
-        var type = inferredViewValue.type;
-        return floe.dashboard.inferredView.generateInferredMarkup[type](inferredViewValue, inferredViewkey);
+    floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
+        return floe.dashboard.inferredView.generateInferredMarkup[inferredViewValue.type](that, inferredViewValue, inferredViewKey );
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup.free = function (inferredViewValue, inferredViewkey) {
+    floe.dashboard.inferredView.generateInferredMarkup.text = function (that, inferredViewValue, inferredViewKey ) {
 
-        var template = "<label class='floec-inferred-%key-label'>%label</label> <input class='floec-inferred-%key-value' type='text' value='%value' /><br/>";
+        var template = that.options.wrapperTemplates["text"];
 
-        var templateValues = {key: inferredViewkey, label: inferredViewValue.label, value: inferredViewValue.value};
-
-        return fluid.stringTemplate(template, templateValues);
+        return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey);
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup.select = function (inferredViewValue, inferredViewkey) {
+    floe.dashboard.inferredView.generateInferredMarkup.select = function (that, inferredViewValue, inferredViewKey) {
+        var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that,  "select", inferredViewValue, inferredViewKey);
 
-        var optionTemplate = "<option value='%optionValue'>%optionValue</option>";
-        var renderedOptions = "";
-        fluid.each(inferredViewValue.options, function (optionValue) {
-            var templateValues = {optionValue: optionValue};
-            renderedOptions = renderedOptions + fluid.stringTemplate(optionTemplate, templateValues);
+        var template = that.options.wrapperTemplates["select"];
+
+        var extraTemplateValues = {renderedChoices: renderedChoices};
+
+        return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey, extraTemplateValues);
+    };
+
+    floe.dashboard.inferredView.generateInferredMarkup.radio = function (that, inferredViewValue, inferredViewKey) {
+        var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that, "radio", inferredViewValue, inferredViewKey);
+
+        var template = that.options.wrapperTemplates["radio"]
+
+        var extraTemplateValues = {renderedChoices: renderedChoices};
+
+        return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey, extraTemplateValues);
+    };
+
+    floe.dashboard.inferredView.getChoicesBlock = function(that, type, inferredViewValue, inferredViewKey) {
+        var choiceTemplate = that.options.choiceTemplates[type + "-choice"];
+        var renderedChoices = "";
+        var name = type + "-" + fluid.allocateGuid();
+        fluid.each(inferredViewValue.choices, function (choiceValue) {
+            var extraChoiceTemplateValues = {name: name};
+            renderedChoices = renderedChoices + floe.dashboard.inferredView.getChoiceTemplate(choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues);
         });
-
-        var template = "<label class='floec-inferred-%key-label'>%label</label> <select class='floec-inferred-%key-value'>%renderedOptions</select><br/>";
-
-        var templateValues = {key: inferredViewkey, label: inferredViewValue.label, value: inferredViewValue.value, renderedOptions: renderedOptions};
-
-        return fluid.stringTemplate(template, templateValues);
+        return renderedChoices;
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup.radio = function (inferredViewValue, inferredViewkey) {
+    floe.dashboard.inferredView.getChoiceTemplate = function (choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues) {
+        var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey};
 
-        var radioTemplate = "<label>%optionValue</label><input class='floec-inferred-%key-value' name='%radioName' value='%optionValue' type='radio' />";
-        var renderedRadios = "";
-        var radioName = "radio-" + fluid.allocateGuid();
-        fluid.each(inferredViewValue.options, function (optionValue) {
-            var templateValues = {optionValue: optionValue, key: inferredViewkey, radioName: radioName};
-            renderedRadios = renderedRadios + fluid.stringTemplate(radioTemplate, templateValues);
-        });
+        var combinedTemplateValues = $.extend(baseChoiceTemplateValues, extraChoiceTemplateValues);
 
-        var template = "<fieldset><legend>%label</legend>%renderedRadios</fieldset> <br/>";
+        return fluid.stringTemplate(choiceTemplate, combinedTemplateValues);
+    };
 
-        var templateValues = {key: inferredViewkey, label: inferredViewValue.label, value: inferredViewValue.value, renderedRadios: renderedRadios};
+    floe.dashboard.inferredView.getWrapperTemplate = function (template, inferredViewValue, inferredViewKey, extraTemplateValues) {
+        var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value};
 
-        return fluid.stringTemplate(template, templateValues);
+        var combinedTemplateValues = $.extend(baseTemplate, extraTemplateValues);
+
+        return fluid.stringTemplate(template, combinedTemplateValues);
     };
 
     // Automatically generates bindings and selectors from inferred views
@@ -102,16 +121,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var bindings = {}, selectors = {};
 
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
+            var templateValues = {inferredViewKey: inferredViewKey};
 
-            var templateValues = {key: inferredViewKey};
-
-            var selectorKey = fluid.stringTemplate("%key-value", templateValues);
-            var selectorValue = fluid.stringTemplate(".floec-inferred-%key-value", templateValues);
+            var selectorKey = fluid.stringTemplate("%inferredViewKey-value", templateValues);
+            var selectorValue = fluid.stringTemplate(".floec-inferred-%inferredViewKey-value", templateValues);
 
             selectors[selectorKey] = selectorValue;
 
-            var bindingKey = fluid.stringTemplate("%key-value", templateValues);
-            var bindingValue = fluid.stringTemplate("inferredViews.%key.value", templateValues);
+            var bindingKey = fluid.stringTemplate("%inferredViewKey-value", templateValues);
+            var bindingValue = fluid.stringTemplate("inferredViews.%inferredViewKey.value", templateValues);
 
             bindings[bindingKey] = bindingValue;
         });
