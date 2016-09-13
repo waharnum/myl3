@@ -21,40 +21,24 @@
 
         </div>
 
+        <div class="floec-inferredView3">
+
+        </div>
+
         <script>
 
             floe.dashboard.inferredView.demo(".floec-inferredView1", {
                 model: {
                     inferredViews: {
-                        age: {
-                            label: "How old are you?",
-                            value: "36",
-                            type: "text"
-                        },
                         name: {
                             label: "What are you called?",
                             value: "William",
                             type: "text"
                         },
-                        hats: {
-                            label: "Do you wear hats?",
-                            value: "No",
-                            type: "radio",
-                            choices: [
-                                "Yes",
-                                "No",
-                                "Sometimes"
-                            ]
-                        },
-                        colors: {
-                            label: "Favourite colors?",
-                            value: ["Black", "Orange"],
-                            type: "checkbox",
-                            choices: [
-                                "Black",
-                                "Red",
-                                "Orange"
-                            ]
+                        age: {
+                            label: "How old are you?",
+                            value: "36",
+                            type: "text"
                         }
                     }
                 }
@@ -63,16 +47,6 @@
             floe.dashboard.inferredView.demo(".floec-inferredView2", {
                 model: {
                     inferredViews: {
-                        name: {
-                            label: "What are you called?",
-                            value: "Giselle",
-                            type: "text"
-                        },
-                        age: {
-                            label: "How old are you?",
-                            value: "32",
-                            type: "text"
-                        },
                         province: {
                             label: "Which province do you live in?",
                             value: "Ontario",
@@ -92,7 +66,21 @@
                                 "No",
                                 "Sometimes"
                             ]
-                        }
+                        },
+                        colors: {
+                            label: "Pick some favourite colors",
+                            value: "Red",
+                            type: "checkbox",
+                            choices: [
+                                "Red",
+                                "Orange",
+                                "Yellow",
+                                "Green",
+                                "Blue",
+                                "Indigo",
+                                "Violet"
+                            ]
+                        },
                     }
                 }
             });
