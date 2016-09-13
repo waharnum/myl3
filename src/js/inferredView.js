@@ -38,20 +38,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         stringTemplates: {
             choices: {
-                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='floec-inferredView-%inferredViewKey-value' name='%name' value='%choiceValue' type='checkbox' />",
+                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%classPrefix-value' name='%name' value='%choiceValue' type='checkbox' />",
 
                 "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
 
-                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='floec-inferredView-%inferredViewKey-value' name='%name' value='%choiceValue' type='radio' />"
+                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%classPrefix-value' name='%name' value='%choiceValue' type='radio' />"
             },
             wrappers: {
-                "checkbox":  "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>",
+                "checkbox":  "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>",
 
-                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='floec-inferredView-%inferredViewKey-label'>%label</label> <input id='%inputId' class='floec-inferredView-%inferredViewKey-value' type='text' value='%value' /></div>",
+                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='%classPrefix-label'>%label</label> <input id='%inputId' class='%classPrefix-value' type='text' value='%value' /></div>",
 
-                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='floec-inferredView-%inferredViewKey-label'>%label</label> <select class='floec-inferredView-%inferredViewKey-value' id='%inputId'>%renderedChoices</select></div>",
+                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='%classPrefix-label'>%label</label> <select class='%classPrefix-value' id='%inputId'>%renderedChoices</select></div>",
 
-                "radio": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
+                "radio": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
             }
         }
     });
@@ -88,7 +88,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.getSingleChoiceMarkup = function (choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues) {
-        var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey, choiceId: "choice-" + fluid.allocateGuid()};
+        var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey, choiceId: "choice-" + fluid.allocateGuid(), classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
 
         var combinedTemplateValues = $.extend(baseChoiceTemplateValues, extraChoiceTemplateValues);
 
@@ -96,7 +96,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.getWrapperMarkup = function (template, inferredViewValue, inferredViewKey, extraTemplateValues) {
-        var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid()};
+        var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid(),
+        classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})
+    };
 
         var combinedTemplateValues = $.extend(baseTemplate, extraTemplateValues);
 
