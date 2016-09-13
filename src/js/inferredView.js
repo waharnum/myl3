@@ -44,13 +44,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             "radio-choice": "<label>%choiceValue</label><input class='floec-inferred-%inferredViewKey-value' name='%name' value='%choiceValue' type='radio' />"
         },
         wrapperTemplates: {
-            "checkbox":  "<fieldset><legend>%label</legend>%renderedChoices</fieldset> <br/>",
+            "checkbox":  "<fieldset><legend>%label</legend>%renderedChoices</fieldset> ",
 
-            "text": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <input class='floec-inferred-%inferredViewKey-value' type='text' value='%value' /><br/>",
+            "text": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <input class='floec-inferred-%inferredViewKey-value' type='text' value='%value' />",
 
-            "select": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <select class='floec-inferred-%inferredViewKey-value'>%renderedChoices</select><br/>",
+            "select": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <select class='floec-inferred-%inferredViewKey-value'>%renderedChoices</select>",
 
-            "radio": "<fieldset><legend>%label</legend>%renderedChoices</fieldset> <br/>"
+            "radio": "<fieldset><legend>%label</legend>%renderedChoices</fieldset> "
         }
     });
 
