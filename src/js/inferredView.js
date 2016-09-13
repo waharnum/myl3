@@ -36,21 +36,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 args: ["{that}.options.model"]
             }
         },
-        choiceTemplates: {
-            "checkbox-choice": "<label>%choiceValue</label><input class='floec-inferred-%inferredViewKey-value' name='%name' value='%choiceValue' type='checkbox' />",
+        stringTemplates: {
+            choices: {
+                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='floec-inferred-%inferredViewKey-value' name='%name' value='%choiceValue' type='checkbox' />",
 
-            "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
+                "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
 
-            "radio-choice": "<label>%choiceValue</label><input class='floec-inferred-%inferredViewKey-value' name='%name' value='%choiceValue' type='radio' />"
-        },
-        wrapperTemplates: {
-            "checkbox":  "<fieldset><legend>%label</legend>%renderedChoices</fieldset> ",
+                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='floec-inferred-%inferredViewKey-value' name='%name' value='%choiceValue' type='radio' />"
+            },
+            wrappers: {
+                "checkbox":  "<fieldset><legend>%label</legend>%renderedChoices</fieldset> ",
 
-            "text": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <input class='floec-inferred-%inferredViewKey-value' type='text' value='%value' />",
+                "text": "<label for='%inputId' class='floec-inferred-%inferredViewKey-label'>%label</label> <input id='%inputId' class='floec-inferred-%inferredViewKey-value' type='text' value='%value' />",
 
-            "select": "<label class='floec-inferred-%inferredViewKey-label'>%label</label> <select class='floec-inferred-%inferredViewKey-value'>%renderedChoices</select>",
+                "select": "<label for='%inputId' class='floec-inferred-%inferredViewKey-label'>%label</label> <select class='floec-inferred-%inferredViewKey-value' id='%inputId'>%renderedChoices</select>",
 
-            "radio": "<fieldset><legend>%label</legend>%renderedChoices</fieldset> "
+                "radio": "<fieldset><legend>%label</legend>%renderedChoices</fieldset> "
+            }
         }
     });
 
@@ -64,18 +66,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
         var extraTemplateValues = {};
         if(inferredViewValue.choices) {
-
             var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that,  inferredViewValue.type, inferredViewValue, inferredViewKey);
-
             extraTemplateValues = {renderedChoices: renderedChoices};
         }
-        var template = that.options.wrapperTemplates[inferredViewValue.type];
+        var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
 
         return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey, extraTemplateValues);
     };
 
     floe.dashboard.inferredView.getChoicesBlock = function (that, type, inferredViewValue, inferredViewKey) {
-        var choiceTemplate = that.options.choiceTemplates[type + "-choice"];
+        var choiceTemplate = that.options.stringTemplates.choices[type + "-choice"];
         var renderedChoices = "";
         var name = type + "-" + fluid.allocateGuid();
         fluid.each(inferredViewValue.choices, function (choiceValue) {
@@ -86,7 +86,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.getChoiceTemplate = function (choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues) {
-        var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey};
+        var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey, choiceId: "choice-" + fluid.allocateGuid()};
 
         var combinedTemplateValues = $.extend(baseChoiceTemplateValues, extraChoiceTemplateValues);
 
@@ -94,7 +94,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.getWrapperTemplate = function (template, inferredViewValue, inferredViewKey, extraTemplateValues) {
-        var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value};
+        var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid()};
 
         var combinedTemplateValues = $.extend(baseTemplate, extraTemplateValues);
 
