@@ -52,6 +52,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
                 "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='%classPrefix-label'>%label</label> <input id='%inputId' class='%classPrefix-value' type='text' value='%value' /></div>",
 
+                "textarea": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='%classPrefix-label'>%label</label> <textarea id='%inputId' class='%classPrefix-value'></textarea></div>",
+
                 "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='%classPrefix-label'>%label</label> <select class='%classPrefix-value' id='%inputId'>%renderedChoices</select></div>",
 
                 "radio": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %classPrefix-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
