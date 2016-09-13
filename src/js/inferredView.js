@@ -68,7 +68,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
         var extraTemplateValues = {};
         if(inferredViewValue.choices) {
-            var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that,  inferredViewValue.type, inferredViewValue, inferredViewKey);
+            var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
             extraTemplateValues = {renderedChoices: renderedChoices};
         }
         var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
@@ -76,7 +76,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return floe.dashboard.inferredView.getWrapperMarkup(template, inferredViewValue, inferredViewKey, extraTemplateValues);
     };
 
-    floe.dashboard.inferredView.getChoicesMarkup = function (that, type, inferredViewValue, inferredViewKey) {
+    floe.dashboard.inferredView.getChoicesMarkup = function (that, inferredViewValue, inferredViewKey) {
+        var type = inferredViewValue.type;
         var choiceTemplate = that.options.stringTemplates.choices[type + "-choice"];
         var renderedChoices = "";
         var name = type + "-" + fluid.allocateGuid();
@@ -116,7 +117,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
             var templateValues = {inferredViewKey: inferredViewKey};
 
-            var selectorKey = fluid.stringTemplate("%inferredViewKey-value", templateValues);
+            var selectorKey = fluid.stringTemplate("inferredView-%inferredViewKey-value", templateValues);
 
             var selectorClass = fluid.stringTemplate(".floec-inferredView-%inferredViewKey-value", templateValues);
 
