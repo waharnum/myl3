@@ -21,6 +21,7 @@
 .floe-inferredView-biography-wrapper textarea {
     display: block;
     width: 20em;
+    height: 10em;
 }
 
 .floe-inferredView-wrapper legend {

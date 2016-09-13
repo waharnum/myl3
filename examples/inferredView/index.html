@@ -3,6 +3,16 @@
     <head>
         <script src="../../src/lib/infusion/infusion-all.js"></script>
         <script src="../../src/lib/gpii-binder/src/js/binder.js"></script>
+
+        <script src="../../src/lib/pouchdb/dist/pouchdb.js"></script>
+        <script src="../../src/lib/gpii-pouchdb/src/js/pouchdb-common.js"></script>
+        <script src="../../src/lib/jsonlint/web/jsonlint.js"></script>
+
+        <script src="../../src/js/eventInTimeAware.js"></script>
+        <script src="../../src/js/dataSource.js"></script>
+        <script src="../../src/js/dataSourcePouchDB.js"></script>
+        <script src="../../src/js/pouchPersisted.js"></script>
+
         <script src="../../src/js/inferredView.js"></script>
 
         <script src="src/js/inferredViewDemo.js"></script>
@@ -23,7 +33,7 @@
 
         <script>
 
-            floe.dashboard.inferredView.demo(".floec-inferredView1", {
+            floe.dashboard.inferredView.demo.pouchPersisted(".floec-inferredView1", {
                 model: {
                     inferredViews: {
                         name: {
@@ -40,10 +50,13 @@
                             label: "Please tell us about yourself",                            type: "textarea"
                         }
                     }
-                }
+                },
+                dbOptions: {
+                    "fixedId": "inferredView1",
+                },
             });
 
-            floe.dashboard.inferredView.demo(".floec-inferredView2", {
+            floe.dashboard.inferredView.demo.pouchPersisted(".floec-inferredView2", {
                 model: {
                     inferredViews: {
                         province: {
@@ -81,7 +94,10 @@
                             ]
                         },
                     }
-                }
+                },
+                dbOptions: {
+                    "fixedId": "inferredView2",
+                },
             });
 
         </script>
