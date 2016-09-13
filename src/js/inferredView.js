@@ -70,16 +70,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var baseTemplateValues = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid(),
         classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
 
-        var extraTemplateValues = {};
-
         if(inferredViewValue.choices) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
-            extraTemplateValues = {renderedChoices: renderedChoices};
+            $.extend(baseTemplateValues, {renderedChoices: renderedChoices});
         }
 
         var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
 
-        return floe.dashboard.inferredView.consolidateTemplateValues(template, baseTemplateValues, extraTemplateValues);
+        return fluid.stringTemplate(template, baseTemplateValues);
 
 
     };
@@ -98,17 +96,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                   choiceId: "choice-" + fluid.allocateGuid(),
                   classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
 
-            renderedChoices = renderedChoices + floe.dashboard.inferredView.consolidateTemplateValues(choiceTemplate, baseTemplateValues);
-
-
+            renderedChoices = renderedChoices + fluid.stringTemplate(choiceTemplate, baseTemplateValues);
         });
         return renderedChoices;
-    };
-
-    floe.dashboard.inferredView.consolidateTemplateValues = function (template, baseTemplateValues, extraTemplateValues) {
-        extraTemplateValues = extraTemplateValues || {};
-        var combinedTemplateValues = $.extend(baseTemplateValues, extraTemplateValues);
-        return fluid.stringTemplate(template, combinedTemplateValues);
     };
 
     // Automatically generates bindings and selectors from inferred views
