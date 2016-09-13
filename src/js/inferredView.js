@@ -113,14 +113,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             var templateValues = {inferredViewKey: inferredViewKey};
 
             var selectorKey = fluid.stringTemplate("%inferredViewKey-value", templateValues);
-            var selectorValue = fluid.stringTemplate(".floec-inferred-%inferredViewKey-value", templateValues);
 
-            selectors[selectorKey] = selectorValue;
+            var selectorClass = fluid.stringTemplate(".floec-inferred-%inferredViewKey-value", templateValues);
 
-            var bindingKey = fluid.stringTemplate("%inferredViewKey-value", templateValues);
-            var bindingValue = fluid.stringTemplate("inferredViews.%inferredViewKey.value", templateValues);
+            var bindingPath = fluid.stringTemplate("inferredViews.%inferredViewKey.value", templateValues);
 
-            bindings[bindingKey] = bindingValue;
+            selectors[selectorKey] = selectorClass;
+            bindings[selectorKey] = bindingPath;
         });
 
         fluid.defaults(gradeName, {
