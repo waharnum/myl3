@@ -21,7 +21,7 @@ module.exports = function (grunt) {
             all: ["src/**/*.js", "tests/**/*.js", "demos/**/*.js", "examples/**/*.js"]
         },
         jsonlint: {
-            all: ["package.json", ".jshintrc", "tests/**/*.json", "demos/**/*.json", "src/**/*.json", "!src/lib/**"]
+            all: ["package.json", ".eslintrc.json", "tests/**/*.json", "demos/**/*.json", "src/**/*.json", "!src/lib/**", "!tests/lib/**"]
         },
         copy: {
             // Copy external front end dependencies into appropriate directories

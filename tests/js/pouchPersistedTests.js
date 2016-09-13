@@ -129,7 +129,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         func: "{pouchPersistedComponent}.persist"
                     },
                     {
-                        listener: "{pouchPersistedComponent}.delete",
+                        listener: "{pouchPersistedComponent}.del",
                         event: "{pouchPersistedComponent}.events.onPouchDocStored"
                     },
                     {
@@ -215,7 +215,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         args: ["{arguments}.0", "Expected GET error message received when a nonexistent _id is requested", "getMissing"]
                     },
                     {
-                        funcName: "{pouchPersistedComponent}.delete"
+                        funcName: "{pouchPersistedComponent}.del"
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
@@ -244,7 +244,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         funcName: "{pouchPersistedComponent}.persist"
                     },
                     {
-                        listener: "{pouchPersistedComponent}.delete",
+                        listener: "{pouchPersistedComponent}.del",
                         event: "{pouchPersistedComponent}.events.onPouchDocStored"
                     },
                     {
@@ -257,7 +257,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         event: "{pouchPersistedComponent}.events.onPouchGetError",
                         args: ["{arguments}.0", "Expected GET error message received when a deleted _id is requested", "getDeleted"]
                     }, {
-                        funcName: "{pouchPersistedComponent}.delete"
+                        funcName: "{pouchPersistedComponent}.del"
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",

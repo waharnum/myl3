@@ -34,7 +34,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         events: {
-            "onSetPouchId": null,
             // Event signature is the retrieved doc
             "onPouchDocRetrieved": null,
             // Event signature is the set request response
@@ -75,7 +74,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.pouchPersisted.set",
                 args: "{that}"
             },
-            "delete": {
+            "del": {
                 funcName: "floe.dashboard.pouchPersisted.del",
                 args: "{that}"
             },
@@ -88,15 +87,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     // Sets the ID to to "created" timestamp to make filtering
     // by time easier
+    // Interested listeners should listen for a model change event to
+    // "_id"
     floe.dashboard.pouchPersisted.setPouchIdToCurrentTime = function (that) {
         that.applier.change("_id", that.model.timeEvents.created);
-        that.events.onSetPouchId.fire();
     };
 
     // Sets the ID to a string
+    // Interested listeners should listen for a model change event to
+    // "_id"
     floe.dashboard.pouchPersisted.setPouchIdToString = function (that, idString) {
         that.applier.change("_id", idString);
-        that.events.onSetPouchId.fire();
     };
 
     // Convenience function for listeners that runs both "set" (for datasource
