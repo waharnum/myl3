@@ -66,26 +66,26 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
         var extraTemplateValues = {};
         if(inferredViewValue.choices) {
-            var renderedChoices = floe.dashboard.inferredView.getChoicesBlock(that,  inferredViewValue.type, inferredViewValue, inferredViewKey);
+            var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that,  inferredViewValue.type, inferredViewValue, inferredViewKey);
             extraTemplateValues = {renderedChoices: renderedChoices};
         }
         var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
 
-        return floe.dashboard.inferredView.getWrapperTemplate(template, inferredViewValue, inferredViewKey, extraTemplateValues);
+        return floe.dashboard.inferredView.getWrapperMarkup(template, inferredViewValue, inferredViewKey, extraTemplateValues);
     };
 
-    floe.dashboard.inferredView.getChoicesBlock = function (that, type, inferredViewValue, inferredViewKey) {
+    floe.dashboard.inferredView.getChoicesMarkup = function (that, type, inferredViewValue, inferredViewKey) {
         var choiceTemplate = that.options.stringTemplates.choices[type + "-choice"];
         var renderedChoices = "";
         var name = type + "-" + fluid.allocateGuid();
         fluid.each(inferredViewValue.choices, function (choiceValue) {
             var extraChoiceTemplateValues = {name: name};
-            renderedChoices = renderedChoices + floe.dashboard.inferredView.getChoiceTemplate(choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues);
+            renderedChoices = renderedChoices + floe.dashboard.inferredView.getSingleChoiceMarkup(choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues);
         });
         return renderedChoices;
     };
 
-    floe.dashboard.inferredView.getChoiceTemplate = function (choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues) {
+    floe.dashboard.inferredView.getSingleChoiceMarkup = function (choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues) {
         var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey, choiceId: "choice-" + fluid.allocateGuid()};
 
         var combinedTemplateValues = $.extend(baseChoiceTemplateValues, extraChoiceTemplateValues);
@@ -93,7 +93,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return fluid.stringTemplate(choiceTemplate, combinedTemplateValues);
     };
 
-    floe.dashboard.inferredView.getWrapperTemplate = function (template, inferredViewValue, inferredViewKey, extraTemplateValues) {
+    floe.dashboard.inferredView.getWrapperMarkup = function (template, inferredViewValue, inferredViewKey, extraTemplateValues) {
         var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid()};
 
         var combinedTemplateValues = $.extend(baseTemplate, extraTemplateValues);
