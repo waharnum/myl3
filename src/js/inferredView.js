@@ -59,7 +59,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.inferredView.appendTemplate = function (that) {
         fluid.each(that.model.inferredViews, function (inferredViewValue, inferredViewKey) {
             var markup = floe.dashboard.inferredView.generateInferredMarkup(that, inferredViewValue, inferredViewKey);
-            that.container.append(markup);
+            that.container.append("<form>" + markup + "</form>");
         });
     };
 
