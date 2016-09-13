@@ -18,14 +18,18 @@
 
         <script>
 
-        floe.dashboard.inferredView(".floec-inferredView1", {
+        fluid.defaults("floe.dashboard.inferredView.demo", {
+            gradeNames: ["floe.dashboard.inferredView"],
             modelListeners: {
                 "*": {
                        "this": "console",
                        "method": "log",
                        "args": ["modelChange", "{change}.path", "{change}.value"]
                    }
-            },
+            }
+        });
+
+        floe.dashboard.inferredView.demo(".floec-inferredView1", {
             model: {
                 inferredViews: {
                     age: {
@@ -37,7 +41,7 @@
                         label: "What are you called?",
                         value: "William",
                         type: "text"
-                    },                    
+                    },
                     hats: {
                         label: "Do you wear hats?",
                         value: "No",
@@ -62,14 +66,7 @@
             }
         });
 
-        floe.dashboard.inferredView(".floec-inferredView2", {
-            modelListeners: {
-                "*": {
-                       "this": "console",
-                       "method": "log",
-                       "args": ["modelChange", "{change}.path", "{change}.value"]
-                   }
-            },
+        floe.dashboard.inferredView.demo(".floec-inferredView2", {        
             model: {
                 inferredViews: {
                     name: {
