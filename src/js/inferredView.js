@@ -33,10 +33,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         invokers: {
             "generateBindingGrade": {
                 funcName: "floe.dashboard.inferredView.generateBindingGrade",
-                args: ["{that}.options.model"]
+                args: ["{that}.options.model.0", "{that}.options.stringTemplates.conf"]
             }
         },
         stringTemplates: {
+            conf: {
+                classPrefix: "floec-inferredView-%inferredViewKey"
+            },
             choices: {
                 "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%classPrefix-value' name='%name' value='%choiceValue' type='checkbox' />",
 
@@ -67,8 +70,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
 
-        var baseTemplateValues = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid(),
-        classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
+        var baseTemplateValues = {inferredViewKey: inferredViewKey,
+            label: inferredViewValue.label,
+            value: inferredViewValue.value,
+            inputId: "input-" + fluid.allocateGuid(),
+            classPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.classPrefix,       {inferredViewKey: inferredViewKey})};
 
         if(inferredViewValue.choices) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
@@ -94,7 +100,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                   inferredViewKey: inferredViewKey,
                   name: name,
                   choiceId: "choice-" + fluid.allocateGuid(),
-                  classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
+                  classPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.classPrefix, {inferredViewKey: inferredViewKey})};
 
             renderedChoices = renderedChoices + fluid.stringTemplate(choiceTemplate, baseTemplateValues);
         });
@@ -102,8 +108,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Automatically generates bindings and selectors from inferred views
-    floe.dashboard.inferredView.generateBindingGrade = function (model) {
-        var inferredViews = model[0].inferredViews;
+    floe.dashboard.inferredView.generateBindingGrade = function (model, confStringTemplates) {
+        var inferredViews = model.inferredViews;
 
         var gradeName = "floe.dashboard.inferredView." + fluid.allocateGuid();
 
@@ -114,7 +120,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             var selectorKey = fluid.stringTemplate("inferredView-%inferredViewKey-value", templateValues);
 
-            var selectorClass = fluid.stringTemplate(".floec-inferredView-%inferredViewKey-value", templateValues);
+            var selectorClass = "." + fluid.stringTemplate(confStringTemplates.classPrefix, templateValues) + "-value";
 
             var bindingPath = fluid.stringTemplate("inferredViews.%inferredViewKey.value", templateValues);
 
