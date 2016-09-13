@@ -66,14 +66,22 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
+
+        var baseTemplateValues = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid(),
+        classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
+
         var extraTemplateValues = {};
+
         if(inferredViewValue.choices) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
             extraTemplateValues = {renderedChoices: renderedChoices};
         }
+
         var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
 
-        return floe.dashboard.inferredView.getWrapperMarkup(template, inferredViewValue, inferredViewKey, extraTemplateValues);
+        return floe.dashboard.inferredView.consolidateTemplateValues(template, baseTemplateValues, extraTemplateValues);
+
+
     };
 
     floe.dashboard.inferredView.getChoicesMarkup = function (that, inferredViewValue, inferredViewKey) {
@@ -82,27 +90,24 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var renderedChoices = "";
         var name = type + "-" + fluid.allocateGuid();
         fluid.each(inferredViewValue.choices, function (choiceValue) {
-            var extraChoiceTemplateValues = {name: name};
-            renderedChoices = renderedChoices + floe.dashboard.inferredView.getSingleChoiceMarkup(choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues);
+
+            var baseTemplateValues = {choiceValue: choiceValue,
+                  inferredViewValue: inferredViewValue,
+                  inferredViewKey: inferredViewKey,
+                  name: name,
+                  choiceId: "choice-" + fluid.allocateGuid(),
+                  classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
+
+            renderedChoices = renderedChoices + floe.dashboard.inferredView.consolidateTemplateValues(choiceTemplate, baseTemplateValues);
+
+
         });
         return renderedChoices;
     };
 
-    floe.dashboard.inferredView.getSingleChoiceMarkup = function (choiceTemplate, choiceValue, inferredViewValue, inferredViewKey, extraChoiceTemplateValues) {
-        var baseChoiceTemplateValues = {choiceValue: choiceValue, inferredViewValue: inferredViewValue, inferredViewKey: inferredViewKey, choiceId: "choice-" + fluid.allocateGuid(), classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})};
-
-        var combinedTemplateValues = $.extend(baseChoiceTemplateValues, extraChoiceTemplateValues);
-
-        return fluid.stringTemplate(choiceTemplate, combinedTemplateValues);
-    };
-
-    floe.dashboard.inferredView.getWrapperMarkup = function (template, inferredViewValue, inferredViewKey, extraTemplateValues) {
-        var baseTemplate = {inferredViewKey: inferredViewKey, label: inferredViewValue.label, value: inferredViewValue.value, inputId: "input-" + fluid.allocateGuid(),
-        classPrefix: fluid.stringTemplate("floec-inferredView-%inferredViewKey",       {inferredViewKey: inferredViewKey})
-    };
-
-        var combinedTemplateValues = $.extend(baseTemplate, extraTemplateValues);
-
+    floe.dashboard.inferredView.consolidateTemplateValues = function (template, baseTemplateValues, extraTemplateValues) {
+        extraTemplateValues = extraTemplateValues || {};
+        var combinedTemplateValues = $.extend(baseTemplateValues, extraTemplateValues);
         return fluid.stringTemplate(template, combinedTemplateValues);
     };
 
