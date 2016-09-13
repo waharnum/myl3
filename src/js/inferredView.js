@@ -45,13 +45,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='floec-inferredView-%inferredViewKey-value' name='%name' value='%choiceValue' type='radio' />"
             },
             wrappers: {
-                "checkbox":  "<div class='floec-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>",
+                "checkbox":  "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>",
 
-                "text": "<div class='floec-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='floec-inferredView-%inferredViewKey-label'>%label</label> <input id='%inputId' class='floec-inferredView-%inferredViewKey-value' type='text' value='%value' /></div>",
+                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='floec-inferredView-%inferredViewKey-label'>%label</label> <input id='%inputId' class='floec-inferredView-%inferredViewKey-value' type='text' value='%value' /></div>",
 
-                "select": "<div class='floec-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='floec-inferredView-%inferredViewKey-label'>%label</label> <select class='floec-inferredView-%inferredViewKey-value' id='%inputId'>%renderedChoices</select></div>",
+                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><label for='%inputId' class='floec-inferredView-%inferredViewKey-label'>%label</label> <select class='floec-inferredView-%inferredViewKey-value' id='%inputId'>%renderedChoices</select></div>",
 
-                "radio": "<div class='floec-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
+                "radio": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper floec-inferredView-%inferredViewKey-wrapper floe-inferredView-%inferredViewKey-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
             }
         }
     });

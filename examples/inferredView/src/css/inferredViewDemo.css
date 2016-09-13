@@ -1,0 +1,15 @@
+.floe-inferredView-wrapper {
+    margin: 1em 0 1em 0;
+}
+
+.floe-inferredView-name-wrapper label {
+    font-weight: bold;
+}
+
+.floe-inferredView-age-wrapper label {
+    font-style: italic;
+}
+
+.floe-inferredView-wrapper legend {
+    font-weight: bold;
+}
