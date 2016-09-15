@@ -39,12 +39,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Test markup generation for various types
 
     floe.tests.dashboard.testGradeGeneration = function (that) {
-        jqUnit.expect(0);
+        jqUnit.expect(2);
 
         var expectedSelectorsBlock = {"inferredView-name-value": ".floec-inferredView-name-value"};
         var expectedBindingsBlock = {
-            "inferredView-name-value": { }
+            "inferredView-name-value": {
+                "selector": "inferredView-name-value",
+                "path": "inferredViews.name.value"
+            }
         };
+
+        jqUnit.assertDeepEq("The expected selector block is generated for the instantiated component.", expectedSelectorsBlock, that.options.selectors);
+        jqUnit.assertDeepEq("The expected bindings block is generated for the instantiated component.", expectedBindingsBlock, that.options.bindings);
+
     };
 
 })(jQuery, fluid);
