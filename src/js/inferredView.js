@@ -129,7 +129,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             var selectorClass = "." + fluid.stringTemplate(confStringTemplates.classPrefix, templateValues) + "-" + confStrings.valueSuffix;
 
-            var bindingPath = fluid.stringTemplate(confStringTemplates.bindingPathPrefix, templateValues) + "." + confStrings.valueSuffix;
+            var bindingPath = fluid.model.composeSegments(fluid.stringTemplate(confStringTemplates.bindingPathPrefix, templateValues), confStrings.valueSuffix);
 
             selectors[selectorKey] = selectorClass;
             bindings[selectorKey] = {selector: selectorKey, path: bindingPath};
