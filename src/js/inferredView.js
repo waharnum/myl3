@@ -19,6 +19,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // model definition, and generate bindings between it and the model
     fluid.defaults("floe.dashboard.inferredView", {
         gradeNames: ["{that}.generateBindingGrade", "fluid.viewComponent"],
+        // TODO: the spec for this needs documentation
+        // model: {
+            // inferredViews:
+        // },
         listeners: {
             "onCreate.appendTemplate": {
                 funcName: "floe.dashboard.inferredView.appendTemplate",
