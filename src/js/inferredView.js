@@ -33,12 +33,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         invokers: {
             "generateBindingGrade": {
                 funcName: "floe.dashboard.inferredView.generateBindingGrade",
-                args: ["{that}.options.model.inferredViews", "{that}.options.stringTemplates.conf"]
+                args: ["{that}.options.model.inferredViews", "{that}.options.stringTemplates.conf", "{that}.options.strings.conf"]
+            }
+        },
+        strings: {
+            conf: {
+                valueSuffix: "value"
             }
         },
         stringTemplates: {
             conf: {
-                classPrefix: "floec-inferredView-%inferredViewKey"
+                classPrefix: "floec-inferredView-%inferredViewKey",
+                selectorPrefix: "inferredView-%inferredViewKey",
+                bindingPathPrefix: "inferredViews.%inferredViewKey"
             },
             choices: {
                 "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%classPrefix-value' name='%name' value='%choiceValue' type='checkbox' />",
@@ -110,7 +117,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Automatically generates bindings and selectors from inferred views
-    floe.dashboard.inferredView.generateBindingGrade = function (inferredViews, confStringTemplates) {
+    floe.dashboard.inferredView.generateBindingGrade = function (inferredViews, confStringTemplates, confStrings) {
         var gradeName = "floe.dashboard.inferredView." + fluid.allocateGuid();
 
         var bindings = {}, selectors = {};
@@ -118,11 +125,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
             var templateValues = {inferredViewKey: inferredViewKey};
 
-            var selectorKey = fluid.stringTemplate("inferredView-%inferredViewKey-value", templateValues);
+            var selectorKey = fluid.stringTemplate(confStringTemplates.selectorPrefix, templateValues) + "-" + confStrings.valueSuffix;
 
-            var selectorClass = "." + fluid.stringTemplate(confStringTemplates.classPrefix, templateValues) + "-value";
+            var selectorClass = "." + fluid.stringTemplate(confStringTemplates.classPrefix, templateValues) + "-" + confStrings.valueSuffix;
 
-            var bindingPath = fluid.stringTemplate("inferredViews.%inferredViewKey.value", templateValues);
+            var bindingPath = fluid.stringTemplate(confStringTemplates.bindingPathPrefix, templateValues) + "." + confStrings.valueSuffix;
 
             selectors[selectorKey] = selectorClass;
             bindings[selectorKey] = {selector: selectorKey, path: bindingPath};
