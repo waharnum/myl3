@@ -70,8 +70,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // Test markup generation for various types
 
     jqUnit.test("Test dynamic markup generation", function () {
-
-        jqUnit.expect(8);
         var markupGenerationTestComponent = floe.dashboard.inferredView(".floec-inferredView-markupGeneration", {
             model: {
                 inferredViews: {
@@ -134,6 +132,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.testMarkup = function (that) {
+        jqUnit.expect(10);
         var inferredViews = that.model.inferredViews;
 
         var expectedInferredViewSpecs = {
@@ -146,9 +145,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 selector: "inferredView-province-value",
                 expectedTag: "SELECT",
                 expectedTagNumber: 1,
-                choices: {
+                children: {
                     expectedTag: "OPTION",
-                    expectedTagNumber: 11
+                    expectedTagNumber: 13
                 }
             },
             favoriteFruit: {
@@ -167,8 +166,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
             var specItem = expectedInferredViewSpecs[inferredViewKey];
             var locatedElement = that.locate(specItem.selector);
-            jqUnit.assertEquals("Expected tag is present", locatedElement.prop("tagName"), specItem.expectedTag);
-            jqUnit.assertEquals("Expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
+            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected tag is present", locatedElement.prop("tagName"), specItem.expectedTag);
+            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
+            if(specItem.children) {
+                var elementChildren = locatedElement.children(specItem.children.expectedTag);
+                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected child tag is present", elementChildren.prop("tagName"), specItem.children.expectedTag);
+                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of child tags are present", elementChildren.length, specItem.children.expectedTagNumber);
+            }
         });
     };
 
