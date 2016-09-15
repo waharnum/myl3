@@ -20,9 +20,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.dashboard.inferredView", {
         gradeNames: ["{that}.generateBindingGrade", "fluid.viewComponent"],
         // TODO: the spec for this needs documentation
-        // model: {
-            // inferredViews:
-        // },
+        model: {
+            inferredViews: {}
+        },
+        events: {
+            onTemplateAppended: null
+        },
         listeners: {
             "onCreate.appendTemplate": {
                 funcName: "floe.dashboard.inferredView.appendTemplate",
@@ -37,7 +40,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         invokers: {
             "generateBindingGrade": {
                 funcName: "floe.dashboard.inferredView.generateBindingGrade",
-                args: ["{that}.options.model.inferredViews", "{that}.options.stringTemplates.conf", "{that}.options.strings.conf"]
+                args: ["{that}.model.inferredViews", "{that}.options.stringTemplates.conf", "{that}.options.strings.conf"]
             }
         },
         strings: {
@@ -79,6 +82,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             totalMarkup = totalMarkup + markup;
         });
         that.container.append("<form class='floe-inferredView-form'>" + totalMarkup + "</form>");
+        that.events.onTemplateAppended.fire();
     };
 
     floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
