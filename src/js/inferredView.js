@@ -24,7 +24,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             inferredViews: {}
         },
         events: {
-            onTemplateAppended: null
+            onTemplateAppended: null,
+            onBindingsApplied: null
         },
         listeners: {
             "onCreate.appendTemplate": {
@@ -35,6 +36,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "funcName": "gpii.binder.applyBinding",
                 args: ["{that}"],
                 priority: "after:appendTemplate"
+            },
+            "onCreate.fireOnBindingsApplied": {
+                this: "{that}.events.onBindingsApplied",
+                method: "fire",
+                priority: "after:applyBindings"
             }
         },
         invokers: {

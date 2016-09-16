@@ -103,7 +103,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 // Radio type
                 favoriteFruit: {
                     label: "What is your favourite fruit?",
-                    value: "Apples",
+                    value: ["Apples","Plums"],
                     choices: [
                         "Apples",
                         "Plums",
@@ -148,12 +148,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test inferred view component",
             tests: [{
-                expect: 12,
+                expect: 14,
                 name: "Test initial markup and model-view binding generation.",
                 sequence: [
                     {
                         listener: "floe.tests.dashboard.testInitialMarkup",
-                        event: "{inferredViewTestEnvironment inferredView}.events.onTemplateAppended",
+                        event: "{inferredViewTestEnvironment inferredView}.events.onBindingsApplied",
                         args: "{inferredView}"
                     }
                 ]
@@ -184,8 +184,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
 
             if(specItem.expectedValue) {
-                var locatedValue = fluid.value(locatedElement);
-                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
+                var locatedValue = fluid.value(locatedElement[0]);
+                jqUnit.assertDeepEq("Dynamic generation of " + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
                 // console.log(locatedValue);
             }
 
@@ -220,13 +220,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             favoriteFruit: {
                 selector: "inferredView-favoriteFruit-value",
                 expectedTag: "INPUT",
-                expectedTagNumber: 4
+                expectedTagNumber: 4,
+                expectedValue: ["Apples","Plums"]
 
             },
             wearsHats: {
                 selector: "inferredView-wearsHats-value",
                 expectedTag: "INPUT",
-                expectedTagNumber: 3
+                expectedTagNumber: 3,
+                expectedValue: "Yes"
             }
         };
 
