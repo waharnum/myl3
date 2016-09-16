@@ -149,7 +149,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             {name: "Test inferred view component",
             tests: [{
                 expect: 12,
-                name: "Test dynamic markup generation",
+                name: "Test initial markup and model-view binding generation.",
                 sequence: [
                     {
                         listener: "floe.tests.dashboard.testInitialMarkup",
@@ -174,8 +174,31 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         ]
     });
 
-    floe.tests.dashboard.testInitialMarkup = function (that) {
+    floe.tests.dashboard.testFromInferredViewSpec = function (that, spec) {
         var inferredViews = that.model.inferredViews;
+
+        fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
+            var specItem = spec[inferredViewKey];
+            var locatedElement = that.locate(specItem.selector);
+            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
+            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
+
+            if(specItem.expectedValue) {
+                var locatedValue = fluid.value(locatedElement);
+                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
+                // console.log(locatedValue);
+            }
+
+            if(specItem.children) {
+                var elementChildren = locatedElement.children(specItem.children.expectedTag);
+                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
+                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of child tags are present", specItem.children.expectedTagNumber, elementChildren.length);
+            }
+        });
+
+    };
+
+    floe.tests.dashboard.testInitialMarkup = function (that) {
 
         var expectedInitialInferredViewMarkupSpec = {
             name: {
@@ -207,24 +230,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         };
 
-        fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
-            var specItem = expectedInitialInferredViewMarkupSpec[inferredViewKey];
-            var locatedElement = that.locate(specItem.selector);
-            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
-            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
+        floe.tests.dashboard.testFromInferredViewSpec(that, expectedInitialInferredViewMarkupSpec);
 
-            if(specItem.expectedValue) {
-                var locatedValue = fluid.value(locatedElement);
-                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
-                // console.log(locatedValue);
-            }
-
-            if(specItem.children) {
-                var elementChildren = locatedElement.children(specItem.children.expectedTag);
-                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
-                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of child tags are present", specItem.children.expectedTagNumber, elementChildren.length);
-            }
-        });
     };
 
     $(document).ready(function () {
