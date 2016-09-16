@@ -158,41 +158,57 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     }
                 ]
             },
-                // {
-                //     expect: 1,
-                //     name: "Test binding generation",
-                //     sequence: [
-                //         {
-                //             func: "{inferredView}.applier.change",
-                //             args: ["inferredViews.favoriteFruit.value", ["Apples", "Plums"]]
-                //         }
-                //     ]
-                // }
+            {
+                expect: 14,
+                name: "Test binding (model change -> view change)",
+                sequence: [
+                    {
+                        func: "{inferredView}.applier.change",
+                        args: ["inferredViews.favoriteFruit.value", ["Apples", "Tomatoes"]]
+                    },
+                    {
+                        func: "{inferredView}.applier.change",
+                        args: ["inferredViews.name.value", "Cynthia"]
+                    },
+                    {
+                        func: "{inferredView}.applier.change",
+                        args: ["inferredViews.province.value", "Manitoba"]
+                    },
+                    {
+                        func: "{inferredView}.applier.change",
+                        args: ["inferredViews.wearsHats.value", "Sometimes"]
+                    },
+                    {
+                        func: "floe.tests.dashboard.testModelToViewBind",
+                        args: "{inferredView}"
+                    }
+                ]
+            }
 
             ]
         }
         ]
     });
 
-    floe.tests.dashboard.testFromInferredViewSpec = function (that, spec) {
+    floe.tests.dashboard.testFromInferredViewSpec = function (that, spec, messagePrefix) {
         var inferredViews = that.model.inferredViews;
 
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
             var specItem = spec[inferredViewKey];
             var locatedElement = that.locate(specItem.selector);
-            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
-            jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
+            jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
+            jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
 
             if(specItem.expectedValue) {
                 var locatedValue = fluid.value(locatedElement[0]);
-                jqUnit.assertDeepEq("Dynamic generation of " + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
+                jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
                 // console.log(locatedValue);
             }
 
             if(specItem.children) {
                 var elementChildren = locatedElement.children(specItem.children.expectedTag);
-                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
-                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of child tags are present", specItem.children.expectedTagNumber, elementChildren.length);
+                jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
+                jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of child tags are present", specItem.children.expectedTagNumber, elementChildren.length);
             }
         });
 
@@ -232,8 +248,43 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         };
 
-        floe.tests.dashboard.testFromInferredViewSpec(that, expectedInitialInferredViewMarkupSpec);
+        floe.tests.dashboard.testFromInferredViewSpec(that, expectedInitialInferredViewMarkupSpec, "Dynamic generation of ");
+    };
 
+    floe.tests.dashboard.testModelToViewBind = function (that) {
+        var expectedFromBindInferredViewMarkupSpec = {
+            name: {
+                selector: "inferredView-name-value",
+                expectedTag: "INPUT",
+                expectedTagNumber: 1,
+                expectedValue: "Cynthia"
+            },
+            province: {
+                selector: "inferredView-province-value",
+                expectedTag: "SELECT",
+                expectedTagNumber: 1,
+                children: {
+                    expectedTag: "OPTION",
+                    expectedTagNumber: 13
+                },
+                expectedValue: "Manitoba"
+            },
+            favoriteFruit: {
+                selector: "inferredView-favoriteFruit-value",
+                expectedTag: "INPUT",
+                expectedTagNumber: 4,
+                expectedValue: ["Apples","Tomatoes"]
+
+            },
+            wearsHats: {
+                selector: "inferredView-wearsHats-value",
+                expectedTag: "INPUT",
+                expectedTagNumber: 3,
+                expectedValue: "Sometimes"
+            }
+        };
+
+        floe.tests.dashboard.testFromInferredViewSpec(that, expectedFromBindInferredViewMarkupSpec, "Model -> view bind of ");
     };
 
     $(document).ready(function () {
