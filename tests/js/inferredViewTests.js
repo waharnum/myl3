@@ -110,7 +110,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         "Tomatoes",
                         "Bananas"
                     ],
-                    type: "radio"
+                    type: "checkbox"
                 },
                 // Checkbox type
                 wearsHats: {
@@ -121,7 +121,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         "No",
                         "Sometimes"
                     ],
-                    type: "checkbox"
+                    type: "radio"
                 }
                 // Textarea type
             }
@@ -148,34 +148,41 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test inferred view component",
             tests: [{
-                expect: 10,
+                expect: 12,
                 name: "Test dynamic markup generation",
                 sequence: [
                     {
-                        listener: "floe.tests.dashboard.testMarkup",
+                        listener: "floe.tests.dashboard.testInitialMarkup",
                         event: "{inferredViewTestEnvironment inferredView}.events.onTemplateAppended",
                         args: "{inferredView}"
                     }
                 ]
-            }
+            },
+                // {
+                //     expect: 1,
+                //     name: "Test binding generation",
+                //     sequence: [
+                //         {
+                //             func: "{inferredView}.applier.change",
+                //             args: ["inferredViews.favoriteFruit.value", ["Apples", "Plums"]]
+                //         }
+                //     ]
+                // }
+
             ]
         }
         ]
     });
 
-    // jqUnit.test("Test dynamic markup generation", function () {
-    //     var markupGenerationTestComponent = floe.dashboard.test.inferredView.dynamicMarkup(".floec-inferredView-markupGeneration");
-    //     floe.tests.dashboard.testMarkup(markupGenerationTestComponent);
-    // });
-
-    floe.tests.dashboard.testMarkup = function (that) {
+    floe.tests.dashboard.testInitialMarkup = function (that) {
         var inferredViews = that.model.inferredViews;
 
-        var expectedInferredViewSpecs = {
+        var expectedInitialInferredViewMarkupSpec = {
             name: {
                 selector: "inferredView-name-value",
                 expectedTag: "INPUT",
-                expectedTagNumber: 1
+                expectedTagNumber: 1,
+                expectedValue: "Bob"
             },
             province: {
                 selector: "inferredView-province-value",
@@ -184,7 +191,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 children: {
                     expectedTag: "OPTION",
                     expectedTagNumber: 13
-                }
+                },
+                expectedValue: "Ontario"
             },
             favoriteFruit: {
                 selector: "inferredView-favoriteFruit-value",
@@ -200,10 +208,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         };
 
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
-            var specItem = expectedInferredViewSpecs[inferredViewKey];
+            var specItem = expectedInitialInferredViewMarkupSpec[inferredViewKey];
             var locatedElement = that.locate(specItem.selector);
             jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
             jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
+
+            if(specItem.expectedValue) {
+                var locatedValue = fluid.value(locatedElement);
+                jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
+                // console.log(locatedValue);
+            }
+
             if(specItem.children) {
                 var elementChildren = locatedElement.children(specItem.children.expectedTag);
                 jqUnit.assertEquals("Dynamic generation of " + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
