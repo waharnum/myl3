@@ -148,7 +148,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test inferred view component",
             tests: [{
-                expect: 19,
+                expect: 22,
                 name: "Test initial markup generation and initial model-view binding generation.",
                 sequence: [
                     {
@@ -159,7 +159,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 19,
+                expect: 22,
                 name: "Test binding (model change -> view change)",
                 sequence: [
                     {
@@ -185,7 +185,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 19,
+                expect: 22,
                 name: "Test binding (view change -> model change)",
                 sequence: [
                     {
@@ -286,14 +286,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 expectedTag: "OPTION",
                 expectedTagNumber: 13
             },
-            expectedValue: "Ontario"
+            expectedValue: "Ontario",
+            expectedStyleClass: "floe-inferredView-province-value"
         },
         favoriteFruit: {
             selector: "inferredView-favoriteFruit-value",
             modelPath: "inferredViews.favoriteFruit.value",
             expectedTag: "INPUT",
             expectedTagNumber: 4,
-            expectedValue: ["Apples","Plums"]
+            expectedValue: ["Apples","Plums"],
+            expectedStyleClass: "floe-inferredView-favoriteFruit-value"
 
         },
         wearsHats: {
@@ -301,7 +303,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             modelPath: "inferredViews.wearsHats.value",
             expectedTag: "INPUT",
             expectedTagNumber: 3,
-            expectedValue: "Yes"
+            expectedValue: "Yes",
+            expectedStyleClass: "floe-inferredView-wearsHats-value"
         }
     };
 
