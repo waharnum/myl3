@@ -234,21 +234,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         ]
     });
 
+    // TODO: This also needs tests for:
+    // - style class generation
+    // - label generation
+
     floe.tests.dashboard.testFromInferredViewSpec = function (that, spec, messagePrefix) {
         var inferredViews = that.model.inferredViews;
 
         fluid.each(inferredViews, function (inferredViewValue, inferredViewKey) {
             var specItem = spec[inferredViewKey];
+
             var locatedElement = that.locate(specItem.selector);
+
             jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
+
             jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
 
-            if(specItem.expectedValue) {
-                var locatedValue = fluid.value(locatedElement[0]);
-                jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on DOM element", specItem.expectedValue, locatedValue);
-                jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on model path", specItem.expectedValue, fluid.get(that.model, specItem.modelPath));
-                // console.log(locatedValue);
-            }
+            var locatedValue = fluid.value(locatedElement[0]);
+
+            jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on DOM element", specItem.expectedValue, locatedValue);
+
+            jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on model path", specItem.expectedValue, fluid.get(that.model, specItem.modelPath));
 
             if(specItem.children) {
                 var elementChildren = locatedElement.children(specItem.children.expectedTag);
@@ -267,7 +273,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 modelPath: "inferredViews.name.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 1,
-                expectedValue: "Bob"
+                expectedValue: "Bob",
+                expectedStyleClass: "floe-inferredView-name-value"
             },
             province: {
                 selector: "inferredView-province-value",
