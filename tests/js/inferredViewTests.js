@@ -148,7 +148,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test dynamic markup generation and binding behaviour",
             tests: [{
-                expect: 26,
+                expect: 39,
                 name: "Test initial markup generation and initial model-view binding generation.",
                 sequence: [
                     {
@@ -159,7 +159,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 26,
+                expect: 39,
                 name: "Test binding (model change -> view change)",
                 sequence: [
                     {
@@ -185,7 +185,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 26,
+                expect: 39,
                 name: "Test binding (view change -> model change)",
                 sequence: [
                     {
@@ -257,22 +257,29 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on DOM element", specItem.expectedValue, locatedValue);
 
-            var locatedElementId = fluid.allocateSimpleId(locatedElement);
-            var correspondingLabel = $("label[for='" + locatedElementId + "']");
-
-            jqUnit.assertEquals("A corresponding label is present in the markup", locatedElementId, correspondingLabel.attr("for"));
+            floe.tests.dashboard.testForMatchingLabel(locatedElement);
 
             jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on model path", specItem.expectedValue, fluid.get(that.model, specItem.modelPath));
 
             if(specItem.children) {
                 var elementChildren = locatedElement.children(specItem.children.expectedTag);
-
                 jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
 
                 jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of child tags are present", specItem.children.expectedTagNumber, elementChildren.length);
+
+                fluid.each(inferredViewValue.choices, function (choice) {
+                    var matchingChoiceElement = elementChildren.filter("[value='" + choice + "']");
+                    jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - a corresponding " + specItem.children.expectedTag + " element is present for the choice value '" + choice + "''", choice, matchingChoiceElement.attr("value"));
+                });
+
             }
         });
+    };
 
+    floe.tests.dashboard.testForMatchingLabel = function (element) {
+        var elementId = fluid.allocateSimpleId(element);
+        var correspondingLabel = $("label[for='" + elementId + "']");
+        jqUnit.assertEquals("A corresponding label is present in the markup", elementId, correspondingLabel.attr("for"));
     };
 
     floe.tests.dashboard.baseInferredViewSpec = {
