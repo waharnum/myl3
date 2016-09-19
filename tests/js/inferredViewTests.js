@@ -235,7 +235,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     // TODO: This also needs tests for:
-    // - style class generation
     // - label generation
 
     floe.tests.dashboard.testFromInferredViewSpec = function (that, spec, messagePrefix) {
