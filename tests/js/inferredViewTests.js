@@ -18,7 +18,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.registerNamespace("floe.tests.dashboard");
 
 
-    // Test binding and selector grade generation
+    // Test generation of bindings and selectors from the model
 
     jqUnit.test("Test dynamic grade generation", function () {
 
@@ -146,7 +146,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.tests.dashboard.inferredViewComponentTester", {
         gradeNames: ["fluid.test.testCaseHolder"],
         modules: [
-            {name: "Test inferred view component",
+            {name: "Test dynamic markup generation and binding behaviour",
             tests: [{
                 expect: 22,
                 name: "Test initial markup generation and initial model-view binding generation.",
