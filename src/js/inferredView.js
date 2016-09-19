@@ -62,20 +62,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 bindingPathPrefix: "inferredViews.%inferredViewKey"
             },
             choices: {
-                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-value' name='%name' value='%choiceValue' type='checkbox' />",
+                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-value %styleClassPrefix-value' name='%name' value='%choiceValue' type='checkbox' />",
 
                 "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
 
-                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-value' name='%name' value='%choiceValue' type='radio' />"
+                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-value %styleClassPrefix-value' name='%name' value='%choiceValue' type='radio' />"
             },
             wrappers: {
                 "checkbox":  "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>",
 
-                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-value' type='text' value='%value' /></div>",
+                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-value %styleClassPrefix-value' type='text' value='%value' /></div>",
 
-                "textarea": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-value'></textarea></div>",
+                "textarea": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-value %styleClassPrefix-value'></textarea></div>",
 
-                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-value' id='%inputId'>%renderedChoices</select></div>",
+                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-value %styleClassPrefix-value' id='%inputId'>%renderedChoices</select></div>",
 
                 "radio": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
             }
