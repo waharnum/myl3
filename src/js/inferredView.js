@@ -110,7 +110,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
 
         var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
-        console.log(baseTemplateValues);
 
         return fluid.stringTemplate(template, baseTemplateValues);
     };

@@ -148,7 +148,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test inferred view component",
             tests: [{
-                expect: 18,
+                expect: 19,
                 name: "Test initial markup generation and initial model-view binding generation.",
                 sequence: [
                     {
@@ -159,7 +159,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 18,
+                expect: 19,
                 name: "Test binding (model change -> view change)",
                 sequence: [
                     {
@@ -185,7 +185,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 18,
+                expect: 19,
                 name: "Test binding (view change -> model change)",
                 sequence: [
                     {
@@ -246,6 +246,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             var locatedElement = that.locate(specItem.selector);
 
+            if(specItem.expectedStyleClass) {
+                jqUnit.assertTrue(messagePrefix + inferredViewValue.type + " type - expected style class is present", locatedElement.hasClass(specItem.expectedStyleClass));
+            }
+
             jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
 
             jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
@@ -265,126 +269,107 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     };
 
+    floe.tests.dashboard.baseInferredViewSpec = {
+        name: {
+            selector: "inferredView-name-value",
+            modelPath: "inferredViews.name.value",
+            expectedTag: "INPUT",
+            expectedTagNumber: 1,
+            expectedStyleClass: "floe-inferredView-name-value"
+        },
+        province: {
+            selector: "inferredView-province-value",
+            modelPath: "inferredViews.province.value",
+            expectedTag: "SELECT",
+            expectedTagNumber: 1,
+            children: {
+                expectedTag: "OPTION",
+                expectedTagNumber: 13
+            },
+            expectedValue: "Ontario"
+        },
+        favoriteFruit: {
+            selector: "inferredView-favoriteFruit-value",
+            modelPath: "inferredViews.favoriteFruit.value",
+            expectedTag: "INPUT",
+            expectedTagNumber: 4,
+            expectedValue: ["Apples","Plums"]
+
+        },
+        wearsHats: {
+            selector: "inferredView-wearsHats-value",
+            modelPath: "inferredViews.wearsHats.value",
+            expectedTag: "INPUT",
+            expectedTagNumber: 3,
+            expectedValue: "Yes"
+        }
+    };
+
     floe.tests.dashboard.testInitialMarkup = function (that) {
 
         var expectedInitialInferredViewMarkupSpec = {
             name: {
-                selector: "inferredView-name-value",
-                modelPath: "inferredViews.name.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 1,
                 expectedValue: "Bob",
-                expectedStyleClass: "floe-inferredView-name-value"
             },
             province: {
-                selector: "inferredView-province-value",
-                modelPath: "inferredViews.province.value",
-                expectedTag: "SELECT",
-                expectedTagNumber: 1,
-                children: {
-                    expectedTag: "OPTION",
-                    expectedTagNumber: 13
-                },
                 expectedValue: "Ontario"
             },
             favoriteFruit: {
-                selector: "inferredView-favoriteFruit-value",
-                modelPath: "inferredViews.favoriteFruit.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 4,
                 expectedValue: ["Apples","Plums"]
 
             },
             wearsHats: {
-                selector: "inferredView-wearsHats-value",
-                modelPath: "inferredViews.wearsHats.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 3,
                 expectedValue: "Yes"
             }
         };
 
-        floe.tests.dashboard.testFromInferredViewSpec(that, expectedInitialInferredViewMarkupSpec, "Dynamic generation of ");
+        var spec = $.extend(true, floe.tests.dashboard.baseInferredViewSpec, expectedInitialInferredViewMarkupSpec);
+
+        floe.tests.dashboard.testFromInferredViewSpec(that, spec, "Dynamic generation of ");
     };
 
     floe.tests.dashboard.testModelToViewBind = function (that) {
         var expectedFromBindInferredViewMarkupSpec = {
             name: {
-                selector: "inferredView-name-value",
-                modelPath: "inferredViews.name.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 1,
                 expectedValue: "Cynthia"
             },
             province: {
-                selector: "inferredView-province-value",
-                modelPath: "inferredViews.province.value",
-                expectedTag: "SELECT",
-                expectedTagNumber: 1,
-                children: {
-                    expectedTag: "OPTION",
-                    expectedTagNumber: 13
-                },
                 expectedValue: "Manitoba"
             },
             favoriteFruit: {
-                selector: "inferredView-favoriteFruit-value",
-                modelPath: "inferredViews.favoriteFruit.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 4,
                 expectedValue: ["Apples","Tomatoes"]
 
             },
             wearsHats: {
-                selector: "inferredView-wearsHats-value",
-                modelPath: "inferredViews.wearsHats.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 3,
                 expectedValue: "Sometimes"
             }
         };
 
-        floe.tests.dashboard.testFromInferredViewSpec(that, expectedFromBindInferredViewMarkupSpec, "Model change -> view change of ");
+        var spec = $.extend(true, floe.tests.dashboard.baseInferredViewSpec, expectedFromBindInferredViewMarkupSpec);
+
+        floe.tests.dashboard.testFromInferredViewSpec(that, spec, "Model change -> view change of ");
     };
 
     floe.tests.dashboard.testViewToModelBind = function (that) {
         var expectedFromValueInferredViewMarkupSpec = {
             name: {
-                selector: "inferredView-name-value",
-                modelPath: "inferredViews.name.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 1,
                 expectedValue: "Daniel"
             },
             province: {
-                selector: "inferredView-province-value",
-                modelPath: "inferredViews.province.value",
-                expectedTag: "SELECT",
-                expectedTagNumber: 1,
-                children: {
-                    expectedTag: "OPTION",
-                    expectedTagNumber: 13
-                },
                 expectedValue: "Quebec"
             },
             favoriteFruit: {
-                selector: "inferredView-favoriteFruit-value",
-                modelPath: "inferredViews.favoriteFruit.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 4,
                 expectedValue: ["Plums","Bananas"]
 
             },
             wearsHats: {
-                selector: "inferredView-wearsHats-value",
-                modelPath: "inferredViews.wearsHats.value",
-                expectedTag: "INPUT",
-                expectedTagNumber: 3,
                 expectedValue: "No"
             }
         };
 
-        floe.tests.dashboard.testFromInferredViewSpec(that, expectedFromValueInferredViewMarkupSpec, "View change -> model change of ");
+        var spec = $.extend(true, floe.tests.dashboard.baseInferredViewSpec, expectedFromValueInferredViewMarkupSpec);
+
+        floe.tests.dashboard.testFromInferredViewSpec(that, spec, "View change -> model change of ");
     };
 
 
