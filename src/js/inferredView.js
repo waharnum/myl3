@@ -28,14 +28,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             onBindingsApplied: null
         },
         listeners: {
-            "onCreate.appendTemplate": {
-                funcName: "floe.dashboard.inferredView.appendTemplate",
+            "onCreate.appendModelGeneratedTemplate": {
+                funcName: "floe.dashboard.inferredView.appendModelGeneratedTemplate",
                 args: ["{that}"]
             },
             "onCreate.applyBindings": {
                 "funcName": "gpii.binder.applyBinding",
                 args: ["{that}"],
-                priority: "after:appendTemplate"
+                priority: "after:appendModelGeneratedTemplate"
             },
             "onCreate.fireOnBindingsApplied": {
                 this: "{that}.events.onBindingsApplied",
@@ -82,7 +82,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.inferredView.appendTemplate = function (that) {
+    floe.dashboard.inferredView.appendModelGeneratedTemplate = function (that) {
         var totalMarkup = "";
         fluid.each(that.model.inferredViews, function (inferredViewValue, inferredViewKey) {
             var markup = floe.dashboard.inferredView.generateInferredMarkup(that, inferredViewValue, inferredViewKey);
