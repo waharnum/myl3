@@ -148,8 +148,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test inferred view component",
             tests: [{
-                expect: 14,
-                name: "Test initial markup and model-view binding generation.",
+                expect: 18,
+                name: "Test initial markup generation and initial model-view binding generation.",
                 sequence: [
                     {
                         listener: "floe.tests.dashboard.testInitialMarkup",
@@ -159,7 +159,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 14,
+                expect: 18,
                 name: "Test binding (model change -> view change)",
                 sequence: [
                     {
@@ -183,6 +183,50 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         args: "{inferredView}"
                     }
                 ]
+            },
+            {
+                expect: 18,
+                name: "Test binding (view change -> model change)",
+                sequence: [
+                    {
+                        func: "fluid.value",
+                        args: ["{inferredView}.dom.inferredView-name-value", "Daniel"]
+                    },
+                    {
+                        element: "{inferredView}.dom.inferredView-name-value",
+                        jQueryTrigger: "change"
+                    },
+                    {
+                        func: "fluid.value",
+                        args: ["{inferredView}.dom.inferredView-province-value", "Quebec"]
+                    },
+                    {
+                        element: "{inferredView}.dom.inferredView-province-value",
+                        jQueryTrigger: "change"
+                    },
+                    {
+                        func: "fluid.value",
+                        args: ["{inferredView}.dom.inferredView-favoriteFruit-value", ["Plums", "Bananas"]]
+                    },
+                    {
+                        element: "{inferredView}.dom.inferredView-favoriteFruit-value",
+                        jQueryTrigger: "change"
+                    },
+                    {
+                        func: "fluid.value",
+                        args: ["{inferredView}.dom.inferredView-wearsHats-value", "No"]
+                    },
+                    {
+                        element: "{inferredView}.dom.inferredView-wearsHats-value",
+                        jQueryTrigger: "change"
+                    },
+                    {
+                        changeEvent: "{inferredView}.applier.modelChanged",
+                        path: "inferredViews",
+                        listener: "floe.tests.dashboard.testViewToModelBind",
+                        args: "{inferredView}"
+                    }
+                ]
             }
 
             ]
@@ -201,7 +245,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             if(specItem.expectedValue) {
                 var locatedValue = fluid.value(locatedElement[0]);
-                jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value from model is present", specItem.expectedValue, locatedValue);
+                jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on DOM element", specItem.expectedValue, locatedValue);
+                jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on model path", specItem.expectedValue, fluid.get(that.model, specItem.modelPath));
                 // console.log(locatedValue);
             }
 
@@ -219,12 +264,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var expectedInitialInferredViewMarkupSpec = {
             name: {
                 selector: "inferredView-name-value",
+                modelPath: "inferredViews.name.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 1,
                 expectedValue: "Bob"
             },
             province: {
                 selector: "inferredView-province-value",
+                modelPath: "inferredViews.province.value",
                 expectedTag: "SELECT",
                 expectedTagNumber: 1,
                 children: {
@@ -235,6 +282,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             favoriteFruit: {
                 selector: "inferredView-favoriteFruit-value",
+                modelPath: "inferredViews.favoriteFruit.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 4,
                 expectedValue: ["Apples","Plums"]
@@ -242,6 +290,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             wearsHats: {
                 selector: "inferredView-wearsHats-value",
+                modelPath: "inferredViews.wearsHats.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 3,
                 expectedValue: "Yes"
@@ -255,12 +304,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var expectedFromBindInferredViewMarkupSpec = {
             name: {
                 selector: "inferredView-name-value",
+                modelPath: "inferredViews.name.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 1,
                 expectedValue: "Cynthia"
             },
             province: {
                 selector: "inferredView-province-value",
+                modelPath: "inferredViews.province.value",
                 expectedTag: "SELECT",
                 expectedTagNumber: 1,
                 children: {
@@ -271,6 +322,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             favoriteFruit: {
                 selector: "inferredView-favoriteFruit-value",
+                modelPath: "inferredViews.favoriteFruit.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 4,
                 expectedValue: ["Apples","Tomatoes"]
@@ -278,14 +330,56 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             },
             wearsHats: {
                 selector: "inferredView-wearsHats-value",
+                modelPath: "inferredViews.wearsHats.value",
                 expectedTag: "INPUT",
                 expectedTagNumber: 3,
                 expectedValue: "Sometimes"
             }
         };
 
-        floe.tests.dashboard.testFromInferredViewSpec(that, expectedFromBindInferredViewMarkupSpec, "Model -> view bind of ");
+        floe.tests.dashboard.testFromInferredViewSpec(that, expectedFromBindInferredViewMarkupSpec, "Model change -> view change of ");
     };
+
+    floe.tests.dashboard.testViewToModelBind = function (that) {
+        var expectedFromValueInferredViewMarkupSpec = {
+            name: {
+                selector: "inferredView-name-value",
+                modelPath: "inferredViews.name.value",
+                expectedTag: "INPUT",
+                expectedTagNumber: 1,
+                expectedValue: "Daniel"
+            },
+            province: {
+                selector: "inferredView-province-value",
+                modelPath: "inferredViews.province.value",
+                expectedTag: "SELECT",
+                expectedTagNumber: 1,
+                children: {
+                    expectedTag: "OPTION",
+                    expectedTagNumber: 13
+                },
+                expectedValue: "Quebec"
+            },
+            favoriteFruit: {
+                selector: "inferredView-favoriteFruit-value",
+                modelPath: "inferredViews.favoriteFruit.value",
+                expectedTag: "INPUT",
+                expectedTagNumber: 4,
+                expectedValue: ["Plums","Bananas"]
+
+            },
+            wearsHats: {
+                selector: "inferredView-wearsHats-value",
+                modelPath: "inferredViews.wearsHats.value",
+                expectedTag: "INPUT",
+                expectedTagNumber: 3,
+                expectedValue: "No"
+            }
+        };
+
+        floe.tests.dashboard.testFromInferredViewSpec(that, expectedFromValueInferredViewMarkupSpec, "View change -> model change of ");
+    };
+
 
     $(document).ready(function () {
         floe.tests.dashboard.inferredViewTestEnvironment();
