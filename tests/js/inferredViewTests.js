@@ -253,7 +253,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of tags are present", specItem.expectedTagNumber, locatedElement.length);
 
-            var locatedValue = fluid.value(locatedElement[0]);
+            var locatedValue = fluid.value(locatedElement);
 
             jqUnit.assertDeepEq(messagePrefix + inferredViewValue.type + " type - expected value is present on DOM element", specItem.expectedValue, locatedValue);
 
@@ -261,7 +261,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             if(specItem.children) {
                 var elementChildren = locatedElement.children(specItem.children.expectedTag);
+
                 jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
+
                 jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected number of child tags are present", specItem.children.expectedTagNumber, elementChildren.length);
             }
         });
