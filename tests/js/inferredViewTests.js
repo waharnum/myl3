@@ -294,7 +294,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 expectedTag: "OPTION",
                 expectedTagNumber: 13
             },
-            expectedValue: "Ontario",
             expectedStyleClass: "floe-inferredView-province-value"
         },
         favoriteFruit: {
@@ -302,7 +301,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             modelPath: "inferredViews.favoriteFruit.value",
             expectedTag: "INPUT",
             expectedTagNumber: 4,
-            expectedValue: ["Apples","Plums"],
             expectedStyleClass: "floe-inferredView-favoriteFruit-value"
 
         },
@@ -311,7 +309,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             modelPath: "inferredViews.wearsHats.value",
             expectedTag: "INPUT",
             expectedTagNumber: 3,
-            expectedValue: "Yes",
             expectedStyleClass: "floe-inferredView-wearsHats-value"
         }
     };
