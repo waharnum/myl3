@@ -234,9 +234,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         ]
     });
 
-    // TODO: This also needs tests for:
-    // - label generation
-
     floe.tests.dashboard.testFromInferredViewSpec = function (that, spec, messagePrefix) {
         var inferredViews = that.model.inferredViews;
 
@@ -245,9 +242,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             var locatedElement = that.locate(specItem.selector);
 
-            if(specItem.expectedStyleClass) {
-                jqUnit.assertTrue(messagePrefix + inferredViewValue.type + " type - expected style class is present", locatedElement.hasClass(specItem.expectedStyleClass));
-            }
+            jqUnit.assertTrue(messagePrefix + inferredViewValue.type + " type - expected style class is present", locatedElement.hasClass(specItem.expectedStyleClass));
 
             jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected tag is present", specItem.expectedTag, locatedElement.prop("tagName"));
 
