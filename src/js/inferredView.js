@@ -74,20 +74,20 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 bindingPathPrefix: "inferredViews.%inferredViewKey"
             },
             choices: {
-                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-value %styleClassPrefix-value' name='%name' value='%choiceValue' type='checkbox' />",
+                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' name='%name' value='%choiceValue' type='checkbox' />",
 
                 "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
 
-                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-value %styleClassPrefix-value' name='%name' value='%choiceValue' type='radio' />"
+                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' name='%name' value='%choiceValue' type='radio' />"
             },
             wrappers: {
                 "checkbox":  "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>",
 
-                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-value %styleClassPrefix-value' type='text' value='%value' /></div>",
+                "text": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='text' value='%value' /></div>",
 
-                "textarea": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-value %styleClassPrefix-value'></textarea></div>",
+                "textarea": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix'></textarea></div>",
 
-                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-value %styleClassPrefix-value' id='%inputId'>%renderedChoices</select></div>",
+                "select": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' id='%inputId'>%renderedChoices</select></div>",
 
                 "radio": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'><fieldset><legend>%label</legend>%renderedChoices</fieldset></div>"
             }
@@ -114,6 +114,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 inputId: "input-" + fluid.allocateGuid(),
                 controlClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.controlClassPrefix, {inferredViewKey: inferredViewKey}),
                 styleClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.styleClassPrefix, {inferredViewKey: inferredViewKey}),
+                valueSuffix: that.options.strings.conf.valueSuffix
             };
 
         if(inferredViewValue.choices) {
@@ -142,6 +143,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     choiceId: "choice-" + fluid.allocateGuid(),
                     controlClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.controlClassPrefix, {inferredViewKey: inferredViewKey}),
                     styleClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.styleClassPrefix, {inferredViewKey: inferredViewKey}),
+                    valueSuffix: that.options.strings.conf.valueSuffix
                 };
 
             renderedChoices = renderedChoices + fluid.stringTemplate(choiceTemplate, baseTemplateValues);
