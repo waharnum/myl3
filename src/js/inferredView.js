@@ -81,15 +81,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' name='%name' value='%choiceValue' type='radio' />"
             },
             values: {
-                "checkbox":  "<fieldset><legend>%label</legend>%renderedChoices</fieldset>",
+                "checkable": "<fieldset><legend>%label</legend>%renderedChoices</fieldset>",
+
+                "checkbox":  "{that}.options.stringTemplates.values.checkable",
+
+                "radio": "{that}.options.stringTemplates.values.checkable",
 
                 "text": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='text' value='%value' />",
 
                 "textarea": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix'></textarea>",
 
-                "select": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' id='%inputId'>%renderedChoices</select>",
-
-                "radio": "<fieldset><legend>%label</legend>%renderedChoices</fieldset>"
+                "select": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' id='%inputId'>%renderedChoices</select>"
             },
             wrappers: {
                 "defaultWrapper": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'>%renderedValues</div>"
