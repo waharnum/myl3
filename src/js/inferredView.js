@@ -97,7 +97,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.dashboard.inferredView.appendModelGeneratedTemplate = function (that) {
         var totalMarkup = "";
         fluid.each(that.model.inferredViews, function (inferredViewValue, inferredViewKey) {
-            var markup = floe.dashboard.inferredView.generateInferredMarkup(that, inferredViewValue, inferredViewKey);
+            var markup = floe.dashboard.inferredView.getInferredMarkup(that, inferredViewValue, inferredViewKey);
             totalMarkup = totalMarkup + markup;
         });
         that.container.append("<form class='floe-inferredView-form'>" + totalMarkup + "</form>");
@@ -114,7 +114,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         };
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey) {
+    floe.dashboard.inferredView.getInferredMarkup = function (that, inferredViewValue, inferredViewKey) {
 
         var baseTemplateValues =
             {
