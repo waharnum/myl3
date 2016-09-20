@@ -74,14 +74,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 bindingPathPrefix: "inferredViews.%inferredViewKey"
             },
             choices: {
-                "checkbox-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' name='%name' value='%choiceValue' type='checkbox' />",
+                "checkable-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' name='%name' value='%choiceValue' type='%type' />",
 
-                "select-choice": "<option value='%choiceValue'>%choiceValue</option>",
+                "checkbox-choice": "{that}.options.stringTemplates.choices.checkable-choice",
 
-                "radio-choice": "<label for='%choiceId'>%choiceValue</label><input id='%choiceId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' name='%name' value='%choiceValue' type='radio' />"
+                "radio-choice": "{that}.options.stringTemplates.choices.checkable-choice",
+
+                "select-choice": "<option value='%choiceValue'>%choiceValue</option>"
             },
             values: {
-                "checkable": "<fieldset><legend>%label</legend>%renderedChoices</fieldset>",
+                "checkable": "<fieldset><legend>%label</legend>%choices</fieldset>",
 
                 "checkbox":  "{that}.options.stringTemplates.values.checkable",
 
@@ -91,10 +93,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
                 "textarea": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix'></textarea>",
 
-                "select": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' id='%inputId'>%renderedChoices</select>"
+                "select": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <select class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' id='%inputId'>%choices</select>"
             },
             wrappers: {
-                "defaultWrapper": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'>%renderedValues</div>"
+                "default-wrapper": "<div class='floec-inferredView-wrapper floe-inferredView-wrapper %controlClassPrefix-wrapper %styleClassPrefix-wrapper'>%values</div>"
             }
         }
     });
@@ -132,16 +134,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         if(inferredViewValue.choices) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
-            $.extend(true, baseTemplateValues, {renderedChoices: renderedChoices});
+            $.extend(true, baseTemplateValues, {choices: renderedChoices});
         }
 
         var template = that.options.stringTemplates.values[inferredViewValue.type];
 
         var renderedValues = fluid.stringTemplate(template, baseTemplateValues);
 
-        var templateValues = $.extend(true, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey), {renderedValues: renderedValues});
+        var templateValues = $.extend(true, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey), {values: renderedValues});
 
-        var wrapperTemplate = that.options.stringTemplates.wrappers[inferredViewValue.type] ? that.options.stringTemplates.wrappers[inferredViewValue.type] : that.options.stringTemplates.wrappers.defaultWrapper;
+        var wrapperTemplate = that.options.stringTemplates.wrappers[inferredViewValue.type + "-wrapper"] ? that.options.stringTemplates.wrappers[inferredViewValue.type + "-wrapper"] : that.options.stringTemplates.wrappers["default-wrapper"];
 
         return fluid.stringTemplate(wrapperTemplate, templateValues);
 
@@ -159,6 +161,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     choiceValue: choiceValue,
                     name: name,
                     choiceId: "choice-" + fluid.allocateGuid(),
+                    type: type
                 };
 
             $.extend(true, baseTemplateValues, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey ));
