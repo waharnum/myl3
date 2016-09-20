@@ -104,22 +104,30 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         that.events.onTemplateAppended.fire();
     };
 
-    floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey ) {
+    // Returns the base set of template values shared between different template functions
+    floe.dashboard.inferredView.getCommonTemplateValues = function (that, inferredViewValue, inferredViewKey) {
+        return  {
+            inferredViewKey: inferredViewKey,
+            controlClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.controlClassPrefix, {inferredViewKey: inferredViewKey}),
+            styleClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.styleClassPrefix, {inferredViewKey: inferredViewKey}),
+            valueSuffix: that.options.strings.conf.valueSuffix
+        };
+    };
+
+    floe.dashboard.inferredView.generateInferredMarkup = function (that, inferredViewValue, inferredViewKey) {
 
         var baseTemplateValues =
             {
-                inferredViewKey: inferredViewKey,
                 label: inferredViewValue.label,
                 value: inferredViewValue.value,
-                inputId: "input-" + fluid.allocateGuid(),
-                controlClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.controlClassPrefix, {inferredViewKey: inferredViewKey}),
-                styleClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.styleClassPrefix, {inferredViewKey: inferredViewKey}),
-                valueSuffix: that.options.strings.conf.valueSuffix
+                inputId: "input-" + fluid.allocateGuid()
             };
+
+        $.extend(true, baseTemplateValues, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey ));
 
         if(inferredViewValue.choices) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
-            $.extend(baseTemplateValues, {renderedChoices: renderedChoices});
+            $.extend(true, baseTemplateValues, {renderedChoices: renderedChoices});
         }
 
         var template = that.options.stringTemplates.wrappers[inferredViewValue.type];
@@ -137,14 +145,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             var baseTemplateValues =
                 {
                     choiceValue: choiceValue,
-                    inferredViewValue: inferredViewValue,
-                    inferredViewKey: inferredViewKey,
                     name: name,
                     choiceId: "choice-" + fluid.allocateGuid(),
-                    controlClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.controlClassPrefix, {inferredViewKey: inferredViewKey}),
-                    styleClassPrefix: fluid.stringTemplate(that.options.stringTemplates.conf.styleClassPrefix, {inferredViewKey: inferredViewKey}),
-                    valueSuffix: that.options.strings.conf.valueSuffix
                 };
+
+            $.extend(true, baseTemplateValues, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey ));
 
             renderedChoices = renderedChoices + fluid.stringTemplate(choiceTemplate, baseTemplateValues);
         });
