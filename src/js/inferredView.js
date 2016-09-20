@@ -18,7 +18,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // A grade that can automatically generate a view based on the supplied
     // model definition, and generate bindings between it and the model
     fluid.defaults("floe.dashboard.inferredView", {
-        gradeNames: ["{that}.generateBindingGrade", "fluid.viewComponent"],
+        gradeNames: ["{that}.getAutoBindingGrade", "fluid.viewComponent"],
         // TODO: the spec for this needs documentation
         model: {
             // Keys in this model block will be used to automatically
@@ -56,7 +56,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         invokers: {
-            "generateBindingGrade": {
+            "getAutoBindingGrade": {
                 funcName: "floe.dashboard.inferredView.getAutoBindingGrade",
                 args: ["{that}.model.inferredViews", "{that}.options.stringTemplates.conf", "{that}.options.strings.conf"]
             }
