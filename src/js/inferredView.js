@@ -57,7 +57,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         },
         invokers: {
             "generateBindingGrade": {
-                funcName: "floe.dashboard.inferredView.generateBindingGrade",
+                funcName: "floe.dashboard.inferredView.getAutoBindingGrade",
                 args: ["{that}.model.inferredViews", "{that}.options.stringTemplates.conf", "{that}.options.strings.conf"]
             }
         },
@@ -157,8 +157,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     // Automatically generates bindings and selectors from inferred views
-    floe.dashboard.inferredView.generateBindingGrade = function (inferredViews, confStringTemplates, confStrings) {
-        var gradeName = "floe.dashboard.inferredView." + fluid.allocateGuid();
+    floe.dashboard.inferredView.getAutoBindingGrade = function (inferredViews, confStringTemplates, confStrings) {
+        var gradeName = "floe.dashboard.inferredView.bindingGrade-" + fluid.allocateGuid();
 
         var bindings = {}, selectors = {};
 
