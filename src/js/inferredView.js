@@ -21,7 +21,19 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["{that}.generateBindingGrade", "fluid.viewComponent"],
         // TODO: the spec for this needs documentation
         model: {
-            inferredViews: {}
+            // Keys in this model block will be used to automatically
+            // generate markup and bindings for display and manipulation of
+            // the model
+            inferredViews: {
+                // key: {
+                //  label: descriptive label for the values
+                //  value: the initial starting value
+                //  type: the type of control to be generated - must match one
+                //  of the wrapper types
+                // choices: array of value choices for choice-supporting types -
+                // type must be one of the choices-supporting types
+                // }
+            }
         },
         events: {
             onTemplateAppended: null,
