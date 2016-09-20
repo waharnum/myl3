@@ -89,7 +89,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
                 "radio": "{that}.options.stringTemplates.values.checkable",
 
-                "text": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='text' value='%value' />",
+                "input": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='%type' value='%value' />",
+
+                "text": "{that}.options.stringTemplates.values.input",
+
+                "number": "{that}.options.stringTemplates.values.input",
 
                 "textarea": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix'></textarea>",
 
@@ -122,12 +126,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     floe.dashboard.inferredView.getInferredMarkup = function (that, inferredViewValue, inferredViewKey) {
+        var type = inferredViewValue.type;
 
         var baseTemplateValues =
             {
                 label: inferredViewValue.label,
                 value: inferredViewValue.value,
-                inputId: "input-" + fluid.allocateGuid()
+                inputId: "input-" + fluid.allocateGuid(),
+                type: type
             };
 
         $.extend(true, baseTemplateValues, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey ));
@@ -137,13 +143,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             $.extend(true, baseTemplateValues, {choices: renderedChoices});
         }
 
-        var template = that.options.stringTemplates.values[inferredViewValue.type];
+        var template = that.options.stringTemplates.values[type];
 
         var renderedValues = fluid.stringTemplate(template, baseTemplateValues);
 
         var templateValues = $.extend(true, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey), {values: renderedValues});
 
-        var wrapperTemplate = that.options.stringTemplates.wrappers[inferredViewValue.type + "-wrapper"] ? that.options.stringTemplates.wrappers[inferredViewValue.type + "-wrapper"] : that.options.stringTemplates.wrappers["default-wrapper"];
+        var wrapperTemplate = that.options.stringTemplates.wrappers[type + "-wrapper"] ? that.options.stringTemplates.wrappers[type + "-wrapper"] : that.options.stringTemplates.wrappers["default-wrapper"];
 
         return fluid.stringTemplate(wrapperTemplate, templateValues);
 

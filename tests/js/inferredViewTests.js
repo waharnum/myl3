@@ -100,6 +100,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         "Nunavut"
                     ]
                 },
+                yearsInProvince: {
+                    label: "How many years have you lived in the province?",
+                    value: "4",
+                    type: "number"
+                },
                 // Radio type
                 favoriteFruit: {
                     label: "What is your favourite fruit?",
@@ -148,7 +153,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test dynamic markup generation and binding behaviour",
             tests: [{
-                expect: 44,
+                expect: 50,
                 name: "Test initial markup generation and initial model-view binding generation.",
                 sequence: [
                     {
@@ -159,7 +164,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 44,
+                expect: 50,
                 name: "Test binding (model change -> view change)",
                 sequence: [
                     {
@@ -185,7 +190,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 44,
+                expect: 50,
                 name: "Test binding (view change -> model change)",
                 sequence: [
                     {
@@ -298,6 +303,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 expectedTagNumber: 13
             },
             expectedStyleClass: "floe-inferredView-province-value"
+        },
+        yearsInProvince: {
+            selector: "inferredView-yearsInProvince-value",
+            expectedValue: "4",
+            modelPath: "inferredViews.yearsInProvince.value",
+            expectedTag: "INPUT",
+            expectedTagNumber: 1,
+            expectedStyleClass: "floe-inferredView-yearsInProvince-value"
         },
         favoriteFruit: {
             selector: "inferredView-favoriteFruit-value",
