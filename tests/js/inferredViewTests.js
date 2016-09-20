@@ -103,7 +103,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 yearsInProvince: {
                     label: "How many years have you lived in the province?",
                     value: "4",
-                    type: "number"
+                    type: "number",
+                    constraints: {
+                        min: 0,
+                        max: 50
+                    }
                 },
                 // Radio type
                 favoriteFruit: {
@@ -153,7 +157,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         modules: [
             {name: "Test dynamic markup generation and binding behaviour",
             tests: [{
-                expect: 50,
+                expect: 52,
                 name: "Test initial markup generation and initial model-view binding generation.",
                 sequence: [
                     {
@@ -164,7 +168,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 50,
+                expect: 52,
                 name: "Test binding (model change -> view change)",
                 sequence: [
                     {
@@ -190,7 +194,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 ]
             },
             {
-                expect: 50,
+                expect: 52,
                 name: "Test binding (view change -> model change)",
                 sequence: [
                     {
@@ -261,6 +265,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
             floe.tests.dashboard.testForMatchingLabel(locatedElements);
 
+            if(specItem.expectedConstraints) {
+                fluid.each(specItem.expectedConstraints, function (expectedConstraintValue, expectedConstraintAttr) {
+                    jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " - expected constraint attribute " + expectedConstraintAttr + "=" + expectedConstraintValue + " is present", expectedConstraintValue, locatedElements.attr(expectedConstraintAttr));
+                });
+            }
+
             if(specItem.children) {
                 var elementChildren = locatedElements.children(specItem.children.expectedTag);
                 jqUnit.assertEquals(messagePrefix + inferredViewValue.type + " type - expected child tag is present", specItem.children.expectedTag, elementChildren.prop("tagName"));
@@ -310,7 +320,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             modelPath: "inferredViews.yearsInProvince.value",
             expectedTag: "INPUT",
             expectedTagNumber: 1,
-            expectedStyleClass: "floe-inferredView-yearsInProvince-value"
+            expectedStyleClass: "floe-inferredView-yearsInProvince-value",
+            expectedConstraints: {
+                min: "0",
+                max: "50"
+            }
         },
         favoriteFruit: {
             selector: "inferredView-favoriteFruit-value",

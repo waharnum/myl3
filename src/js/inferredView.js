@@ -89,7 +89,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
                 "radio": "{that}.options.stringTemplates.values.checkable",
 
-                "input": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='%type' value='%value' />",
+                "input": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='%type' value='%value' %constraints />",
 
                 "text": "{that}.options.stringTemplates.values.input",
 
@@ -133,7 +133,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 label: inferredViewValue.label,
                 value: inferredViewValue.value,
                 inputId: "input-" + fluid.allocateGuid(),
-                type: type
+                type: type,
+                constraints: ""
             };
 
         $.extend(true, baseTemplateValues, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey ));
@@ -141,6 +142,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         if(inferredViewValue.choices) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
             $.extend(true, baseTemplateValues, {choices: renderedChoices});
+        }
+
+        if(inferredViewValue.constraints) {
+            var renderedConstraints = "";
+            fluid.each(inferredViewValue.constraints, function (constraintValue, constraintAttr) {
+                renderedConstraints = renderedConstraints + constraintAttr + "=" + constraintValue + " ";
+            });
+            $.extend(true, baseTemplateValues, {constraints: renderedConstraints});
         }
 
         var template = that.options.stringTemplates.values[type];
