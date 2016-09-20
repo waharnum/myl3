@@ -32,6 +32,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 //  of the wrapper types
                 // choices: array of value choices for choice-supporting types -
                 // type must be one of the choices-supporting types
+                // constraints: a block of constraint attributes + values
+                // to append to any <input> type - refer to https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/HTML5/Constraint_validation
                 // }
             }
         },
