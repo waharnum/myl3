@@ -85,17 +85,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "select-choice": "<option value='%choiceValue'>%choiceValue</option>"
             },
             values: {
-                "checkable": "<fieldset><legend>%label</legend>%choices</fieldset>",
+                "checkable-default": "<fieldset><legend>%label</legend>%choices</fieldset>",
 
-                "checkbox":  "{that}.options.stringTemplates.values.checkable",
+                "checkbox":  "{that}.options.stringTemplates.values.checkable-default",
 
-                "radio": "{that}.options.stringTemplates.values.checkable",
+                "radio": "{that}.options.stringTemplates.values.checkable-default",
 
-                "input": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='%type' value='%value' %constraints />",
+                "input-default": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <input id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix' type='%type' value='%value' %constraints />",
 
-                "text": "{that}.options.stringTemplates.values.input",
+                "text": "{that}.options.stringTemplates.values.input-default",
 
-                "number": "{that}.options.stringTemplates.values.input",
+                "number": "{that}.options.stringTemplates.values.input-default",
 
                 "textarea": "<label for='%inputId' class='%controlClassPrefix-label'>%label</label> <textarea id='%inputId' class='%controlClassPrefix-%valueSuffix %styleClassPrefix-%valueSuffix'></textarea>",
 
@@ -107,7 +107,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.inferredView.appendModelGeneratedTemplate = function (that) {
+    floe.dashboard.inferredView.appendModelGeneratedTemplate = function (that, clear) {
+        if(clear) {
+            that.container.empty();
+        }
         var totalMarkup = "";
         fluid.each(that.model.inferredViews, function (inferredViewValue, inferredViewKey) {
             var markup = floe.dashboard.inferredView.getInferredMarkup(that, inferredViewValue, inferredViewKey);
@@ -141,7 +144,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         $.extend(true, baseTemplateValues, floe.dashboard.inferredView.getCommonTemplateValues(that, inferredViewValue, inferredViewKey ));
 
-        if(inferredViewValue.choices) {
+        if(inferredViewValue.choices && that.options.stringTemplates.choices[type + "-choice"]) {
             var renderedChoices = floe.dashboard.inferredView.getChoicesMarkup(that, inferredViewValue, inferredViewKey);
             $.extend(true, baseTemplateValues, {choices: renderedChoices});
         }
@@ -213,6 +216,202 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         });
 
         return gradeName;
+    };
+
+    fluid.defaults("floe.dashboard.inferredView.editable", {
+        gradeNames: ["fluid.viewComponent"],
+        selectors: {
+            editable: ".floec-editable",
+            currentInferredView: ".floec-currentInferredView"
+        },
+        events: {
+            "onCurrentInferredViewReady": null
+        },
+        components: {
+            currentInferredView: {
+                type: "floe.dashboard.inferredView",
+                container: "{that}.dom.currentInferredView",
+                options: {
+                    model: {
+                        inferredViews: {
+                            name: {
+                                label: "What are you called?",
+                                value: "William",
+                                type: "select",
+                                choices: ["William", "Alan"]
+                            }
+                        }
+                    },
+                    listeners: {
+                        "onBindingsApplied.escalate": "{editable}.events.onCurrentInferredViewReady.fire"
+                    },
+                    modelListeners: {
+                        "redoPreview": {
+                            "path": "inferredViews",
+                            "funcName": "floe.dashboard.inferredView.appendModelGeneratedTemplate",
+                            "args": ["{that}", true],
+                            excludeSource: "init"
+                        }
+                    }
+                }
+            },
+            editor: {
+                type: "floe.dashboard.inferredView.editor",
+                container: "{that}.dom.editable",
+                createOnEvent: "{editable}.events.onCurrentInferredViewReady",
+                options: {
+                    inferredViewKey: "name",
+                    model: {
+                        inferredViews: {
+                            expander: {
+                                funcName: "floe.dashboard.inferredView.editor.getEditableModel",
+                                args: ["{currentInferredView}.model.inferredViews"]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    fluid.defaults("floe.dashboard.inferredView.editor", {
+        gradeNames: ["{that}.getEditorGrade", "floe.dashboard.inferredView"],
+        // inferredViewKey: "name"
+        invokers: {
+            "getEditorGrade": {
+                "funcName": "floe.dashboard.inferredView.editable.getEditorGrade",
+                "args": "{that}.options.inferredViewKey"
+            }
+        }
+    });
+
+    floe.dashboard.inferredView.editor.getEditableModel = function (inferredViews) {
+        var inferredViewsModelBlock = {};
+        fluid.each(inferredViews, function (inferredViewDefinition, inferredViewKey) {
+            var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
+            var type = inferredViewDefinition.type;
+            fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
+                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart);
+                inferredViewsModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
+            });
+        });
+        console.log(inferredViewsModelBlock);
+    };
+
+    floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart) {
+
+        console.log(inferredViewDefinitionKey, inferredViewDefinitionValue, type);
+        // label - always free text
+        if(inferredViewDefinitionKey === "label") {
+            console.log("Label case");
+            return {
+                label: "Label",
+                value: modelPathStart + ".label",
+                type: "text"
+            };
+        }
+
+        // value - free text or select
+        if(inferredViewDefinitionKey === "value") {
+            console.log("Value case");
+        }
+
+        // type - from types
+        if(inferredViewDefinitionKey === "type") {
+            console.log("Type case");
+        }
+
+        // choices - if from a choice type
+        if(inferredViewDefinitionKey === "choices") {
+            console.log("Choices case");
+        }
+
+    };
+
+    floe.dashboard.inferredView.editable.getEditorGrade = function (inferredViewKey) {
+        var gradeName = "floe.dashboard.inferredView.editorGrade-" + fluid.allocateGuid();
+
+        var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
+        var modelPath = "inferredViews." + inferredViewKey;
+
+        var editorBlock = {
+            model: {
+                inferredViews: {
+                    type: {
+                        label: "Type",
+                        value: modelPathStart + ".type",
+                        type: "select",
+                        choices: {
+                            expander: {
+                                funcName: "floe.dashboard.inferredView.editable.getAvailableTypes",
+                                args: ["{that}.options.stringTemplates.values"]
+                            }
+                        }
+                    },
+                    label: {
+                        label: "Label",
+                        value: modelPathStart + ".label",
+                        type: "text"
+                    },
+                    value: {
+                        label: "Default Value",
+                        value: modelPathStart + ".value",
+                        type: "select",
+                        choices: modelPathStart + ".choices"
+                    },
+                    choices: {
+                        label: "Choices",
+                        type: "textarea"
+                    }
+                }
+            },
+            modelRelay: {
+                choicesEdit: {
+                    target: modelPathStart + ".choices",
+                    singleTransform: {
+                        input: "{editor}.model.inferredViews.choices.value",
+                        type: "fluid.transforms.free",
+                        func: "floe.dashboard.inferredView.editable.relayChoicesChange",
+                        args: ["{currentInferredView}", "{editor}.model.inferredViews.choices.value", modelPath]
+                    },
+                    forward: {
+                        excludeSource: "init"
+                    },
+                    backward: {
+                        excludeSource: "*"
+                    }
+                },
+                choicesInit: {
+                    target: "{editor}.model.inferredViews.choices.value",
+                    singleTransform: {
+                        input: modelPathStart + ".choices",
+                        type: "fluid.transforms.literalValue"
+                    },
+                    forward: {
+                        includeSource: "init"
+                    },
+                    backward: {
+                        excludeSource: "init"
+                    }
+                }
+            }
+        };
+
+        fluid.defaults(gradeName, editorBlock);
+
+        return gradeName;
+    };
+
+    floe.dashboard.inferredView.editable.getAvailableTypes = function (valueTypes) {
+        var filteredTypes = fluid.remove_if(fluid.copy(valueTypes), function (valueType, valueKey) {
+            return (valueKey.indexOf("-default") > -1);
+        });
+        return fluid.keys(filteredTypes);
+    };
+
+    floe.dashboard.inferredView.editable.relayChoicesChange = function (currentInferredView, choicesChange, modelPath) {
+        console.log(currentInferredView, choicesChange);
+        currentInferredView.applier.change(modelPath + ".choices", choicesChange.split(","));
     };
 
 })(jQuery, fluid);

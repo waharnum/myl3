@@ -30,75 +30,85 @@
         <div class="floec-inferredView2">
 
         </div>
+        <h2>Editable</h2>
+        <div class="floec-inferredView-editor">
+            <h3>Editor</h3>
+            <div class="floec-editable"></div>
+            <h3>Preview</h3>
+            <div class="floec-currentInferredView">
+            </div>
+        </div>
 
         <script>
 
-            floe.dashboard.inferredView.demo.pouchPersisted(".floec-inferredView1", {
-                model: {
-                    inferredViews: {
-                        name: {
-                            label: "What are you called?",
-                            value: "William",
-                            type: "text"
-                        },
-                        age: {
-                            label: "How old are you?",
-                            value: "36",
-                            type: "number"
-                        },
-                        biography: {
-                            label: "Please tell us about yourself",                            type: "textarea"
-                        }
-                    }
-                },
-                dbOptions: {
-                    "fixedId": "inferredView1",
-                },
-            });
+            // floe.dashboard.inferredView.demo.pouchPersisted(".floec-inferredView1", {
+            //     model: {
+            //         inferredViews: {
+            //             name: {
+            //                 label: "What are you called?",
+            //                 value: "William",
+            //                 type: "text"
+            //             },
+            //             age: {
+            //                 label: "How old are you?",
+            //                 value: "36",
+            //                 type: "number"
+            //             },
+            //             biography: {
+            //                 label: "Please tell us about yourself",                            type: "textarea"
+            //             }
+            //         }
+            //     },
+            //     dbOptions: {
+            //         "fixedId": "inferredView1",
+            //     },
+            // });
+            //
+            // floe.dashboard.inferredView.demo.pouchPersisted(".floec-inferredView2", {
+            //     model: {
+            //         inferredViews: {
+            //             province: {
+            //                 label: "Which province do you live in?",
+            //                 value: "Ontario",
+            //                 type: "select",
+            //                 choices: [
+            //                     "Alberta",
+            //                     "Ontario",
+            //                     "Quebec"
+            //                 ]
+            //             },
+            //             hats: {
+            //                 label: "Do you wear hats?",
+            //                 value: "Sometimes",
+            //                 type: "radio",
+            //                 choices: [
+            //                     "Yes",
+            //                     "No",
+            //                     "Sometimes"
+            //                 ]
+            //             },
+            //             colors: {
+            //                 label: "Pick some favourite colors",
+            //                 value: "Red",
+            //                 type: "checkbox",
+            //                 choices: [
+            //                     "Red",
+            //                     "Orange",
+            //                     "Yellow",
+            //                     "Green",
+            //                     "Blue",
+            //                     "Indigo",
+            //                     "Violet"
+            //                 ]
+            //             },
+            //         }
+            //     },
+            //     dbOptions: {
+            //         "fixedId": "inferredView2",
+            //     },
+            // });
 
-            floe.dashboard.inferredView.demo.pouchPersisted(".floec-inferredView2", {
-                model: {
-                    inferredViews: {
-                        province: {
-                            label: "Which province do you live in?",
-                            value: "Ontario",
-                            type: "select",
-                            choices: [
-                                "Alberta",
-                                "Ontario",
-                                "Quebec"
-                            ]
-                        },
-                        hats: {
-                            label: "Do you wear hats?",
-                            value: "Sometimes",
-                            type: "radio",
-                            choices: [
-                                "Yes",
-                                "No",
-                                "Sometimes"
-                            ]
-                        },
-                        colors: {
-                            label: "Pick some favourite colors",
-                            value: "Red",
-                            type: "checkbox",
-                            choices: [
-                                "Red",
-                                "Orange",
-                                "Yellow",
-                                "Green",
-                                "Blue",
-                                "Indigo",
-                                "Violet"
-                            ]
-                        },
-                    }
-                },
-                dbOptions: {
-                    "fixedId": "inferredView2",
-                },
-            });
+            floe.dashboard.inferredView.editable(".floec-inferredView-editor");
 
         </script>
 
