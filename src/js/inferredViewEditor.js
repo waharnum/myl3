@@ -37,25 +37,42 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             displayedInferredView: ".floec-displayedInferredView"
         },
         events: {
-            "ondisplayedInferredViewReady": null
+            "onDisplayedInferredViewReady": null,
+            "onDisplayInferredView": null
         },
-        dynamicComponents: {
+        modelListeners: {
+            "inferredViews": {
+                "this": "console",
+                "method": "log",
+                "args": ["modelChange", "{change}.path", "{change}.value", "{that}"],
+                "namespace": "log"
+            }
+        },
+        listeners: {
+            "onCreate.displayInferredView": {
+                funcName: "{that}.events.onDisplayInferredView.fire"
+            }
+        },
+        components: {
             displayedInferredView: {
                 type: "floe.dashboard.inferredView",
                 container: "{that}.dom.displayedInferredView",
-                createOnEvent: "{editable}.events.onCreate",
+                createOnEvent: "{editable}.events.onDisplayInferredView",
                 options: {
                     model: {
                         inferredViews: "{editable}.model.inferredViews"
                     },
                     listeners: {
-                        "onBindingsApplied.escalate": "{editable}.events.ondisplayedInferredViewReady.fire"
+                        "onBindingsApplied.escalate": "{editable}.events.onDisplayedInferredViewReady.fire",
+                        "onDestroy.clearContainer": {
+                            this: "{that}.container",
+                            method: "empty"
+                        }
                     },
                     modelListeners: {
                         "redoPreview": {
                             "path": "inferredViews",
-                            "funcName": "floe.dashboard.inferredView.appendModelGeneratedTemplate",
-                            "args": ["{that}", true],
+                            funcName: "{editable}.events.onDisplayInferredView.fire",
                             excludeSource: "init"
                         }
                     }
@@ -64,9 +81,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             editor: {
                 type: "floe.dashboard.inferredView.editor",
                 container: "{that}.dom.editable",
-                createOnEvent: "{editable}.events.ondisplayedInferredViewReady",
+                createOnEvent: "{editable}.events.onDisplayedInferredViewReady",
                 options: {
-                    inferredViewsToEdit: "{displayedInferredView}.model.inferredViews"
+                    inferredViewsToEdit: "{displayedInferredView}.model.inferredViews",
+                    listeners: {
+                        "onDestroy.clearContainer": {
+                            this: "{that}.container",
+                            method: "empty"
+                        }
+                    }
                 }
             }
         }
