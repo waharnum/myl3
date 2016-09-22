@@ -30,13 +30,29 @@
             <h3>Editor</h3>
             <div class="floec-editable"></div>
             <h3>Preview</h3>
-            <div class="floec-currentInferredView">
+            <div class="floec-displayedInferredView">
             </div>
         </div>
 
         <script>
 
-            floe.dashboard.inferredView.editable(".floec-inferredView-editor");
+            floe.dashboard.inferredView.editable(".floec-inferredView-editor", {
+                model: {
+                    inferredViews: {
+                        name: {
+                            label: "What are you called?",
+                            value: "William",
+                            type: "text"
+                        },
+                        neighbourhood: {
+                            label: "Which Toronto neighbourhoods have you lived in?",
+                            value: ["Upper Beaches", "Annex"],
+                            type: "checkbox",
+                            choices: ["Upper Beaches", "Annex", "High Park Village"]
+                        }
+                    }
+                }
+            });
 
         </script>
 
