@@ -34,8 +34,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                             name: {
                                 label: "What are you called?",
                                 value: "William",
-                                type: "select",
-                                choices: ["William", "Alan"]
+                                type: "text"
                             },
                             neighbourhood: {
                                 label: "Which Toronto neighbourhoods have you lived in?",
@@ -82,6 +81,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
+    floe.dashboard.inferredView.editor.getInputTypeForDefaultValue = function (type) {
+        if (type === "select" || type === "radio") {
+            return "select";
+        } else if (type === "checkbox") {
+            return "checkbox";
+        } else {
+            return "text";
+        }
+    };
 
     floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelRelayCurrentInferredView) {
 
@@ -102,7 +110,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             return {
                 label: "Default Value",
                 value: modelRelayCurrentInferredView + ".value",
-                type: "select",
+                type: floe.dashboard.inferredView.editor.getInputTypeForDefaultValue(type),
                 choices: modelRelayCurrentInferredView + ".choices"
             };
         }
