@@ -261,14 +261,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 createOnEvent: "{editable}.events.onCurrentInferredViewReady",
                 options: {
                     inferredViewKey: "name",
-                    model: {
-                        inferredViews: {
-                            expander: {
-                                funcName: "floe.dashboard.inferredView.editor.getEditableModel",
-                                args: ["{currentInferredView}.model.inferredViews"]
-                            }
-                        }
-                    }
+                    inferredViewsToEdit: "{currentInferredView}.model.inferredViews"
                 }
             }
         }
@@ -277,26 +270,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.defaults("floe.dashboard.inferredView.editor", {
         gradeNames: ["{that}.getEditorGrade", "floe.dashboard.inferredView"],
         // inferredViewKey: "name"
+        // inferredViewsToEdit:
         invokers: {
             "getEditorGrade": {
                 "funcName": "floe.dashboard.inferredView.editable.getEditorGrade",
-                "args": "{that}.options.inferredViewKey"
+                "args": ["{that}.options.inferredViewKey", "{that}.options.inferredViewsToEdit"]
             }
         }
     });
 
-    floe.dashboard.inferredView.editor.getEditableModel = function (inferredViews) {
-        var inferredViewsModelBlock = {};
-        fluid.each(inferredViews, function (inferredViewDefinition, inferredViewKey) {
-            var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
-            var type = inferredViewDefinition.type;
-            fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
-                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart);
-                inferredViewsModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
-            });
-        });
-        console.log(inferredViewsModelBlock);
-    };
+    // floe.dashboard.inferredView.editor.getEditableModel = function (inferredViews) {
+    //     var inferredViewsModelBlock = {};
+    //     fluid.each(inferredViews, function (inferredViewDefinition, inferredViewKey) {
+    //         var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
+    //         var type = inferredViewDefinition.type;
+    //         fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
+    //             var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart);
+    //             inferredViewsModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
+    //         });
+    //     });
+    //     console.log(inferredViewsModelBlock);
+    // };
 
     floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart) {
 
@@ -314,87 +308,113 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         // value - free text or select
         if(inferredViewDefinitionKey === "value") {
             console.log("Value case");
+            return {
+                label: "Default Value",
+                value: modelPathStart + ".value",
+                type: "select",
+                choices: modelPathStart + ".choices"
+            };
         }
 
         // type - from types
         if(inferredViewDefinitionKey === "type") {
             console.log("Type case");
+            return {
+                label: "Type",
+                value: modelPathStart + ".type",
+                type: "select",
+                choices: {
+                    expander: {
+                        funcName: "floe.dashboard.inferredView.editable.getAvailableTypes",
+                        args: ["{that}.options.stringTemplates.values"]
+                    }
+                }
+            };
         }
 
         // choices - if from a choice type
         if(inferredViewDefinitionKey === "choices") {
             console.log("Choices case");
+            return {
+                label: "Choices",
+                type: "textarea"
+            };
         }
 
     };
 
-    floe.dashboard.inferredView.editable.getEditorGrade = function (inferredViewKey) {
+    floe.dashboard.inferredView.editor.getChoicesRelayForEditable = function(inferredViewKey, type, modelPathStart, modelPath) {
+        var relayBlock = {};
+
+        relayBlock[inferredViewKey + "-choicesEdit"] = {
+            target: modelPathStart + ".choices",
+            singleTransform: {
+                input: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
+                type: "fluid.transforms.free",
+                func: "floe.dashboard.inferredView.editable.relayChoicesChange",
+                args: ["{currentInferredView}", "{editor}.model.inferredViews." + inferredViewKey + "-choices.value", modelPath]
+            },
+            forward: {
+                excludeSource: "init"
+            },
+            backward: {
+                excludeSource: "*"
+            }
+        };
+
+        relayBlock[inferredViewKey + "-choicesInit"] = {
+                target: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
+                singleTransform: {
+                    input: modelPathStart + ".choices",
+                    type: "fluid.transforms.literalValue"
+                },
+                forward: {
+                    includeSource: "init"
+                },
+                backward: {
+                    excludeSource: "init"
+                }
+        };
+
+        return relayBlock;
+    };
+
+    floe.dashboard.inferredView.editable.getEditorGrade = function (inferredViewKey, inferredViewsToEdit) {
+        console.log(inferredViewsToEdit);
+
         var gradeName = "floe.dashboard.inferredView.editorGrade-" + fluid.allocateGuid();
 
         var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
         var modelPath = "inferredViews." + inferredViewKey;
 
+        var newModelBlock = {};
+
+        var newModelRelayBlock = {};
+
+        fluid.each(inferredViewsToEdit, function (inferredViewDefinition, inferredViewKey) {
+            var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
+            var modelPath = "inferredViews." + inferredViewKey;
+            var type = inferredViewDefinition.type;
+
+            fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
+                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart);
+                newModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
+            });
+
+            if (inferredViewDefinition.choices) {
+                var block = floe.dashboard.inferredView.editor.getChoicesRelayForEditable(inferredViewKey, type, modelPathStart, modelPath);
+                $.extend(true, newModelRelayBlock, block);
+            }
+
+            console.log(newModelRelayBlock);
+
+        });
+
         var editorBlock = {
             model: {
-                inferredViews: {
-                    type: {
-                        label: "Type",
-                        value: modelPathStart + ".type",
-                        type: "select",
-                        choices: {
-                            expander: {
-                                funcName: "floe.dashboard.inferredView.editable.getAvailableTypes",
-                                args: ["{that}.options.stringTemplates.values"]
-                            }
-                        }
-                    },
-                    label: {
-                        label: "Label",
-                        value: modelPathStart + ".label",
-                        type: "text"
-                    },
-                    value: {
-                        label: "Default Value",
-                        value: modelPathStart + ".value",
-                        type: "select",
-                        choices: modelPathStart + ".choices"
-                    },
-                    choices: {
-                        label: "Choices",
-                        type: "textarea"
-                    }
-                }
+                inferredViews: newModelBlock
             },
-            modelRelay: {
-                choicesEdit: {
-                    target: modelPathStart + ".choices",
-                    singleTransform: {
-                        input: "{editor}.model.inferredViews.choices.value",
-                        type: "fluid.transforms.free",
-                        func: "floe.dashboard.inferredView.editable.relayChoicesChange",
-                        args: ["{currentInferredView}", "{editor}.model.inferredViews.choices.value", modelPath]
-                    },
-                    forward: {
-                        excludeSource: "init"
-                    },
-                    backward: {
-                        excludeSource: "*"
-                    }
-                },
-                choicesInit: {
-                    target: "{editor}.model.inferredViews.choices.value",
-                    singleTransform: {
-                        input: modelPathStart + ".choices",
-                        type: "fluid.transforms.literalValue"
-                    },
-                    forward: {
-                        includeSource: "init"
-                    },
-                    backward: {
-                        excludeSource: "init"
-                    }
-                }
-            }
+            modelRelay: newModelRelayBlock
         };
 
         fluid.defaults(gradeName, editorBlock);
