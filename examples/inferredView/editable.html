@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <script src="../../src/lib/infusion/infusion-all.js"></script>
+        <script src="../../src/lib/gpii-binder/src/js/binder.js"></script>
+
+        <script src="../../src/lib/pouchdb/dist/pouchdb.js"></script>
+        <script src="../../src/lib/gpii-pouchdb/src/js/pouchdb-common.js"></script>
+        <script src="../../src/lib/jsonlint/web/jsonlint.js"></script>
+
+        <script src="../../src/js/eventInTimeAware.js"></script>
+        <script src="../../src/js/dataSource.js"></script>
+        <script src="../../src/js/dataSourcePouchDB.js"></script>
+        <script src="../../src/js/pouchPersisted.js"></script>
+
+        <script src="../../src/js/inferredView.js"></script>
+
+        <script src="src/js/inferredViewDemo.js"></script>
+
+        <link rel="stylesheet" type="text/css" href="src/css/inferredViewDemo.css" />
+
+    </head>
+
+    <body>
+        <h1>inferredView Grade Example, with Editing</h1>
+
+        <h2>Editable</h2>
+        <div class="floec-inferredView-editor">
+            <h3>Editor</h3>
+            <div class="floec-editable"></div>
+            <h3>Preview</h3>
+            <div class="floec-currentInferredView">
+            </div>
+        </div>
+
+        <script>
+    
+            floe.dashboard.inferredView.editable(".floec-inferredView-editor");
+
+        </script>
+
+    </body>
+</html>

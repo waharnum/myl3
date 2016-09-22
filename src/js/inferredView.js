@@ -239,6 +239,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                                 value: "William",
                                 type: "select",
                                 choices: ["William", "Alan"]
+                            },
+                            neighbourhood: {
+                                label: "Which Toronto neighbourhoods have you lived in?",
+                                value: ["Upper Beaches", "Annex"],
+                                type: "checkbox",
+                                choices: ["Upper Beaches", "Annex", "High Park Village"]
                             }
                         }
                     },
@@ -279,20 +285,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    // floe.dashboard.inferredView.editor.getEditableModel = function (inferredViews) {
-    //     var inferredViewsModelBlock = {};
-    //     fluid.each(inferredViews, function (inferredViewDefinition, inferredViewKey) {
-    //         var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
-    //         var type = inferredViewDefinition.type;
-    //         fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
-    //             var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart);
-    //             inferredViewsModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
-    //         });
-    //     });
-    //     console.log(inferredViewsModelBlock);
-    // };
 
-    floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart) {
+    floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelRelayCurrentInferredView) {
 
         console.log(inferredViewDefinitionKey, inferredViewDefinitionValue, type);
         // label - always free text
@@ -300,7 +294,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             console.log("Label case");
             return {
                 label: "Label",
-                value: modelPathStart + ".label",
+                value: modelRelayCurrentInferredView + ".label",
                 type: "text"
             };
         }
@@ -310,9 +304,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             console.log("Value case");
             return {
                 label: "Default Value",
-                value: modelPathStart + ".value",
+                value: modelRelayCurrentInferredView + ".value",
                 type: "select",
-                choices: modelPathStart + ".choices"
+                choices: modelRelayCurrentInferredView + ".choices"
             };
         }
 
@@ -321,7 +315,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             console.log("Type case");
             return {
                 label: "Type",
-                value: modelPathStart + ".type",
+                value: modelRelayCurrentInferredView + ".type",
                 type: "select",
                 choices: {
                     expander: {
@@ -343,11 +337,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     };
 
-    floe.dashboard.inferredView.editor.getChoicesRelayForEditable = function(inferredViewKey, type, modelPathStart, modelPath) {
+    floe.dashboard.inferredView.editor.getChoicesRelayForEditable = function (inferredViewKey, type, modelRelayCurrentInferredView, modelPath) {
         var relayBlock = {};
 
         relayBlock[inferredViewKey + "-choicesEdit"] = {
-            target: modelPathStart + ".choices",
+            target: modelRelayCurrentInferredView + ".choices",
             singleTransform: {
                 input: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
                 type: "fluid.transforms.free",
@@ -363,17 +357,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         };
 
         relayBlock[inferredViewKey + "-choicesInit"] = {
-                target: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
-                singleTransform: {
-                    input: modelPathStart + ".choices",
-                    type: "fluid.transforms.literalValue"
-                },
-                forward: {
-                    includeSource: "init"
-                },
-                backward: {
-                    excludeSource: "init"
-                }
+            target: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
+            singleTransform: {
+                input: modelRelayCurrentInferredView + ".choices",
+                type: "fluid.transforms.literalValue"
+            },
+            forward: {
+                includeSource: "init"
+            },
+            backward: {
+                excludeSource: "init"
+            }
         };
 
         return relayBlock;
@@ -384,25 +378,22 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
         var gradeName = "floe.dashboard.inferredView.editorGrade-" + fluid.allocateGuid();
 
-        var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
-        var modelPath = "inferredViews." + inferredViewKey;
-
         var newModelBlock = {};
 
         var newModelRelayBlock = {};
 
         fluid.each(inferredViewsToEdit, function (inferredViewDefinition, inferredViewKey) {
-            var modelPathStart = "{currentInferredView}.model.inferredViews." + inferredViewKey;
+            var modelRelayCurrentInferredView = "{currentInferredView}.model.inferredViews." + inferredViewKey;
             var modelPath = "inferredViews." + inferredViewKey;
             var type = inferredViewDefinition.type;
 
             fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
-                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelPathStart);
+                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelRelayCurrentInferredView);
                 newModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
             });
 
             if (inferredViewDefinition.choices) {
-                var block = floe.dashboard.inferredView.editor.getChoicesRelayForEditable(inferredViewKey, type, modelPathStart, modelPath);
+                var block = floe.dashboard.inferredView.editor.getChoicesRelayForEditable(inferredViewKey, type, modelRelayCurrentInferredView, modelPath);
                 $.extend(true, newModelRelayBlock, block);
             }
 
