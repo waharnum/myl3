@@ -46,6 +46,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.tests.dashboard.testGradeGeneration = function (that) {
         jqUnit.expect(2);
 
+        console.log(that);
+
         var expectedSelectorsBlock = {
             "inferredView-name-value": ".floec-inferredView-name-value",
             "inferredView-city-value": ".floec-inferredView-city-value"
