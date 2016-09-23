@@ -62,9 +62,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             }
         },
         listeners: {
+            "onCreate.appendMarkup": {
+                this: "{that}.container",
+                method: "append",
+                args: "{that}.options.strings.markup"
+            },
             "onCreate.displayInferredView": {
-                funcName: "{that}.events.onDisplayInferredView.fire"
+                funcName: "{that}.events.onDisplayInferredView.fire",
+                priority: "after:appendMarkup"
             }
+        },
+        strings: {
+            markup: "<h3>Editor</h3> <div class=\"floec-editable\"></div> <h3>Preview</h3> <div class=\"floec-displayedInferredView\"> </div>"
         },
         components: {
             displayedInferredView: {
