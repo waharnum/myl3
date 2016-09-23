@@ -17,43 +17,60 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     fluid.registerNamespace("floe.tests.dashboard");
 
+    fluid.defaults("floe.tests.dashboard.inferredView.editable", {
+        gradeNames: ["floe.dashboard.inferredView.editable"],
+        model: {
+            inferredViews: {
+                name: {
+                    label: "What is your name?",
+                    value: "Alice",
+                    type: "text"
+                },
+                province: {
+                    label: "What province / territory do you live in?",
+                    value: "Ontario",
+                    type: "select",
+                    choices: [
+                        "Ontario",
+                        "Quebec",
+                        "Nova Scotia",
+                        "New Brunswick",
+                        "Manitoba",
+                        "British Columbia",
+                        "Prince Edward Island",
+                        "Saskatchewan",
+                        "Alberta",
+                        "Newfoundland and Labrador",
+                        "Northwest Territories",
+                        "Yukon",
+                        "Nunavut"
+                    ]
+                }
+            }
+        }
+        // components: {
+        //     displayedInferredView: {
+        //         options: {
+        //             listeners: {
+        //                 "onDestroy.clearContainer": null
+        //             }
+        //         }
+        //     },
+        //     editor: {
+        //         options: {
+        //             listeners: {
+        //                 "onDestroy.clearContainer": null
+        //             }
+        //         }
+        //     }
+        // }
+    });
+
     // Test generation of bindings and selectors from the model
 
     jqUnit.test("Test editor grade generation", function () {
 
-        var gradeGenerationTestComponent = floe.dashboard.inferredView.editable(".floec-inferredView-editor", {
-            model: {
-                inferredViews: {
-                    name: {
-                        label: "What is your name?",
-                        value: "Alice",
-                        type: "text"
-                    },
-                    province: {
-                        label: "What province / territory do you live in?",
-                        value: "Ontario",
-                        type: "select",
-                        choices: [
-                            "Ontario",
-                            "Quebec",
-                            "Nova Scotia",
-                            "New Brunswick",
-                            "Manitoba",
-                            "British Columbia",
-                            "Prince Edward Island",
-                            "Saskatchewan",
-                            "Alberta",
-                            "Newfoundland and Labrador",
-                            "Northwest Territories",
-                            "Yukon",
-                            "Nunavut"
-                        ]
-                    }
-                }
-            }
-
-
-        });
+        var gradeGenerationTestComponent = floe.tests.dashboard.inferredView.editable(".floec-inferredViewEditor-gradeGeneration");
 
         floe.tests.dashboard.testGradeGeneration(gradeGenerationTestComponent.editor);
     });
@@ -61,17 +78,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     floe.tests.dashboard.testGradeGeneration = function (that) {
         jqUnit.expect(3);
 
-        console.log(that);
-
         var expectedSelectorsBlock = {
 
-            "inferredView-name-label-value": ".floec-inferredView-name-label-value",
-            "inferredView-name-type-value": ".floec-inferredView-name-type-value",
-            "inferredView-name-value-value": ".floec-inferredView-name-value-value",
-            "inferredView-province-choices-value": ".floec-inferredView-province-choices-value",
-            "inferredView-province-label-value": ".floec-inferredView-province-label-value",
-            "inferredView-province-type-value": ".floec-inferredView-province-type-value",
-            "inferredView-province-value-value": ".floec-inferredView-province-value-value"
+            "inferredView-name-label-value": ".floec-inferredViewEditor-name-label-value",
+            "inferredView-name-type-value": ".floec-inferredViewEditor-name-type-value",
+            "inferredView-name-value-value": ".floec-inferredViewEditor-name-value-value",
+            "inferredView-province-choices-value": ".floec-inferredViewEditor-province-choices-value",
+            "inferredView-province-label-value": ".floec-inferredViewEditor-province-label-value",
+            "inferredView-province-type-value": ".floec-inferredViewEditor-province-type-value",
+            "inferredView-province-value-value": ".floec-inferredViewEditor-province-value-value"
         };
 
         var expectedBindingsBlock = {
@@ -166,6 +181,47 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     };
 
+    fluid.defaults("floe.tests.dashboard.inferredViewEditableTestEnvironment", {
+        gradeNames: ["fluid.test.testEnvironment"],
+        components: {
+            inferredViewEditable: {
+                type: "floe.tests.dashboard.inferredView.editable",
+                createOnEvent: "{inferredViewEditableComponentTester}.events.onTestCaseStart",
+                container: ".floec-inferredViewEditor-interaction"
+            },
+            inferredViewEditableComponentTester: {
+                type: "floe.tests.dashboard.inferredViewEditableComponentTester"
+            }
+        }
+    });
 
+    fluid.defaults("floe.tests.dashboard.inferredViewEditableComponentTester", {
+        gradeNames: ["fluid.test.testCaseHolder"],
+        modules: [
+            {name: "Test dynamic markup generation and binding behaviour",
+            tests: [
+                {
+                    expect: 0,
+                    name: "Test choices relay",
+                    sequence: [
+                        {
+                            listener: "floe.tests.dashboard.testChoiceRelay",
+                            event: "{inferredViewEditableTestEnvironment inferredViewEditable editor}.events.onBindingsApplied",
+                            args: ["{inferredViewEditable}"]
+                        }
+                    ]
+                }
+            ]
+        }
+        ]
+    });
+
+    floe.tests.dashboard.testChoiceRelay = function (inferredViewEditable) {
+        console.log(inferredViewEditable);
+    };
+
+    $(document).ready(function () {
+        floe.tests.dashboard.inferredViewEditableTestEnvironment();
+    });
 
 })(jQuery, fluid);

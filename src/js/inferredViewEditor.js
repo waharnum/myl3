@@ -50,7 +50,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // },
             "cleanup": {
                 "path": "inferredViews",
-                "funcName": "floe.dashboard.inferredView.editable.cleanup",
+                "funcName": "floe.dashboard.inferredView.editable.cleanupInferredViews",
                 "args": ["{that}"],
                 excludeSource: "init"
             },
@@ -118,17 +118,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 "funcName": "floe.dashboard.inferredView.editable.getEditorGrade",
                 "args": ["{that}.options.inferredViewKey", "{that}.options.inferredViewsToEdit"]
             }
+        },
+        stringTemplates: {
+            conf: {
+                controlClassPrefix: "floec-inferredViewEditor-%inferredViewKey",
+                styleClassPrefix: "floe-inferredViewEditor-%inferredViewKey"
+            }
         }
     });
 
-    floe.dashboard.inferredView.editable.cleanup = function (that) {
+    floe.dashboard.inferredView.editable.cleanupInferredViews = function (that) {
         var inferredViews = fluid.transform(that.model.inferredViews, function (inferredView) {
-            return floe.dashboard.inferredView.editable.cleanupInferredView(inferredView);
+            return floe.dashboard.inferredView.editable.cleanupInferredViewsInferredView(inferredView);
         });
         that.applier.change("inferredViews", inferredViews);
     };
 
-    floe.dashboard.inferredView.editable.cleanupInferredView = function (inferredView) {
+    floe.dashboard.inferredView.editable.cleanupInferredViewsInferredView = function (inferredView) {
         var type = inferredView.type;
         if(type === "select" || type === "radio" || type === "checkbox") {
             inferredView.choices = inferredView.choices ? inferredView.choices : [];
@@ -146,13 +152,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     };
 
-    floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelRelaydisplayedInferredView) {
+    floe.dashboard.inferredView.editor.getInferredViewForEditable = function (inferredViewDefinitionValue, inferredViewDefinitionKey, type, iocReferenceDisplayedInferredView) {
 
         // label - always free text
         if(inferredViewDefinitionKey === "label") {
             return {
                 label: "Label",
-                value: modelRelaydisplayedInferredView + ".label",
+                value: iocReferenceDisplayedInferredView + ".label",
                 type: "text"
             };
         }
@@ -161,9 +167,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         if(inferredViewDefinitionKey === "value") {
             return {
                 label: "Default Value",
-                value: modelRelaydisplayedInferredView + ".value",
+                value: iocReferenceDisplayedInferredView + ".value",
                 type: floe.dashboard.inferredView.editor.getInputTypeForDefaultValue(type),
-                choices: modelRelaydisplayedInferredView + ".choices"
+                choices: iocReferenceDisplayedInferredView + ".choices"
             };
         }
 
@@ -171,7 +177,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         if(inferredViewDefinitionKey === "type") {
             return {
                 label: "Type",
-                value: modelRelaydisplayedInferredView + ".type",
+                value: iocReferenceDisplayedInferredView + ".type",
                 type: "select",
                 choices: {
                     expander: {
@@ -192,11 +198,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     };
 
-    floe.dashboard.inferredView.editor.getChoicesRelayForEditable = function (inferredViewKey, type, modelRelaydisplayedInferredView, modelPath) {
+    floe.dashboard.inferredView.editor.getChoicesRelayForEditable = function (inferredViewKey, type, iocReferenceDisplayedInferredView, modelPath) {
         var relayBlock = {};
 
         relayBlock[inferredViewKey + "-choicesEdit"] = {
-            target: modelRelaydisplayedInferredView + ".choices",
+            target: iocReferenceDisplayedInferredView + ".choices",
             singleTransform: {
                 input: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
                 type: "fluid.transforms.free",
@@ -214,7 +220,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         relayBlock[inferredViewKey + "-choicesInit"] = {
             target: "{editor}.model.inferredViews." + inferredViewKey + "-choices.value",
             singleTransform: {
-                input: modelRelaydisplayedInferredView + ".choices",
+                input: iocReferenceDisplayedInferredView + ".choices",
                 type: "fluid.transforms.literalValue"
             },
             forward: {
@@ -237,17 +243,17 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         var newModelRelayBlock = {};
 
         fluid.each(inferredViewsToEdit, function (inferredViewDefinition, inferredViewKey) {
-            var modelRelaydisplayedInferredView = "{displayedInferredView}.model.inferredViews." + inferredViewKey;
+            var iocReferenceDisplayedInferredView = "{displayedInferredView}.model.inferredViews." + inferredViewKey;
             var modelPath = "inferredViews." + inferredViewKey;
             var type = inferredViewDefinition.type;
 
             fluid.each(inferredViewDefinition, function (inferredViewDefinitionValue, inferredViewDefinitionKey) {
-                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, modelRelaydisplayedInferredView);
+                var block = floe.dashboard.inferredView.editor.getInferredViewForEditable(inferredViewDefinitionValue, inferredViewDefinitionKey, type, iocReferenceDisplayedInferredView);
                 newModelBlock[inferredViewKey + "-" + inferredViewDefinitionKey] = block;
             });
 
             if (inferredViewDefinition.choices) {
-                var block = floe.dashboard.inferredView.editor.getChoicesRelayForEditable(inferredViewKey, type, modelRelaydisplayedInferredView, modelPath);
+                var block = floe.dashboard.inferredView.editor.getChoicesRelayForEditable(inferredViewKey, type, iocReferenceDisplayedInferredView, modelPath);
                 $.extend(true, newModelRelayBlock, block);
             }
         });
@@ -264,6 +270,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         return gradeName;
     };
 
+    // Returns all non-default types defined on the inferredView component
     floe.dashboard.inferredView.editable.getAvailableTypes = function (valueTypes) {
         var filteredTypes = fluid.remove_if(fluid.copy(valueTypes), function (valueType, valueKey) {
             return (valueKey.indexOf("-default") > -1);
