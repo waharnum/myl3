@@ -27,8 +27,27 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    fluid.defaults("floe.dashboard.inferredView.demo.pouchPersisted", {
-        gradeNames: ["floe.dashboard.pouchPersisted", "floe.dashboard.inferredView.demo"],
+    fluid.defaults("floe.dashboard.inferredView.demo.editable", {
+        gradeNames: ["floe.dashboard.inferredView.editable"],
+        model: {
+            inferredViews: {
+                name: {
+                    label: "What are you called?",
+                    value: "William",
+                    type: "text"
+                },
+                neighbourhood: {
+                    label: "Which Toronto neighbourhoods have you lived in?",
+                    value: ["Upper Beaches", "Annex"],
+                    type: "checkbox",
+                    choices: ["Upper Beaches", "Annex", "High Park Village"]
+                }
+            }
+        }
+    });
+
+    fluid.defaults("floe.dashboard.inferredView.demo.pouchPersistance", {
+        gradeNames: ["floe.dashboard.pouchPersisted"],
         dbOptions: {
             "name": "examples",
         },
@@ -38,7 +57,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 priority: "before:appendTemplate"
             },
             "onPouchDocRetrieved.setModelFromRetrieved": {
-                funcName: "floe.dashboard.inferredView.demo.pouchPersisted.setModelFromRetrieved",
+                funcName: "floe.dashboard.inferredView.demo.pouchPersistance.setModelFromRetrieved",
                 args: ["{that}", "{arguments}.0"]
             }
         },
@@ -61,10 +80,18 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }
     });
 
-    floe.dashboard.inferredView.demo.pouchPersisted.setModelFromRetrieved = function (that, retrieved) {
+    floe.dashboard.inferredView.demo.pouchPersistance.setModelFromRetrieved = function (that, retrieved) {
         if(retrieved) {
             that.applier.change("", retrieved);
         }
     };
+
+    fluid.defaults("floe.dashboard.inferredView.demo.pouchPersisted", {
+        gradeNames: ["floe.dashboard.inferredView.demo.pouchPersistance", "floe.dashboard.inferredView.demo"]
+    });
+
+    fluid.defaults("floe.dashboard.inferredView.demo.editable.pouchPersisted", {
+        gradeNames: ["floe.dashboard.inferredView.demo.pouchPersistance", "floe.dashboard.inferredView.demo.editable"]
+    });
 
 })(jQuery, fluid);

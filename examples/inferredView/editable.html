@@ -36,22 +36,10 @@
 
         <script>
 
-            floe.dashboard.inferredView.editable(".floec-inferredView-editor", {
-                model: {
-                    inferredViews: {
-                        name: {
-                            label: "What are you called?",
-                            value: "William",
-                            type: "text"
-                        },
-                        neighbourhood: {
-                            label: "Which Toronto neighbourhoods have you lived in?",
-                            value: ["Upper Beaches", "Annex"],
-                            type: "checkbox",
-                            choices: ["Upper Beaches", "Annex", "High Park Village"]
-                        }
-                    }
-                }
+            floe.dashboard.inferredView.demo.editable(".floec-inferredView-editor", {
+                dbOptions: {
+                    "fixedId": "editable1",
+                },
             });
 
         </script>
