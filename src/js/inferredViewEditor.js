@@ -103,7 +103,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     fluid.defaults("floe.dashboard.inferredView.editor", {
         gradeNames: ["{that}.getEditorGrade", "floe.dashboard.inferredView"],
-        // inferredViewKey: "name"
         // inferredViewsToEdit:
         invokers: {
             "getEditorGrade": {
