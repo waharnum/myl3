@@ -201,7 +201,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             {name: "Test dynamic markup generation and binding behaviour",
             tests: [
                 {
-                    expect: 0,
+                    expect: 1,
                     name: "Test choices relay",
                     sequence: [
                         {
@@ -217,7 +217,38 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.testChoiceRelay = function (inferredViewEditable) {
-        console.log(inferredViewEditable);
+        var provinceChoicesValueControl = inferredViewEditable.editor.locate("inferredView-province-choices-value");
+
+        var currentChoices = fluid.value(provinceChoicesValueControl);
+
+        // via https://en.wikipedia.org/wiki/List_of_proposed_provinces_and_territories_of_Canada
+        var revisedChoices = currentChoices.replace("Ontario,", "National Capital Region,Northern Ontario,Northwestern Ontario,Province of Toronto,");
+
+        fluid.value(provinceChoicesValueControl, revisedChoices);
+
+        provinceChoicesValueControl.trigger("change");
+
+        var expectedProvinceChoices = [
+            "National Capital Region",
+            "Northern Ontario",
+            "Northwestern Ontario",
+            "Province of Toronto",
+            "Quebec",
+            "Nova Scotia",
+            "New Brunswick",
+            "Manitoba",
+            "British Columbia",
+            "Prince Edward Island",
+            "Saskatchewan",
+            "Alberta",
+            "Newfoundland and Labrador",
+            "Northwest Territories",
+            "Yukon",
+            "Nunavut"
+        ];
+
+        jqUnit.assertDeepEq("UI changes to the choices are relayed as expected", expectedProvinceChoices, inferredViewEditable.displayedInferredView.model.inferredViews.province.choices);
+
     };
 
     $(document).ready(function () {
