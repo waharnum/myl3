@@ -84,32 +84,42 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         func: "{pouchPersistedComponent}.persist"
                     },
                     {
-                        listener: "{pouchPersistedComponent}.get",
-                        event: "{pouchPersistedComponent}.events.onPouchDocStored"
-                    },
-                    {
-                        listener: "floe.tests.dashboard.testPouchPersistedStorage",
-                        event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
-                        args: ["{pouchPersistedComponent}", "{arguments}.0", "Component model and retrieved document are identical, except for _rev"]
-                    },
-                    {
-                        func: "{pouchPersistedComponent}.applier.change",
-                        args: ["persistedValues.string", "Hello brave new world."]
-                    },
-                    {
-                        listener: "{pouchPersistedComponent}.get",
-                        event: "{pouchPersistedComponent}.events.onPouchDocStored"
-                    },
-                    {
-                        listener: "floe.tests.dashboard.testPouchPersistedStorage",
-                        event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
-                        args: ["{pouchPersistedComponent}", "{arguments}.0", "Following an applier.change-based update, model and retrieved document are identical, except for _rev"]
+                        listener: "floe.tests.dashboard.testNew",
+                        event: "{pouchPersistedComponent}.events.onPouchDocStored",
+                        args: ["{pouchPersistedComponent}"]
                     }
+                    // {
+                    //     listener: "{pouchPersistedComponent}.get",
+                    //     event: "{pouchPersistedComponent}.events.onPouchDocStored"
+                    // },
+                    // {
+                    //     listener: "floe.tests.dashboard.testPouchPersistedStorage",
+                    //     event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
+                    //     args: ["{pouchPersistedComponent}", "{arguments}.0", "Component model and retrieved document are identical, except for _rev"]
+                    // },
+                    // {
+                    //     func: "{pouchPersistedComponent}.applier.change",
+                    //     args: ["persistedValues.string", "Hello brave new world."]
+                    // },
+                    // {
+                    //     listener: "{pouchPersistedComponent}.get",
+                    //     event: "{pouchPersistedComponent}.events.onPouchDocStored"
+                    // },
+                    // {
+                    //     listener: "floe.tests.dashboard.testPouchPersistedStorage",
+                    //     event: "{pouchPersistedComponent}.events.onPouchDocRetrieved",
+                    //     args: ["{pouchPersistedComponent}", "{arguments}.0", "Following an applier.change-based update, model and retrieved document are identical, except for _rev"]
+                    // }
                 ]
             }
             ]
         }]
     });
+
+    floe.tests.dashboard.testNew = function (pouchPersistedComponent) {
+        console.log("floe.tests.dashboard.testNew");
+        pouchPersistedComponent.get();
+    };
 
     floe.tests.dashboard.testPouchPersistedStorage = function (that, retrievedDoc, message) {
         // Remove the _rev on retrievedDoc
@@ -282,11 +292,16 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     $(document).ready(function () {
+
+        var pouchDB = gpii.pouch({dbOptions: {
+            name: "test"
+        }});
+
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest();
-
-        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
-
-        floe.tests.dashboard.pouchPersistedComponentTestEnvironment.errorTest();
+        //
+        // floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
+        //
+        // floe.tests.dashboard.pouchPersistedComponentTestEnvironment.errorTest();
     });
 
 })(jQuery, fluid);

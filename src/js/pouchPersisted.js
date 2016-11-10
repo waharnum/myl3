@@ -27,9 +27,23 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         gradeNames: ["floe.dashboard.eventInTimeAware"],
         components: {
             dataSource: {
-                type: "floe.dashboard.dataSource.pouchDB",
+                type: "gpii.dataSource.pouchDB",
                 options: {
-                    dbOptions: "{pouchPersisted}.options.dbOptions"
+                    // readOnlyGrade: "gpii.dataSource.pouchDB",
+                    dbOptions: "{pouchPersisted}.options.dbOptions",
+                    dbViews: [{
+                        "_id": "_design/views",
+                        "views": {
+                            "findUserByName": {
+                                "map": "function(doc) {if (doc.type === 'user') emit(doc.name, doc)}"
+                            }
+                        }
+                    }],
+                    requestUrl: "/%entryId",
+                    termMap: {
+                        "entryId": "%_id"
+                    },
+                    writable: true
                 }
             }
         },
@@ -107,6 +121,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // model changes, update the modification time, and persist the modified
     // model to the datasource simply by invoking this function
     floe.dashboard.pouchPersisted.persist = function (that) {
+        console.log("floe.dashboard.pouchPersisted.persist");
         that.setModifiedTimeStamp();
         that.set();
     };
@@ -123,45 +138,59 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // https://pouchdb.com/api.html#fetch_document
 
     floe.dashboard.pouchPersisted.get = function (that, retrievalOptions) {
+        console.log("floe.dashboard.pouchPersisted.get");
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
 
-        that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
-            that.events.onPouchDocRetrieved.fire(retrievedDoc);
-        }, function (getErr) {
-            that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
+        that.dataSource.get({"_id": docId}, {}).then(function (result) {
+            console.log(result);
+        }, function (error) {
+            console.log(error);
         });
+
+        // that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
+        //     that.events.onPouchDocRetrieved.fire(retrievedDoc);
+        // }, function (getErr) {
+        //     that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
+        // });
     };
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.set = function (that) {
+        console.log("floe.dashboard.pouchPersisted.set");
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
+        that.dataSource.set({"_id": docId}, doc, {}).then(function (result) {
+            console.log(result);
+            that.events.onPouchDocStored.fire(result);
+        }, function (error) {
+            console.log(error);
+        });
 
-        that.dataSource.get(docId).then(
-            // Update the doc if it exists
-            function (retrievedDoc) {
-                // Set the _rev to the revision of the retrieved doc
-                doc._rev = retrievedDoc._rev;
-                that.dataSource.set(doc).then(function (setResp) {
-                    that.events.onPouchDocStored.fire(setResp);
-                }, function (setErr) {
-                    that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
-                });
-            },
-            // Create the doc on a 404 (doesn't exist yet)
-            function (getErr) {
-                if (getErr.status === 404) {
-                    that.dataSource.set(doc).then(function (setResp) {
-                        that.events.onPouchDocStored.fire(setResp);
-                    }, function (setErr) {
-                        that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
-                    });
-                } else {
-                    that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before SET failed", getErr));
-                }
-            });
 
+        // that.dataSource.get({"_id": docId}, {}).then(
+        //     // Update the doc if it exists
+        //     function (retrievedDoc) {
+        //         // Set the _rev to the revision of the retrieved doc
+        //         doc._rev = retrievedDoc._rev;
+        //         that.dataSource.set(doc).then(function (setResp) {
+        //             that.events.onPouchDocStored.fire(setResp);
+        //         }, function (setErr) {
+        //             that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
+        //         });
+        //     },
+        //     // Create the doc on a 404 (doesn't exist yet)
+        //     function (getErr) {
+        //         if (getErr.status === 404) {
+        //             that.dataSource.set(doc).then(function (setResp) {
+        //                 that.events.onPouchDocStored.fire(setResp);
+        //             }, function (setErr) {
+        //                 that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
+        //             });
+        //         } else {
+        //             that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before SET failed", getErr));
+        //         }
+        //     });
     };
 
     // Delete the persisted document
