@@ -96,5 +96,5 @@ module.exports = function (grunt) {
 
     grunt.registerTask("default", ["lint"]);
     grunt.registerTask("lint", "Apply eslint and jsonlint", ["eslint", "jsonlint"]);
-    grunt.registerTask("installFrontEnd", "Install front-end dependencies from the node_modules directory after 'npm install'", ["exec:infusionInstall", "exec:infusionBuild", "copy:frontEndDependencies"]);
+    grunt.registerTask("installFrontEnd", "Install front-end dependencies from the node_modules directory after 'npm install'", ["browserifyPrep", "shell:browserify", "exec:infusionInstall", "exec:infusionBuild", "copy:frontEndDependencies"]);
 };
