@@ -6,12 +6,21 @@
         <script src="../../src/lib/gpii-pouchdb/src/js/pouchdb-common.js"></script>
         <script src="../../src/lib/jsonlint/web/jsonlint.js"></script>
 
+        <!-- browserify deps -->
+        <script src="../../src/lib/browserify/http.js"></script>
+        <script src="../../src/lib/browserify/https.js"></script>
+        <script src="../../src/lib/browserify/urlModule.js"></script>
+
+        <!-- kettle datasource -->
+        <script src="../../src/lib/kettle/dataSource-core.js"></script>
+        <script src="../../src/lib/kettle/dataSource-url.js"></script>
+
         <script src="../../src/js/eventInTimeAware.js"></script>
-        <script src="../../src/js/dataSource.js"></script>
-        <script src="../../src/js/dataSourcePouchDB.js"></script>
+
+        <script src="../../src/js/dataSourcePouchDB-gpii.js"></script>
         <script src="../../src/js/pouchPersisted.js"></script>
 
-        <script src="src/js/pouchPersistedInlineEdit.js"></script>        
+        <script src="src/js/pouchPersistedInlineEdit.js"></script>
         <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/components/inlineEdit/css/InlineEdit.css" />
         <link rel="stylesheet" type="text/css" href="../../src/lib/infusion/src/framework/core/css/fluid.css" />
     </head>
@@ -49,6 +58,11 @@
             </ul>
         </div>
     <script>
+
+        pouchDB = gpii.pouch({dbOptions: {
+            name: "examples"
+        }});
+
         floe.dashboard.pouchPersistedInlineEdit(".floec-persistedInlineEdit");
     </script>
 

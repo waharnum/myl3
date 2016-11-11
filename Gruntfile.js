@@ -23,6 +23,16 @@ module.exports = function (grunt) {
         jsonlint: {
             all: ["package.json", ".eslintrc.json", "tests/**/*.json", "demos/**/*.json", "src/**/*.json", "!src/lib/**", "!tests/lib/**"]
         },
+        clean: {
+            browserify: "browserify"
+        },
+        mkdir: {
+            browserify: {
+                options: {
+                    create: ["browserify"]
+                }
+            }
+        },
         copy: {
             // Copy external front end dependencies into appropriate directories
             frontEndDependencies: {
@@ -39,6 +49,10 @@ module.exports = function (grunt) {
                     {expand: true, cwd: "./node_modules/gpii-handlebars/", src: "**", dest: "./src/lib/gpii-handlebars/"},
                     // Infusion
                     {expand: true, cwd: "./node_modules/infusion/build", src: "**", dest: "./src/lib/infusion"},
+                    // Kettle
+                    {expand: true, cwd: "./node_modules/kettle/lib", src: "**", dest: "./src/lib/kettle"},
+                    // Kettle datasource dependencies from browserify
+                    {expand: true, cwd: "./browserify", src: "**", dest: "./src/lib/browserify"},
                     // Infusion testing framework
                     {expand: true, cwd: "./node_modules/infusion/build/tests", src: "**", dest: "./tests/lib/infusion"}
                 ]
@@ -53,6 +67,19 @@ module.exports = function (grunt) {
                 command: "grunt build",
                 cwd: "./node_modules/infusion"
             }
+        },
+        shell: {
+            options: {
+                stdout: true,
+                stderr: true,
+                failOnError: true,
+                execOptions: {
+                    maxBuffer: Infinity
+                }
+            },
+            browserify: {
+                command: "node node_modules/browserify/bin/cmd.js -s http node_modules/http-browserify/index.js -o browserify/http.js; node node_modules/browserify/bin/cmd.js -s https node_modules/https-browserify/index.js -o browserify/https.js; node node_modules/browserify/bin/cmd.js -s urlModule node_modules/url/url.js -o browserify/urlModule.js"
+            }
         }
     });
 
@@ -61,10 +88,17 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks("grunt-jsonlint");
     grunt.loadNpmTasks("grunt-contrib-copy");
     grunt.loadNpmTasks("grunt-exec");
+    grunt.loadNpmTasks("grunt-shell");
+    grunt.loadNpmTasks("grunt-mkdir");
+    grunt.loadNpmTasks("grunt-contrib-clean");
+
+    grunt.registerTask("browserifyPrep", "Prepare a directory for holding the output of browserifying the kettle URL data source", function () {
+    grunt.task.run(["clean:browserify", "mkdir:browserify"]);
+});
 
     // Custom tasks:
 
     grunt.registerTask("default", ["lint"]);
     grunt.registerTask("lint", "Apply eslint and jsonlint", ["eslint", "jsonlint"]);
-    grunt.registerTask("installFrontEnd", "Install front-end dependencies from the node_modules directory after 'npm install'", ["exec:infusionInstall", "exec:infusionBuild", "copy:frontEndDependencies"]);
+    grunt.registerTask("installFrontEnd", "Install front-end dependencies from the node_modules directory after 'npm install'", ["browserifyPrep", "shell:browserify", "exec:infusionInstall", "exec:infusionBuild", "copy:frontEndDependencies"]);
 };

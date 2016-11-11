@@ -14,16 +14,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 (function ($, fluid) {
     "use strict";
 
-    // Mixin to make sure everything shares the same test DB
-    fluid.defaults("floe.tests.dashboard.testDBOptions", {
-        dbOptions: {
-            name: "test"
-        }
-    });
-
     // Sets up and tears down a test DB for each test case
     fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder", {
-        gradeNames: ["fluid.test.testCaseHolder", "floe.tests.dashboard.testDBOptions"],
+        // Set for individual test case
+        // dbOptions: {
+        //     name: "testDelete"
+        // },
+        gradeNames: ["fluid.test.testCaseHolder"],
         listeners: {
             "onCreate.setupPouchTestDB": {
                 funcName: "floe.tests.dashboard.pouchPersistedTestCaseHolder.setupPouchTestDB",

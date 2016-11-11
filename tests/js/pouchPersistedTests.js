@@ -9,7 +9,7 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, floe, jqUnit */
+/* global fluid, floe, jqUnit, gpii */
 
 (function ($, fluid) {
 
@@ -18,7 +18,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     fluid.registerNamespace("floe.tests.dashboard");
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedComponent", {
-        gradeNames: ["floe.tests.dashboard.testDBOptions", "floe.dashboard.pouchPersisted"],
+        gradeNames: ["floe.dashboard.pouchPersisted"],
         model: {
             "persistedValues": {
                 "boolean": true,
@@ -74,6 +74,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.storage", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
+        dbOptions: {
+            name: "testStorage"
+        },
         modules: [ {
             name: "PouchDB persisted component - storage test cases",
             tests: [{
@@ -119,6 +122,9 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.delete", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
+        dbOptions: {
+            name: "testDelete"
+        },
         modules: [ {
             name: "PouchDB persisted component - delete test cases",
             tests: [{
@@ -136,7 +142,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                         listener: "floe.tests.dashboard.testPouchPersistedDelete",
                         event: "{pouchPersistedComponent}.events.onPouchDocDeleted",
                         args: ["{pouchPersistedComponent}"]
-                    }
+                    },
 
                 ]
             }
@@ -145,7 +151,15 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     });
 
     floe.tests.dashboard.testPouchPersistedDelete = function (that) {
-        jqUnit.assertUndefined("No persisted entry retrieved", that.get());
+
+        var getPromise = that.get();
+
+        getPromise.then(function () {
+            // The promise shouldn't ever be successful in this case;
+            // the document will have been deleted
+        }, function (error) {
+            jqUnit.assertDeepEq("Document not found after delete", floe.tests.dashboard.expectedPouchErrors.deleted404, error);
+        });
     };
 
     floe.tests.dashboard.expectedPouchErrors = {
@@ -181,25 +195,28 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             pouchError: floe.tests.dashboard.expectedPouchErrors.deleted404
         },
         "setAfterGetDocumentUpdateConflict": {
-            message: "SET after GET (update if exists) failed",
+            message: "SET failed",
             pouchError: floe.tests.dashboard.expectedPouchErrors.documentUpdateConflict409
         },
         "setAfterGet404DocumentUpdateConflict": {
-            message: "SET after GET 404 response (create if does not exist) failed",
+            message: "SET failed",
             pouchError: floe.tests.dashboard.expectedPouchErrors.documentUpdateConflict409
         },
         "getBeforeDeleteMissing": {
-            message: "GET before DELETE failed",
+            message: "SET to {} (delete) failed",
             pouchError: floe.tests.dashboard.expectedPouchErrors.missing404
         },
         "getBeforeDeleteDeleted": {
-            message: "GET before DELETE failed",
+            message: "SET to {} (delete) failed",
             pouchError: floe.tests.dashboard.expectedPouchErrors.deleted404
         }
     };
 
     fluid.defaults("floe.tests.dashboard.pouchPersistedTestCaseHolder.error", {
         gradeNames: ["floe.tests.dashboard.pouchPersistedTestCaseHolder"],
+        dbOptions: {
+            name: "testError"
+        },
         modules: [ {
             name: "PouchDB persisted component - error test cases",
             tests: [{
@@ -211,7 +228,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
-                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        event: "{pouchPersistedComponent}.events.onPouchError",
                         args: ["{arguments}.0", "Expected GET error message received when a nonexistent _id is requested", "getMissing"]
                     },
                     {
@@ -219,7 +236,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
-                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        event: "{pouchPersistedComponent}.events.onPouchError",
                         args: ["{arguments}.0", "Expected GET before DELETE error message received when a nonexistent _id has delete requested", "getBeforeDeleteMissing"]
                     },
                     {
@@ -228,7 +245,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
-                        event: "{pouchPersistedComponent}.events.onPouchSetError",
+                        event: "{pouchPersistedComponent}.events.onPouchError",
                         args: ["{arguments}.0", "Expected SET error message received in a document update conflict when creating", "setAfterGet404DocumentUpdateConflict"]
                     },
                     {
@@ -237,7 +254,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
-                        event: "{pouchPersistedComponent}.events.onPouchSetError",
+                        event: "{pouchPersistedComponent}.events.onPouchError",
                         args: ["{arguments}.0", "Expected SET error message received in a document update conflict when updating", "setAfterGetDocumentUpdateConflict"]
                     },
                     {
@@ -254,14 +271,14 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
-                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        event: "{pouchPersistedComponent}.events.onPouchError",
                         args: ["{arguments}.0", "Expected GET error message received when a deleted _id is requested", "getDeleted"]
                     }, {
                         funcName: "{pouchPersistedComponent}.del"
                     },
                     {
                         listener: "floe.tests.dashboard.testPouchPersistedError",
-                        event: "{pouchPersistedComponent}.events.onPouchGetError",
+                        event: "{pouchPersistedComponent}.events.onPouchError",
                         args: ["{arguments}.0", "Expected GET before DELETE error message received when a deleted _id has delete requested again", "getBeforeDeleteDeleted"]
                     }
                 ]
@@ -282,9 +299,22 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     };
 
     $(document).ready(function () {
+
+        gpii.pouch({dbOptions: {
+            name: "testStorage"
+        }});
+
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest();
 
+        gpii.pouch({dbOptions: {
+            name: "testDelete"
+        }});
+
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.deleteTest();
+
+        gpii.pouch({dbOptions: {
+            name: "testError"
+        }});
 
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.errorTest();
     });

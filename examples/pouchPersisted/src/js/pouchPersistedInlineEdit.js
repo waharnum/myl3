@@ -64,8 +64,8 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
                 funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromDeleted",
                 args: ["{that}", "{arguments}.0"]
             },
-            "onPouchGetError.updateLogFromGetError": {
-                funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromGetError",
+            "onPouchError.updateLogFromError": {
+                funcName: "floe.dashboard.pouchPersistedInlineEdit.updateLogFromError",
                 args: ["{that}", "{arguments}.0"]
             },
             // Persists the component when changes are made
@@ -105,7 +105,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         logArea.prepend("<li>Persisted component deleted:<br /><pre><code>" + JSON.stringify(deleteResponse, null, 2) + "</code></pre></li>");
     };
 
-    floe.dashboard.pouchPersistedInlineEdit.updateLogFromGetError = function (that, errorResponse) {
+    floe.dashboard.pouchPersistedInlineEdit.updateLogFromError = function (that, errorResponse) {
         var logArea = that.locate("storageLog");
         logArea.prepend("<li>Get error - probably no stored model available<br /><pre><code>" + JSON.stringify(errorResponse, null, 2) + "</code></pre></li>");
     };
