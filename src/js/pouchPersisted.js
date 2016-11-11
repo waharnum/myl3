@@ -154,15 +154,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // TODO: this needs an actual functional implementation
     floe.dashboard.pouchPersisted.del = function (that) {
         var docId = that.model._id;
-        that.dataSource.get(docId).then(function (doc) {
-            that.dataSource.del(doc).then(function (deleteResp) {
-                that.events.onPouchDocDeleted.fire(deleteResp);
-            }, function (delErr) {
-                that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("DEL after GET failed", delErr));
-                return "Delete after get failed: " + delErr;
-            });
-        }, function (getErr) {
-            that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before DELETE failed", getErr));
+        // "delete" by setting to blank
+        return that.dataSource.set({"_id": docId}, {}, {}).then(function (result) {
+            that.events.onPouchDocDeleted.fire(result);
+        }, function (setErr) {
+            var errorMessage = floe.dashboard.pouchPersisted.makeErrorStructure("SET to {} (delete) failed", setErr);
+            fluid.log(fluid.logLevel.IMPORTANT, errorMessage);
+            that.events.onPouchError.fire(errorMessage);
         });
     };
 

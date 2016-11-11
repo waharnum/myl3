@@ -152,6 +152,10 @@ var gpii = fluid.registerNamespace("gpii");
 
         // SET: save/update records
         if (options.operation === "set") {
+
+            // An empty object is a delete operation
+            var isEmpty = fluid.keys(data).length <= 0;
+
             id = gpii.dataSource.pouchDB.getDocId(url);
 
             if (!data._id) {
@@ -167,15 +171,19 @@ var gpii = fluid.registerNamespace("gpii");
                 // add or update document _rev to that of
                 // the existing document
                 data._rev = result._rev;
-                pouchDB.put(data).then(function (result) {
+                // set or delete, depending on whether passed data is empty
+                var action = isEmpty ? "remove" : "put";
+                console.log(action);
+                pouchDB[action](data).then(function (result) {
                     promiseTogo.resolve(result);
                 }, function (err) {
                     promiseTogo.reject(err);
                 });
             },
             // Create a new document on a 404 (document doesn't exist)
+            // if we're doing a set operation; otherwise this is an error
             function (err) {
-                if(err.status === 404) {
+                if(err.status === 404 && !isEmpty) {
                     pouchDB.put(data).then(function (result) {
                         promiseTogo.resolve(result);
                     }, function (err) {
