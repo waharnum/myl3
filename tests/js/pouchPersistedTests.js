@@ -9,7 +9,7 @@ You may obtain a copy of the ECL 2.0 License and BSD License at
 https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.txt
 */
 
-/* global fluid, floe, jqUnit */
+/* global fluid, floe, jqUnit, gpii */
 
 (function ($, fluid) {
 
@@ -297,13 +297,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
 
     $(document).ready(function () {
 
-        var pouchDB = gpii.pouch({dbOptions: {
+        gpii.pouch({dbOptions: {
             name: "testStorage"
         }});
 
         floe.tests.dashboard.pouchPersistedComponentTestEnvironment.storageTest();
 
-        pouchDB = gpii.pouch({dbOptions: {
+        gpii.pouch({dbOptions: {
             name: "testError"
         }});
 

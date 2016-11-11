@@ -10,6 +10,7 @@ https://github.com/GPII/universal/blob/master/LICENSE.txt
 
 /* eslint-env browser */
 /* eslint strict: ["error", "function"] */
+/* global require */
 
 /*
 Mildly adapted from https://github.com/cindyli/universal/blob/71594c2b444a7350f3cf6561d22cb301978ba290/gpii/node_modules/gpii-oauth2/gpii-oauth2-datastore/src/DataSource-pouchDB.js
@@ -183,10 +184,8 @@ var gpii = fluid.registerNamespace("gpii");
                 } else {
                     promiseTogo.reject(err);
                 }
-            }
-        );
-
-    }
+            });
+        }
 
         return promiseTogo;
     };

@@ -26,7 +26,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         components: {
             dataSource: {
                 type: "gpii.dataSource.pouchDB",
-                options: {                    
+                options: {
                     dbOptions: "{pouchPersisted}.options.dbOptions",
                     dbViews: [{}],
                     requestUrl: "/%entryId",
