@@ -20,8 +20,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     //
     // This is a higher-level grade than the PouchDB datasource that makes
     // some further assumptions about desired behaviour, including:
-    // - a create/update pattern when doing set operations
-    // - a "get before set/delete" pattern that automatically handles revisions
     // - the automatic generation of timestamp-based IDs for persisted models
     fluid.defaults("floe.dashboard.pouchPersisted", {
         gradeNames: ["floe.dashboard.eventInTimeAware"],
@@ -29,19 +27,12 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             dataSource: {
                 type: "gpii.dataSource.pouchDB",
                 options: {
-                    // readOnlyGrade: "gpii.dataSource.pouchDB",
+                    readOnlyGrade: "gpii.dataSource.pouchDB",
                     dbOptions: "{pouchPersisted}.options.dbOptions",
-                    dbViews: [{
-                        "_id": "_design/views",
-                        "views": {
-                            "findUserByName": {
-                                "map": "function(doc) {if (doc.type === 'user') emit(doc.name, doc)}"
-                            }
-                        }
-                    }],
+                    dbViews: [{}],
                     requestUrl: "/%entryId",
                     termMap: {
-                        "entryId": "%_id"
+                        "entryId": "noencode:%_id"
                     },
                     writable: true
                 }
@@ -57,9 +48,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             // Event signature for errors should include the error structure
             // returned by floe.dashboard.pouchPersisted.makeErrorStructure
             // (a basic message + the Pouch error structure)
-            "onPouchGetError": null,
-            "onPouchSetError": null,
-            "onPouchDeleteError": null
+            "onPouchError": null
         },
         listeners: {
             "onCreate.setPouchId": {
@@ -142,17 +131,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
 
-        that.dataSource.get({"_id": docId}, {}).then(function (result) {
-            console.log(result);
-        }, function (error) {
-            console.log(error);
+        return that.dataSource.get({"_id": docId}, retrievalOptions).then(function (retrievedDoc) {
+            that.events.onPouchDocRetrieved.fire(retrievedDoc);
+        }, function (getErr) {
+            that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
         });
-
-        // that.dataSource.get(docId, retrievalOptions).then(function (retrievedDoc) {
-        //     that.events.onPouchDocRetrieved.fire(retrievedDoc);
-        // }, function (getErr) {
-        //     that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
-        // });
     };
 
     // Creates or updates the persisted model
@@ -160,13 +143,13 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         console.log("floe.dashboard.pouchPersisted.set");
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
-        that.dataSource.set({"_id": docId}, doc, {}).then(function (result) {
+        return that.dataSource.set({"_id": docId}, doc, {}).then(function (result) {
             console.log(result);
             that.events.onPouchDocStored.fire(result);
-        }, function (error) {
-            console.log(error);
+        }, function (setError) {
+            console.log(setError);
+            that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET failed", setError));
         });
-
 
         // that.dataSource.get({"_id": docId}, {}).then(
         //     // Update the doc if it exists
@@ -176,7 +159,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         //         that.dataSource.set(doc).then(function (setResp) {
         //             that.events.onPouchDocStored.fire(setResp);
         //         }, function (setErr) {
-        //             that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
+        //             that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
         //         });
         //     },
         //     // Create the doc on a 404 (doesn't exist yet)
@@ -185,10 +168,10 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         //             that.dataSource.set(doc).then(function (setResp) {
         //                 that.events.onPouchDocStored.fire(setResp);
         //             }, function (setErr) {
-        //                 that.events.onPouchSetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
+        //                 that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
         //             });
         //         } else {
-        //             that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before SET failed", getErr));
+        //             that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before SET failed", getErr));
         //         }
         //     });
     };
@@ -200,11 +183,11 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
             that.dataSource.del(doc).then(function (deleteResp) {
                 that.events.onPouchDocDeleted.fire(deleteResp);
             }, function (delErr) {
-                that.events.onPouchDeleteError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("DEL after GET failed", delErr));
+                that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("DEL after GET failed", delErr));
                 return "Delete after get failed: " + delErr;
             });
         }, function (getErr) {
-            that.events.onPouchGetError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before DELETE failed", getErr));
+            that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before DELETE failed", getErr));
         });
     };
 

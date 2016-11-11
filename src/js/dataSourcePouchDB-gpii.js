@@ -60,16 +60,11 @@ var gpii = fluid.registerNamespace("gpii");
     // Match the url with the _id field of the view list to determine if this url is to query by a view or an document id
     // The string to match is "_design/views" in case of the views definition for the auth server
     gpii.dataSource.pouchDB.isQueryView = function (dbViews, url) {
-        console.log("gpii.dataSource.pouchDB.isQueryView");
-        console.log(dbViews, url);
         var viewIdentifier = dbViews[0]._id;
         return url.indexOf(viewIdentifier) !== -1;
     };
 
     gpii.dataSource.pouchDB.handle = function (that, pouchDB, options, directModel, data) {
-        console.log("gpii.dataSource.pouchDB.handle");
-        console.log(options, directModel);
-        console.log(that.options.requestUrl, that.options.termMap, directModel);
         var url = that.resolveUrl(that.options.requestUrl, that.options.termMap, directModel);
         return gpii.dataSource.pouchDB.handle.pouchDB(that, pouchDB, options, url, data);
     };
@@ -112,21 +107,18 @@ var gpii = fluid.registerNamespace("gpii");
     };
 
     gpii.dataSource.pouchDB.handle.pouchDB = function (that, pouchDB, options, url, data) {
-        console.log(arguments);
         var dbViews = that.options.dbViews;
         var promiseTogo = fluid.promise();
         var id;
 
         // GET: Queries using a document id or view/map functions
         if (options.operation === "get") {
-            console.log("GET operation");
             var promiseQuery = fluid.promise();
 
             // Find out if the query is via a view or directly by a document id
             var isQueryView = gpii.dataSource.pouchDB.isQueryView(dbViews, url);
 
             if (isQueryView) {
-                console.log("isQuieryView: true");
                 // A query by a view
                 var decodedViewInfo = gpii.dataSource.pouchDB.decodeView(url);
                 var viewList = dbViews[0].views;
@@ -135,10 +127,8 @@ var gpii = fluid.registerNamespace("gpii");
 
                 promiseQuery = pouchDB.query(viewFunc, viewOptions);
             } else {
-                console.log("isQuieryView: false");
                 // A query by a document id
                 id = gpii.dataSource.pouchDB.getDocId(url);
-                console.log(id);
                 promiseQuery = pouchDB.get(id);
             }
 
@@ -156,13 +146,42 @@ var gpii = fluid.registerNamespace("gpii");
 
         // SET: save/update records
         if (options.operation === "set") {
-            console.log("SET operation");
             id = gpii.dataSource.pouchDB.getDocId(url);
+
             if (!data._id) {
                 fluid.extend(data, {_id: id});
             }
-            promiseTogo = pouchDB.put(data);
-        }
+
+            // Perform "get before set", match behaviour of
+            // kettle.dataSource.CouchDB
+            var getPromise = pouchDB.get(id);
+
+            // Document exists
+            getPromise.then(function (result) {
+                // add or update document _rev to that of
+                // the existing document
+                data._rev = result._rev;
+                pouchDB.put(data).then(function (result) {
+                    promiseTogo.resolve(result);
+                }, function (err) {
+                    promiseTogo.reject(err);
+                });
+            },
+            // Create a new document on a 404 (document doesn't exist)
+            function (err) {
+                if(err.status === 404) {
+                    pouchDB.put(data).then(function (result) {
+                        promiseTogo.resolve(result);
+                    }, function (err) {
+                        promiseTogo.reject(err);
+                    });
+                } else {
+                    promiseTogo.reject(err);
+                }
+            }
+        );
+
+    }
 
         return promiseTogo;
     };
