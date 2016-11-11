@@ -150,7 +150,7 @@ var gpii = fluid.registerNamespace("gpii");
             });
         }
 
-        // SET: save/update records
+        // SET: save/update records, or delete them if the data is empty
         if (options.operation === "set") {
 
             // An empty object is a delete operation
@@ -171,9 +171,8 @@ var gpii = fluid.registerNamespace("gpii");
                 // add or update document _rev to that of
                 // the existing document
                 data._rev = result._rev;
-                // set or delete, depending on whether passed data is empty
+                // put or remove, depending on whether passed data is empty
                 var action = isEmpty ? "remove" : "put";
-                console.log(action);
                 pouchDB[action](data).then(function (result) {
                     promiseTogo.resolve(result);
                 }, function (err) {
