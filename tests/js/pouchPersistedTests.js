@@ -284,16 +284,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         }]
     });
 
-    floe.tests.dashboard.get404 = function (pouchPersistedComponent) {
-        console.log(pouchPersistedComponent);
-        var togo = pouchPersistedComponent.get();
-        togo.then(function (success) {
-            console.log(success);
-        }, function (error) {
-            console.log(error);
-        });
-    };
-
     floe.tests.dashboard.testPouchPersistedError = function (getError, message, expected) {
         jqUnit.assertDeepEq(message, floe.tests.dashboard.expectedErrors[expected], getError);
     };

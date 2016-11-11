@@ -26,8 +26,7 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
         components: {
             dataSource: {
                 type: "gpii.dataSource.pouchDB",
-                options: {
-                    readOnlyGrade: "gpii.dataSource.pouchDB",
+                options: {                    
                     dbOptions: "{pouchPersisted}.options.dbOptions",
                     dbViews: [{}],
                     requestUrl: "/%entryId",
@@ -110,7 +109,6 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // model changes, update the modification time, and persist the modified
     // model to the datasource simply by invoking this function
     floe.dashboard.pouchPersisted.persist = function (that) {
-        console.log("floe.dashboard.pouchPersisted.persist");
         that.setModifiedTimeStamp();
         that.set();
     };
@@ -127,56 +125,33 @@ https://raw.githubusercontent.com/fluid-project/chartAuthoring/master/LICENSE.tx
     // https://pouchdb.com/api.html#fetch_document
 
     floe.dashboard.pouchPersisted.get = function (that, retrievalOptions) {
-        console.log("floe.dashboard.pouchPersisted.get");
         retrievalOptions = retrievalOptions || {};
         var docId = that.model._id;
 
         return that.dataSource.get({"_id": docId}, retrievalOptions).then(function (retrievedDoc) {
             that.events.onPouchDocRetrieved.fire(retrievedDoc);
         }, function (getErr) {
-            that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr));
+            var errorMessage = floe.dashboard.pouchPersisted.makeErrorStructure("GET failed", getErr);
+            fluid.log(fluid.logLevel.IMPORTANT, errorMessage);
+            that.events.onPouchError.fire(errorMessage);
         });
     };
 
     // Creates or updates the persisted model
     floe.dashboard.pouchPersisted.set = function (that) {
-        console.log("floe.dashboard.pouchPersisted.set");
         var doc = fluid.copy(that.model);
         var docId = that.model._id;
         return that.dataSource.set({"_id": docId}, doc, {}).then(function (result) {
-            console.log(result);
             that.events.onPouchDocStored.fire(result);
-        }, function (setError) {
-            console.log(setError);
-            that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET failed", setError));
+        }, function (setErr) {
+            var errorMessage = floe.dashboard.pouchPersisted.makeErrorStructure("SET failed", setErr);
+            fluid.log(fluid.logLevel.IMPORTANT, errorMessage);
+            that.events.onPouchError.fire(errorMessage);
         });
-
-        // that.dataSource.get({"_id": docId}, {}).then(
-        //     // Update the doc if it exists
-        //     function (retrievedDoc) {
-        //         // Set the _rev to the revision of the retrieved doc
-        //         doc._rev = retrievedDoc._rev;
-        //         that.dataSource.set(doc).then(function (setResp) {
-        //             that.events.onPouchDocStored.fire(setResp);
-        //         }, function (setErr) {
-        //             that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET (update if exists) failed", setErr));
-        //         });
-        //     },
-        //     // Create the doc on a 404 (doesn't exist yet)
-        //     function (getErr) {
-        //         if (getErr.status === 404) {
-        //             that.dataSource.set(doc).then(function (setResp) {
-        //                 that.events.onPouchDocStored.fire(setResp);
-        //             }, function (setErr) {
-        //                 that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("SET after GET 404 response (create if does not exist) failed", setErr));
-        //             });
-        //         } else {
-        //             that.events.onPouchError.fire(floe.dashboard.pouchPersisted.makeErrorStructure("GET before SET failed", getErr));
-        //         }
-        //     });
     };
 
     // Delete the persisted document
+    // TODO: this needs an actual functional implementation
     floe.dashboard.pouchPersisted.del = function (that) {
         var docId = that.model._id;
         that.dataSource.get(docId).then(function (doc) {

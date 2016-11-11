@@ -11,6 +11,10 @@ https://github.com/GPII/universal/blob/master/LICENSE.txt
 /* eslint-env browser */
 /* eslint strict: ["error", "function"] */
 
+/*
+Mildly adapted from https://github.com/cindyli/universal/blob/71594c2b444a7350f3cf6561d22cb301978ba290/gpii/node_modules/gpii-oauth2/gpii-oauth2-datastore/src/DataSource-pouchDB.js
+*/
+
 var fluid = fluid || require("infusion");
 var gpii = fluid.registerNamespace("gpii");
 
@@ -24,6 +28,7 @@ var gpii = fluid.registerNamespace("gpii");
     // to be instantiated beforehand.
     fluid.defaults("gpii.dataSource.pouchDB", {
         gradeNames: ["kettle.dataSource.URL"],
+        readOnlyGrade: "gpii.dataSource.pouchDB",
         dbViews: null,   // Supplied by integrators
         invokers: {
             getImpl: {
